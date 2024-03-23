@@ -1,0 +1,87 @@
+body{
+    height: 100%;
+    width : 100%;
+    margin: 0;
+    padding: 0;
+    background-color:gray;
+    font-family: Arial, Meiryo;
+    color:#fff;
+}
+
+.flex-container{
+    position: fixed;
+    top: 0;
+    width:100%;
+    padding-top: 3px;
+    text-align: center;
+    background-color:gray;
+    z-index: 3;
+    
+}
+.head-style{
+    display: inline-block;
+}
+.img-progress {
+    position: fixed;
+    left: 0;
+    top: -1px;
+    height: 1px;
+    opacity: 1;
+    background: #40b5ff;
+    border: solid #22648d;
+    border-width: 2px 0;
+    transition: width .3s, opacity .5s cubic-bezier(.76, 0, .86, .06)
+    
+}
+
+.img-progress:after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 1px;
+    width: 1px;
+    box-shadow: -2px -2px 3px 5px #40b5ff;
+}
+#bg-color{
+    height: 20px;
+    width: 20px;
+    vertical-align: middle;
+}
+#debug{
+    height: 20px;
+    width: 20px;
+    vertical-align: middle;
+}
+#skeletonList{
+    height: 20px;
+    width: 180px;
+}
+#classList{
+    height: 20px;
+    width: 100px;
+}
+#speedList{
+    width: 40px;
+}
+#loading-text{
+    /* display:none; */
+    opacity: 1;
+}
+ #animation-progress{
+    height: 2px;
+    width:60vw;
+    background: #fff;
+    margin: 5px 0 0 0vw;
+} 
+
+
+#foot{
+    color:#fff;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    background-color:gray;
+}

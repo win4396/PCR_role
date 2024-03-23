@@ -1,0 +1,1506 @@
+{
+    "100101": {
+        "name": "ヒヨリ",
+        "type": "1",
+        "hasRarity6": true
+    },
+    "100201": {
+        "name": "ユイ",
+        "type": "7",
+        "hasRarity6": true
+    },
+    "100301": {
+        "name": "レイ",
+        "type": "4",
+        "hasRarity6": true
+    },
+    "100401": {
+        "name": "ミソギ",
+        "type": "1",
+        "hasRarity6": true
+    },
+    "100501": {
+        "name": "マツリ",
+        "type": "2",
+        "hasRarity6": true
+    },
+    "100601": {
+        "name": "アカリ",
+        "type": "6",
+        "hasRarity6": true
+    },
+    "100701": {
+        "name": "ミヤコ",
+        "type": "3",
+        "hasRarity6": true
+    },
+    "100801": {
+        "name": "ユキ",
+        "type": "21",
+        "hasRarity6": true
+    },
+    "100901": {
+        "name": "アンナ",
+        "type": "5",
+        "hasRarity6": true
+    },
+    "101001": {
+        "name": "マホ",
+        "type": "7",
+        "hasRarity6": true
+    },
+    "101101": {
+        "name": "リノ",
+        "type": "8",
+        "hasRarity6": true
+    },
+    "101201": {
+        "name": "ハツネ",
+        "type": "7",
+        "hasRarity6": true
+    },
+    "101301": {
+        "name": "ナナカ",
+        "type": "7",
+        "hasRarity6": true
+    },
+    "101401": {
+        "name": "カスミ",
+        "type": "21",
+        "hasRarity6": true
+    },
+    "101501": {
+        "name": "ミサト",
+        "type": "9",
+        "hasRarity6": true
+    },
+    "101601": {
+        "name": "スズナ",
+        "type": "8",
+        "hasRarity6": true
+    },
+    "101701": {
+        "name": "カオリ",
+        "type": "1",
+        "hasRarity6": true
+    },
+    "101801": {
+        "name": "イオ",
+        "type": "5",
+        "hasRarity6": true
+    },
+    "102001": {
+        "name": "ミミ",
+        "type": "5",
+        "hasRarity6": true
+    },
+    "102101": {
+        "name": "クルミ",
+        "type": "3",
+        "hasRarity6": true
+    },
+    "102201": {
+        "name": "ヨリ",
+        "type": "6",
+        "hasRarity6": true
+    },
+    "102301": {
+        "name": "アヤネ",
+        "type": "3",
+        "hasRarity6": true
+    },
+    "102501": {
+        "name": "スズメ",
+        "type": "7",
+        "hasRarity6": true
+    },
+    "102601": {
+        "name": "リン",
+        "type": "6",
+        "hasRarity6": true
+    },
+    "102701": {
+        "name": "エリコ",
+        "type": "3",
+        "hasRarity6": true
+    },
+    "102801": {
+        "name": "サレン",
+        "type": "4",
+        "hasRarity6": true
+    },
+    "102901": {
+        "name": "ノゾミ",
+        "type": "4",
+        "hasRarity6": true
+    },
+    "103001": {
+        "name": "ニノン",
+        "type": "5",
+        "hasRarity6": true
+    },
+    "103101": {
+        "name": "シノブ",
+        "type": "5",
+        "hasRarity6": true
+    },
+    "103201": {
+        "name": "アキノ",
+        "type": "5",
+        "hasRarity6": true
+    },
+    "103301": {
+        "name": "マヒル",
+        "type": "6",
+        "hasRarity6": true
+    },
+    "103401": {
+        "name": "ユカリ",
+        "type": "5",
+        "hasRarity6": true
+    },
+    "103601": {
+        "name": "キョウカ",
+        "type": "7",
+        "hasRarity6": true
+    },
+    "103701": {
+        "name": "トモ",
+        "type": "4",
+        "hasRarity6": true
+    },
+    "103801": {
+        "name": "シオリ",
+        "type": "8",
+        "hasRarity6": true
+    },
+    "104001": {
+        "name": "アオイ",
+        "type": "8",
+        "hasRarity6": true
+    },
+    "104201": {
+        "name": "チカ",
+        "type": "7",
+        "hasRarity6": true
+    },
+    "104301": {
+        "name": "マコト",
+        "type": "5",
+        "hasRarity6": true
+    },
+    "104401": {
+        "name": "イリヤ",
+        "type": "3",
+        "hasRarity6": true
+    },
+    "104501": {
+        "name": "クウカ",
+        "type": "2",
+        "hasRarity6": true
+    },
+    "104601": {
+        "name": "タマキ",
+        "type": "2",
+        "hasRarity6": true
+    },
+    "104701": {
+        "name": "ジュン",
+        "type": "5",
+        "hasRarity6": true
+    },
+    "104801": {
+        "name": "ミフユ",
+        "type": "6",
+        "hasRarity6": true
+    },
+    "104901": {
+        "name": "シズル",
+        "type": "5",
+        "hasRarity6": true
+    },
+    "105001": {
+        "name": "ミサキ",
+        "type": "7",
+        "hasRarity6": true
+    },
+    "105101": {
+        "name": "ミツキ",
+        "type": "5",
+        "hasRarity6": true
+    },
+    "105201": {
+        "name": "リマ",
+        "type": "4",
+        "hasRarity6": true
+    },
+    "105301": {
+        "name": "モニカ",
+        "type": "4",
+        "hasRarity6": true
+    },
+    "105401": {
+        "name": "ツムギ",
+        "type": "1",
+        "hasRarity6": true
+    },
+    "105501": {
+        "name": "アユミ",
+        "type": "48",
+        "hasRarity6": true
+    },
+    "105601": {
+        "name": "ルカ",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "105701": {
+        "name": "ジータ",
+        "type": "4",
+        "hasRarity6": true
+    },
+    "105801": {
+        "name": "ペコリーヌ",
+        "type": "5",
+        "hasRarity6": true
+    },
+    "105901": {
+        "name": "コッコロ",
+        "type": "6",
+        "hasRarity6": true
+    },
+    "106001": {
+        "name": "キャル",
+        "type": "7",
+        "hasRarity6": true
+    },
+    "106101": {
+        "name": "ムイミ",
+        "type": "2",
+        "hasRarity6": true
+    },
+    "106301": {
+        "name": "アリサ",
+        "type": "8",
+        "hasRarity6": true
+    },
+    "106401": {
+        "name": "シェフィ",
+        "type": "4",
+        "hasRarity6": true
+    },
+    "106501": {
+        "name": "カヤ",
+        "type": "1",
+        "hasRarity6": true
+    },
+    "106601": {
+        "name": "イノリ",
+        "type": "3",
+        "hasRarity6": true
+    },
+    "106701": {
+        "name": "ホマレ",
+        "type": "21",
+        "hasRarity6": false
+    },
+    "106801": {
+        "name": "ラビリスタ",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "106901": {
+        "name": "カイザーインサイト",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "107001": {
+        "name": "ネネカ",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "107101": {
+        "name": "クリスティーナ",
+        "type": "10",
+        "hasRarity6": true
+    },
+    "107501": {
+        "name": "ペコリーヌ（サマー）",
+        "type": "5",
+        "hasRarity6": true
+    },
+    "107601": {
+        "name": "コッコロ（サマー）",
+        "type": "6",
+        "hasRarity6": true
+    },
+    "107701": {
+        "name": "スズメ（サマー）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "107801": {
+        "name": "キャル（サマー）",
+        "type": "7",
+        "hasRarity6": true
+    },
+    "107901": {
+        "name": "タマキ（サマー）",
+        "type": "2",
+        "hasRarity6": false
+    },
+    "108001": {
+        "name": "ミフユ（サマー）",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "108101": {
+        "name": "シノブ（ハロウィン）",
+        "type": "3",
+        "hasRarity6": false
+    },
+    "108201": {
+        "name": "ミヤコ（ハロウィン）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "108301": {
+        "name": "ミサキ（ハロウィン）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "108401": {
+        "name": "チカ（クリスマス）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "108501": {
+        "name": "クルミ（クリスマス）",
+        "type": "3",
+        "hasRarity6": false
+    },
+    "108601": {
+        "name": "アヤネ（クリスマス）",
+        "type": "3",
+        "hasRarity6": false
+    },
+    "108701": {
+        "name": "ヒヨリ（ニューイヤー）",
+        "type": "1",
+        "hasRarity6": true
+    },
+    "108801": {
+        "name": "ユイ（ニューイヤー）",
+        "type": "21",
+        "hasRarity6": true
+    },
+    "108901": {
+        "name": "レイ（ニューイヤー）",
+        "type": "22",
+        "hasRarity6": true
+    },
+    "109001": {
+        "name": "エリコ（バレンタイン）",
+        "type": "3",
+        "hasRarity6": false
+    },
+    "109101": {
+        "name": "シズル（バレンタイン）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "109201": {
+        "name": "アン",
+        "type": "23",
+        "hasRarity6": false
+    },
+    "109301": {
+        "name": "ルゥ",
+        "type": "23",
+        "hasRarity6": false
+    },
+    "109401": {
+        "name": "グレア",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "109501": {
+        "name": "クウカ（オーエド）",
+        "type": "2",
+        "hasRarity6": false
+    },
+    "109601": {
+        "name": "ニノン（オーエド）",
+        "type": "2",
+        "hasRarity6": false
+    },
+    "109701": {
+        "name": "レム",
+        "type": "24",
+        "hasRarity6": false
+    },
+    "109801": {
+        "name": "ラム",
+        "type": "24",
+        "hasRarity6": false
+    },
+    "109901": {
+        "name": "エミリア",
+        "type": "23",
+        "hasRarity6": false
+    },
+    "110001": {
+        "name": "スズナ（サマー）",
+        "type": "8",
+        "hasRarity6": false
+    },
+    "110101": {
+        "name": "イオ（サマー）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "110201": {
+        "name": "ミサキ（サマー）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "110301": {
+        "name": "サレン（サマー）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "110401": {
+        "name": "マコト（サマー）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "110501": {
+        "name": "カオリ（サマー）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "110601": {
+        "name": "マホ（サマー）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "110701": {
+        "name": "アオイ（編入生）",
+        "type": "8",
+        "hasRarity6": false
+    },
+    "110801": {
+        "name": "クロエ",
+        "type": "2",
+        "hasRarity6": false
+    },
+    "110901": {
+        "name": "チエル",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "111001": {
+        "name": "ユニ",
+        "type": "26",
+        "hasRarity6": false
+    },
+    "111101": {
+        "name": "キョウカ（ハロウィン）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "111201": {
+        "name": "ミソギ（ハロウィン）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "111301": {
+        "name": "ミミ（ハロウィン）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "111401": {
+        "name": "ルナ",
+        "type": "25",
+        "hasRarity6": false
+    },
+    "111501": {
+        "name": "クリスティーナ（クリスマス）",
+        "type": "10",
+        "hasRarity6": false
+    },
+    "111601": {
+        "name": "ノゾミ（クリスマス）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "111701": {
+        "name": "イリヤ（クリスマス）",
+        "type": "3",
+        "hasRarity6": false
+    },
+    "111801": {
+        "name": "ペコリーヌ（ニューイヤー）",
+        "type": "22",
+        "hasRarity6": false
+    },
+    "111901": {
+        "name": "コッコロ（ニューイヤー）",
+        "type": "23",
+        "hasRarity6": false
+    },
+    "112001": {
+        "name": "キャル（ニューイヤー）",
+        "type": "21",
+        "hasRarity6": false
+    },
+    "112101": {
+        "name": "スズメ（ニューイヤー）",
+        "type": "21",
+        "hasRarity6": false
+    },
+    "112201": {
+        "name": "カスミ（マジカル）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "112301": {
+        "name": "シオリ（マジカル）",
+        "type": "8",
+        "hasRarity6": false
+    },
+    "112401": {
+        "name": "ウヅキ（デレマス）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "112501": {
+        "name": "リン（デレマス）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "112601": {
+        "name": "ミオ（デレマス）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "112701": {
+        "name": "リン（レンジャー）",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "112801": {
+        "name": "マヒル（レンジャー）",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "112901": {
+        "name": "リノ（ワンダー）",
+        "type": "8",
+        "hasRarity6": false
+    },
+    "113001": {
+        "name": "アユミ（ワンダー）",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "113101": {
+        "name": "ルカ（サマー）",
+        "type": "27",
+        "hasRarity6": false
+    },
+    "113201": {
+        "name": "アンナ（サマー）",
+        "type": "28",
+        "hasRarity6": false
+    },
+    "113301": {
+        "name": "ナナカ（サマー）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "113401": {
+        "name": "ハツネ（サマー）",
+        "type": "29",
+        "hasRarity6": false
+    },
+    "113501": {
+        "name": "ミサト（サマー）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "113601": {
+        "name": "ジュン（サマー）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "113701": {
+        "name": "アカリ（エンジェル）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "113801": {
+        "name": "ヨリ（エンジェル）",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "113901": {
+        "name": "ツムギ（ハロウィン）",
+        "type": "2",
+        "hasRarity6": false
+    },
+    "114001": {
+        "name": "レイ（ハロウィン）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "114101": {
+        "name": "マツリ（ハロウィン）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "114201": {
+        "name": "モニカ（マジカル）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "114301": {
+        "name": "トモ（マジカル）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "114401": {
+        "name": "アキノ（クリスマス）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "114501": {
+        "name": "サレン（クリスマス）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "114601": {
+        "name": "ユカリ（クリスマス）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "114701": {
+        "name": "ムイミ（ニューイヤー）",
+        "type": "31",
+        "hasRarity6": false
+    },
+    "115001": {
+        "name": "ネネカ（ニューイヤー）",
+        "type": "21",
+        "hasRarity6": false
+    },
+    "115501": {
+        "name": "コッコロ（儀装束）",
+        "type": "2",
+        "hasRarity6": false
+    },
+    "115601": {
+        "name": "ユイ（儀装束）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "115701": {
+        "name": "カスミ（サマー）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "115801": {
+        "name": "リマ（シンデレラ）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "115901": {
+        "name": "マコト（シンデレラ）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "116001": {
+        "name": "マホ（シンデレラ）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "116201": {
+        "name": "クロエ（聖学祭）",
+        "type": "2",
+        "hasRarity6": false
+    },
+    "116301": {
+        "name": "チエル（聖学祭）",
+        "type": "32",
+        "hasRarity6": false
+    },
+    "116401": {
+        "name": "ユニ（聖学祭）",
+        "type": "39",
+        "hasRarity6": false
+    },
+    "116501": {
+        "name": "イノリ（タイムトラベル）",
+        "type": "3",
+        "hasRarity6": false
+    },
+    "116601": {
+        "name": "カヤ（タイムトラベル）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "116701": {
+        "name": "アオイ（作業服）",
+        "type": "33",
+        "hasRarity6": false
+    },
+    "116801": {
+        "name": "タマキ（作業服）",
+        "type": "2",
+        "hasRarity6": false
+    },
+    "116901": {
+        "name": "ミフユ（作業服）",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "117001": {
+        "name": "エリコ（サマー）",
+        "type": "3",
+        "hasRarity6": false
+    },
+    "117101": {
+        "name": "シズル（サマー）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "117201": {
+        "name": "ノゾミ（サマー）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "117301": {
+        "name": "チカ（サマー）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "117401": {
+        "name": "ツムギ（サマー）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "117501": {
+        "name": "ミツキ（オーエド）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "117601": {
+        "name": "ユキ（オーエド）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "117701": {
+        "name": "カオリ（ハロウィン）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "117801": {
+        "name": "ニノン（ハロウィン）",
+        "type": "36",
+        "hasRarity6": false
+    },
+    "117901": {
+        "name": "スズナ（ハロウィン）",
+        "type": "8",
+        "hasRarity6": false
+    },
+    "118001": {
+        "name": "クレジッタ",
+        "type": "35",
+        "hasRarity6": false
+    },
+    "118101": {
+        "name": "ランファ",
+        "type": "21",
+        "hasRarity6": false
+    },
+    "118201": {
+        "name": "ミソラ",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "118301": {
+        "name": "ハツネ（ハツネ&シオリ）",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "118401": {
+        "name": "シオリ（ハツネ&シオリ）",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "118501": {
+        "name": "カリン",
+        "type": "37",
+        "hasRarity6": false
+    },
+    "119001": {
+        "name": "イオ（ノワール）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "119101": {
+        "name": "クウカ（ノワール）",
+        "type": "26",
+        "hasRarity6": false
+    },
+    "119201": {
+        "name": "マヒル（クリスマス）",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "119301": {
+        "name": "リノ（クリスマス）",
+        "type": "8",
+        "hasRarity6": false
+    },
+    "119401": {
+        "name": "ぺコリーヌ",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "119501": {
+        "name": "コッコロ",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "119601": {
+        "name": "キャル",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "119701": {
+        "name": "シェフィ",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "119901": {
+        "name": "ミヤコ（クリスマス）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "120001": {
+        "name": "シズル（ノワール）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "120101": {
+        "name": "イオ（ノワール）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "120201": {
+        "name": "クウカ（ノワール）",
+        "type": "26",
+        "hasRarity6": false
+    },
+    "120301": {
+        "name": "シズル（ノワール）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "120401": {
+        "name": "ミミ（リトルリリカル）",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "120501": {
+        "name": "ミソギ（リトルリリカル）",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "120601": {
+        "name": "キョウカ（リトルリリカル）",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "120701": {
+        "name": "シェフィ（ニューイヤー）",
+        "type": "22",
+        "hasRarity6": false
+    },
+    "120801": {
+        "name": "ルカ（ニューイヤー）",
+        "type": "22",
+        "hasRarity6": false
+    },
+    "120901": {
+        "name": "イリヤ（ニューイヤー）",
+        "type": "38",
+        "hasRarity6": false
+    },
+    "121001": {
+        "name": "ペコリーヌ（オーバーロード）",
+        "type": "41",
+        "hasRarity6": false
+    },
+    "121101": {
+        "name": "キャル（オーバーロード）",
+        "type": "42",
+        "hasRarity6": false
+    },
+    "121201": {
+        "name": "ラビリスタ（オーバーロード）",
+        "type": "40",
+        "hasRarity6": false
+    },
+    "121301": {
+        "name": "クルミ（ステージ）",
+        "type": "3",
+        "hasRarity6": false
+    },
+    "121401": {
+        "name": "ミサキ（ステージ）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "121501": {
+        "name": "アユミ（怪盗）",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "121601": {
+        "name": "イノリ（怪盗）",
+        "type": "3",
+        "hasRarity6": false
+    },
+    "121701": {
+        "name": "アキノ（アキノ＆サレン）",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "121801": {
+        "name": "サレン（アキノ＆サレン）",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "121901": {
+        "name": "アンナ（パイレーツ）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "122001": {
+        "name": "シノブ（パイレーツ）",
+        "type": "3",
+        "hasRarity6": false
+    },
+    "122101": {
+        "name": "アオイ（キャンプ）",
+        "type": "35",
+        "hasRarity6": false
+    },
+    "122201": {
+        "name": "ユカリ（キャンプ）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "122301": {
+        "name": "ヴァンピィ",
+        "type": "43",
+        "hasRarity6": false
+    },
+    "122401": {
+        "name": "ヒヨリ（サマー）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "122501": {
+        "name": "レイ（サマー）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "122601": {
+        "name": "ユイ（サマー）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "122701": {
+        "name": "キョウカ（サマー）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "122801": {
+        "name": "ミソギ（サマー）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "122901": {
+        "name": "ミミ（サマー）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "123001": {
+        "name": "アメス",
+        "type": "44",
+        "hasRarity6": false
+    },
+    "123101": {
+        "name": "マホ（エクスプローラー）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "123201": {
+        "name": "アヤネ（エクスプローラー）",
+        "type": "3",
+        "hasRarity6": false
+    },
+    "123301": {
+        "name": "ネア",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "123401": {
+        "name": "ジュン（キャンプ）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "123501": {
+        "name": "リン（ハロウィン）",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "123601": {
+        "name": "トモ（ハロウィン）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "123701": {
+        "name": "ナナカ（ハロウィン）",
+        "type": "21",
+        "hasRarity6": false
+    },
+    "123801": {
+        "name": "クリスティーナ（ワイルド）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "123901": {
+        "name": "マツリ（ワイルド）",
+        "type": "2",
+        "hasRarity6": false
+    },
+    "124001": {
+        "name": "アカリ（クリスマス）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "124101": {
+        "name": "ヨリ（クリスマス）",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "124201": {
+        "name": "ジュン（クリスマス）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "124301": {
+        "name": "アン（アン＆グレア）",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "124401": {
+        "name": "グレア（アン＆グレア）",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "124501": {
+        "name": "ホマレ（ニューイヤー）",
+        "type": "21",
+        "hasRarity6": false
+    },
+    "124601": {
+        "name": "ミサト（ニューイヤー）",
+        "type": "21",
+        "hasRarity6": false
+    },
+    "124701": {
+        "name": "ミツキ（ニューイヤー）",
+        "type": "46",
+        "hasRarity6": false
+    },
+    "124801": {
+        "name": "ノゾミ（リベレイター）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "124901": {
+        "name": "カヤ（リベレイター）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "125001": {
+        "name": "ムイミ（リベレイター）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "125101": {
+        "name": "タマキ（カフェ）",
+        "type": "47",
+        "hasRarity6": false
+    },
+    "125201": {
+        "name": "モニカ（カフェ）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "125301": {
+        "name": "コッコロ（レンジャー）",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "125401": {
+        "name": "シオリ（レンジャー）",
+        "type": "8",
+        "hasRarity6": false
+    },
+    "125501": {
+        "name": "ジータ（ウォーロック）",
+        "type": "50",
+        "hasRarity6": false
+    },
+    "125601": {
+        "name": "ビカラ",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "125701": {
+        "name": "カリン（アルケミスト）",
+        "type": "9",
+        "hasRarity6": false
+    },
+    "125801": {
+        "name": "リリ（フォールン）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "125901": {
+        "name": "カヤ（リベレイター）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "126001": {
+        "name": "クリア（フォールン）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "126101": {
+        "name": "プレシア（フォールン）",
+        "type": "53",
+        "hasRarity6": false
+    },
+    "126201": {
+        "name": "イリヤ（儀装束）",
+        "type": "3",
+        "hasRarity6": false
+    },
+    "126301": {
+        "name": "ユキ（儀装束）",
+        "type": "9",
+        "hasRarity6": false
+    },
+    "126401": {
+        "name": "クローチェ",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "126501": {
+        "name": "ライラエル",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "126601": {
+        "name": "ネネカ（サマー）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "126701": {
+        "name": "アキノ（サマー）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "126801": {
+        "name": "ユカリ（サマー）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "126901": {
+        "name": "ランファ（サマー）",
+        "type": "21",
+        "hasRarity6": false
+    },
+    "127001": {
+        "name": "クウカ（サマー）",
+        "type": "52",
+        "hasRarity6": false
+    },
+    "127101": {
+        "name": "シノブ（サマー）",
+        "type": "46",
+        "hasRarity6": false
+    },
+    "127201": {
+        "name": "キャル（編入生）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "127301": {
+        "name": "スズナ（編入生）",
+        "type": "8",
+        "hasRarity6": false
+    },
+    "127401": {
+        "name": "ビカラ（コラボ）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "127501": {
+        "name": "サレン（サラサリア）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "127601": {
+        "name": "ルカ（サラサリア）",
+        "type": "4",
+        "hasRarity6": false
+    },
+    "127901": {
+        "name": "ペコリーヌ（クリスマス）",
+        "type": "5",
+        "hasRarity6": false
+    },
+    "128001": {
+        "name": "クレジッタ（クリスマス）",
+        "type": "35",
+        "hasRarity6": false
+    },
+    "128101": {
+        "name": "シズル（シズル&リノ）",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "128201": {
+        "name": "リノ（シズル&リノ）",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "128301": {
+        "name": "イノリ（ニューイヤー）",
+        "type": "38",
+        "hasRarity6": false
+    },
+    "128401": {
+        "name": "ハツネ（ニューイヤー）",
+        "type": "21",
+        "hasRarity6": false
+    },
+    "128501": {
+        "name": "カスミ（ニューイヤー）",
+        "type": "21",
+        "hasRarity6": false
+    },
+    "128601": {
+        "name": "リリ（フォールン）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "128701": {
+        "name": "ヒヨリ（アストラル）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "128801": {
+        "name": "レイ（アストラル）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "128901": {
+        "name": "ユイ（アストラル）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "129001": {
+        "name": "エリス",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "129301": {
+        "name": "ユニ（ウィンター）",
+        "type": "7",
+        "hasRarity6": false
+    },
+    "129401": {
+        "name": "クロエ（ウィンター）",
+        "type": "2",
+        "hasRarity6": false
+    },
+    "129601": {
+        "name": "アネモネ",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "129701": {
+        "name": "ネフィ＝ネラ",
+        "type": "0",
+        "hasRarity6": false
+    },
+    "130601": {
+        "name": "レイ（アストラル）",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "170101": {
+        "name": "ジータ",
+        "type": "34",
+        "hasRarity6": false
+    },
+    "180101": {
+        "name": "ヒヨリ（プリンセス）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "180201": {
+        "name": "ユイ（プリンセス）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "180301": {
+        "name": "レイ（プリンセス）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "180401": {
+        "name": "ペコリーヌ（プリンセス）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "180501": {
+        "name": "コッコロ（プリンセス）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "180601": {
+        "name": "キャル（プリンセス）",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "180701": {
+        "name": "ハツネ＆シオリ",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "180801": {
+        "name": "ミソギ＆ミミ＆キョウカ",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "180901": {
+        "name": "アキノ＆サレン",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "181001": {
+        "name": "アン＆グレア",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "181101": {
+        "name": "シズル＆リノ",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "190801": {
+        "name": "カリン",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "191201": {
+        "name": "ペテルギウス",
+        "type": "1",
+        "hasRarity6": false
+    },
+    "191301": {
+        "name": "カズマサ",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "191401": {
+        "name": "コッコロ",
+        "type": "6",
+        "hasRarity6": false
+    },
+    "191501": {
+        "name": "主人公",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "191601": {
+        "name": "主人公",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "191701": {
+        "name": "主人公",
+        "type": "0",
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "403101": {
+        "hasRarity6": true,
+        "hasSpecialBase": true
+    },
+    "403102": {
+        "hasRarity6": true,
+        "hasSpecialBase": true
+    },
+    "403103": {
+        "hasRarity6": true,
+        "hasSpecialBase": true
+    },
+    "404201": {
+        "hasRarity6": true,
+        "hasSpecialBase": true
+    },
+    "404205": {
+        "hasRarity6": true,
+        "hasSpecialBase": true
+    }
+}
