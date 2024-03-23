@@ -1,8 +1,5 @@
-//import * as sp from 'spine-webgl.min.js'
-import './spine-webgl.min.js'
- /// <reference path="spine-webgl.min.js" />
 var localURL = 'data/';
-
+var looptmp = 0;
 //var window = this;
 window.skeleton = {};
 
@@ -14,30 +11,42 @@ var gl;
 var mvp = new spine.webgl.Matrix4();
 var skeletonRenderer;
 var debugRenderer;
+var debugShader;
 var shapes;
 
 var activeSkeleton = "";
 var classMap;
-var loadingText = document.getElementById("animation-roading");
+var loadingText = document.getElementById("loading-text");
 var pendingAnimation = "";
 var progressBar;
 var animationQueue = [];
 var skeletonList = document.getElementById("skeletonList");
 var classList = document.getElementById("classList");
 var animationProgressBar = document.getElementById("animation-progress");
-var speedFactor = 1;
+var footHeight = document.getElementById("foot").offsetHeight; 
 
+var viewportHeight = window.innerHeight;  
+var viewportWidth = window.innerWidth;
+const colorInput = document.getElementById('bg-color');  
+var topbox = document.getElementById("topbox");
+var firstElementChild = topbox.firstChild;
+var speedFactor = 1;
+$('#speedList').change(function () {
+    var value = parseFloat($('#speedList')[0].value);
+    !isNaN(value) && (speedFactor = value);
+});
+var bgColor = [.3, .3, .3, 1];
 function _(e, t, n) {
-	var r = null;
-	if ("text" === e) return document.createTextNode(t);
-	r = document.createElement(e);
-	for (var l in t)
-		if ("style" === l) for (var a in t.style) r.style[a] = t.style[a];
-		else if ("className" === l) r.className = t[l];
-		else if ("event" === l) for (var a in t[l]) r.addEventListener(a, t[l][a]);
-		else r.setAttribute(l, t[l]);
-	if (n) for (var s = 0; s < n.length; s++) null != n[s] && r.appendChild(n[s]);
-	return r;
+    var r = null;
+    if ("text" === e) return document.createTextNode(t);
+    r = document.createElement(e);
+    for (var l in t)
+        if ("style" === l) for (var a in t.style) r.style[a] = t.style[a];
+        else if ("className" === l) r.className = t[l];
+        else if ("event" === l) for (var a in t[l]) r.addEventListener(a, t[l][a]);
+        else r.setAttribute(l, t[l]);
+    if (n) for (var s = 0; s < n.length; s++) null != n[s] && r.appendChild(n[s]);
+    return r;
 }
 
 function getClass(i){
@@ -45,24 +54,24 @@ function getClass(i){
 }
 
 function loadData(url, cb, loadType, progress) {
-	var xhr = new XMLHttpRequest();
-	xhr.open("GET", url, true);
-	if (loadType) xhr.responseType = loadType;
-	if (progress) xhr.onprogress = progress;
-	xhr.onload = function () {
-		if (xhr.status == 200) {
-			//console.log("Response received:", xhr.response);
-			cb(true, xhr.response);
-		} else {
-			//console.error("Request failed with status:", xhr.status);
-			cb(false);
-		}
-	};
-	xhr.onerror = function () {
-		//console.error("Request encountered an error");
-		cb(false);
-	};
-	xhr.send();
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    if (loadType) xhr.responseType = loadType;
+    if (progress) xhr.onprogress = progress;
+    xhr.onload = function () {
+        if (xhr.status == 200) {
+            //console.log("Response received:", xhr.response);
+            cb(true, xhr.response);
+        } else {
+            //console.error("Request failed with status:", xhr.status);
+            cb(false);
+        }
+    };
+    xhr.onerror = function () {
+        //console.error("Request encountered an error");
+        cb(false);
+    };
+    xhr.send();
 }
 function sliceCyspAnimation(buf) {
     var view = new DataView(buf);
@@ -75,15 +84,15 @@ function sliceCyspAnimation(buf) {
 }
 
 function init() {
-	canvas = document.getElementById("canvas");
-	var config = { alpha: false };
-	gl = canvas.getContext("webgl", config) || canvas.getContext("experimental-webgl", config);
-	if (!gl) {
-		alert("WebGL is unavailable.");
-		return;
-	}
+    canvas = document.getElementById("canvas");
+    var config = { alpha: false };
+    gl = canvas.getContext("webgl", config) || canvas.getContext("experimental-webgl", config);
+    if (!gl) {
+        alert("WebGL is unavailable.");
+        return;
+    }
     
-	shader = spine.webgl.Shader.newTwoColoredTextured(gl);
+    shader = spine.webgl.Shader.newTwoColoredTextured(gl);
     batcher = new spine.webgl.PolygonBatcher(gl);
     mvp.ortho2d(0, 0, canvas.width - 1, canvas.height - 1);
     skeletonRenderer = new spine.webgl.SkeletonRenderer(gl);
@@ -96,57 +105,56 @@ function init() {
     debugShader = spine.webgl.Shader.newColored(gl);
     shapes = new spine.webgl.ShapeRenderer(gl);
 
-	loadData(
-		"classMap.json",
-		function (success, json) {
-			if (!success) return alert("加载角色信息失败");
+    loadData(
+        "classMap.json",
+        function (success, json) {
+            if (!success) return alert("加载角色信息失败");
 
-			classMap = json;
-			skeletonList.firstElementChild.remove();
+            classMap = json;
+            skeletonList.firstElementChild.remove();
 
-			Object.keys(json).forEach(function (i) {
-				var name = json[i].name;
-				var noAdded = json[i].type == "0" && !json[i].hasSpecialBase;
+            Object.keys(json).forEach(function (i) {
+                var name = json[i].name;
+                var noAdded = json[i].type == "0" && !json[i].hasSpecialBase;
 
-				if (noAdded) {
-					skeletonList.appendChild(_("option", { value: i, disabled: "" }, [_("text", name + "(未实装)")]));
-				} else {
-					skeletonList.appendChild(_("option", { value: i * 1 + 10 }, [_("text", "1★" + name)]));
-					skeletonList.appendChild(_("option", { value: i * 1 + 30 }, [_("text", "3★" + name)]));
-					if (json[i].hasRarity6) skeletonList.appendChild(_("option", { value: i * 1 + 60 }, [_("text", "6★" + name)]));
-				}
-			});
+                if (noAdded) {
+                    skeletonList.appendChild(_("option", { value: i, disabled: "" }, [_("text", name + "(未实装)")]));
+                } else {
+                    skeletonList.appendChild(_("option", { value: i * 1 + 10 }, [_("text", "1★" + name)]));
+                    skeletonList.appendChild(_("option", { value: i * 1 + 30 }, [_("text", "3★" + name)]));
+                    if (json[i].hasRarity6) skeletonList.appendChild(_("option", { value: i * 1 + 60 }, [_("text", "6★" + name)]));
+                }
+            });
 
-			loadingText.textContent = "";
+            loadingText.textContent = "";
 
-			$(skeletonList).change(function () {
-				var baseUnitId = skeletonList.value | 0;
-				baseUnitId -= (baseUnitId % 100) - 1;
-				var classList = $("#classList")[0];
-				var val = classMap[baseUnitId].type;
-				classList.value = val;
-				if (!classList.value) {
-					classList.appendChild(_("option", { value: val }, [_("text", val)]));
-					classList.value = val;
-				}
-			});
-			if (location.hash.slice(1)) {
-				skeletonList.value = location.hash.slice(1);
-				skeletonList.dispatchEvent(new Event("change"));
-				document.getElementById("loadSkeletion").click();
-			}
-		},
-		"json"
-	);
-	document.getElementById("loadSkeletion").addEventListener("click", function () {
-		if (!skeletonList.value || !classList.value) return;
-		//判断输入与当前动画id是否相同,如果是,不执行
-		if (activeSkeleton == skeletonList.value && currentClass == classList.value) return;
-		console.log("sv",skeletonList.value,"cv",classList.value);
-		load(skeletonList.value, classList.value);
-	});
+            $(skeletonList).change(function () {
+                var baseUnitId = skeletonList.value | 0;
+                baseUnitId -= (baseUnitId % 100) - 1;
+                var classList = $("#classList")[0];
+                var val = classMap[baseUnitId].type;
+                classList.value = val;
+                if (!classList.value) {
+                    classList.appendChild(_("option", { value: val }, [_("text", val)]));
+                    classList.value = val;
+                }
+            });
+            if (location.hash.slice(1)) {
+                skeletonList.value = location.hash.slice(1);
+                skeletonList.dispatchEvent(new Event("change"));
+                document.getElementById("loadSkeleton").click();
+            }
+        },
+        "json"
+    );
+    document.getElementById("loadSkeleton").addEventListener("click", function () {
+        if (!skeletonList.value || !classList.value) return;
+        //判断输入与当前动画id是否相同,如果是,不执行
+        if (activeSkeleton == skeletonList.value && currentClass == classList.value) return;
+        load(skeletonList.value, classList.value);
+    });
 }
-var additionAnimations = ["DEAR", "NO_WEAPON", "POSING", "RACE", "RUN_JUMP", "SMILE"];
+var additionAnimations = ['DEAR', 'NO_WEAPON', 'POSING', 'RACE', 'RUN_JUMP', 'SMILE'];
 
 var loading = false;
 var loadingSkeleton;
@@ -154,51 +162,52 @@ var generalBattleSkeletonData = {};
 var generalAdditionAnimations = {};
 var currentTexture;
 var currentClassAnimData = {
-	type: 0,
-	data: {}
+    type: 0,
+    data: {}
 };
 var currentCharaAnimData = {
-	id: 0,
-	data: {}
+    id: 0,
+    data: {}
 };
-var currentClass = "1";
+var currentClass = '1';
 var currentSkeletonBuffer;
 
 //  保存之后再写
 //saveSkeleton.addEventListener('click', function (e) {});
 
 function load(unit_id, class_id) {
-	//saveSkeleton.style.display = "none";
-	//判断是否在加载动画,如果是,不执行
-	if (loading) return;
-	loading = true;
-	if ((activeSkeleton == unit_id) && (currentClass == classList.value)) return;
-	currentClass = class_id;
-	var baseUnitId = unit_id | 0;
-	baseUnitId -= (baseUnitId % 100) - 1;
-	loadingSkeleton = { id: unit_id | 0, info: classMap[baseUnitId], baseId: "000000" };
-	if (progressBar) progressBar.remove();
-	progressBar = document.body.appendChild(_("div", { className: "img-progress", style: { width: "5px", opacity: 1} }));
-	progressBar.style.width = "0";
+    //saveSkeleton.style.display = "none";
+    //判断是否在加载动画,如果是,不执行
+    if (loading) return;
+    loading = true;
+    if ((activeSkeleton == unit_id) && (currentClass == classList.value)) return;
+    currentClass = class_id;
+    var baseUnitId = unit_id | 0;
+    baseUnitId -= (baseUnitId % 100) - 1;
+    loadingSkeleton = { id: unit_id | 0, info: classMap[baseUnitId], baseId: "000000" };
+    if (progressBar) progressBar.remove();
+    progressBar = document.body.appendChild(_("div", { className: "img-progress", style: { width: "5px", opacity: 1} }));
+    topbox.insertBefore(progressBar,firstElementChild);
+    progressBar.style.width = "0";
 
-	if (loadingSkeleton.info.hasSpecialBase) {
-		loadingSkeleton.baseId = baseUnitId;
-		currentClass = baseUnitId;
-	}
-	var baseId = loadingSkeleton.baseId;
+    if (loadingSkeleton.info.hasSpecialBase) {
+        loadingSkeleton.baseId = baseUnitId;
+        currentClass = baseUnitId;
+    }
+    var baseId = loadingSkeleton.baseId;
 
-	if (!generalBattleSkeletonData[baseId]) {
-		(loadingText.textContent = "加载骨骼(1/6)"),
-			loadData(
-				localURL + baseId + "_CHARA_BASE.cysp",
-				function (success, data) {
-					if (!success || data === null) return loading = false, loadingText.textContent = '加载共用骨架失败', progressBar.width = '100%', progressBar.opacity = 0;
-					generalBattleSkeletonData[baseId] = data;
-					loadAdditionAnimation();
-				},
-				"arraybuffer"
-			);
-	} else 
+    if (!generalBattleSkeletonData[baseId]) {
+        (loadingText.textContent = "加载骨骼(1/6)"),
+            loadData(
+                localURL + baseId + "_CHARA_BASE.cysp",
+                function (success, data) {
+                    if (!success || data === null) return loading = false, loadingText.textContent = '加载共用骨架失败', progressBar.width = '100%', progressBar.opacity = 0;
+                    generalBattleSkeletonData[baseId] = data;
+                    loadAdditionAnimation();
+                },
+                "arraybuffer"
+            );
+    } else 
     loadAdditionAnimation();
 }
 function loadAdditionAnimation() {
@@ -252,7 +261,7 @@ function loadCharaSkillAnimation(){
         loadingText.textContent = '加载角色技能动画(4/6)';
         loadData(localURL + baseUnitId + '_BATTLE.cysp',function(success,data){
             if (!success || data === null) return loading = false, loadingText.textContent = '加载角色技能动画失败', progressBar.width = '100%', progressBar.opacity = 0; 
-            currentClassAnimData = {
+            currentCharaAnimData = {
                 id: baseUnitId,
                 data: sliceCyspAnimation(data)
             }
@@ -264,127 +273,132 @@ function loadTexture(){
     progressBar.style.width = '60%';
     loadingText.textContent = '加载材质(5/6)';
     loadData(localURL + loadingSkeleton.id + '.atlas',function(success,atlasText){
-        if (!success || data === null) return loading = false, loadingText.textContent = '加载材质失败', progressBar.width = '100%', progressBar.opacity = 0; 
-        loadTextureNext(atlasText);      
+        if (!success) return loading = false, loadingText.textContent = '加载材质失败', progressBar.width = '100%', progressBar.opacity = 0; 
+        progressBar.style.width = '80%';
+        loadingText.textContent = '加载材质图片(6/6)';
+        loadData(localURL + loadingSkeleton.id + '.png',function(success,blob){
+            if (!success) return loading = false, loadingText.textContent = '加载材质图片失败'; 
+            var img = new Image();
+            img.onload = function(){
+                progressBar.style.width = '100%';
+                progressBar.style.opacity = 0;
+                var created = !!window.skeleton.skeleton;
+                if(created){
+                    window.skeleton.state.clearTracks();
+                    window.skeleton.state.clearListeners();
+                    gl.deleteTexture(currentTexture.texture);
+                }
+
+                var imgTexture = new spine.webgl.GLTexture(gl,img);
+                URL.revokeObjectURL(img.src);
+                var atlas = new spine.TextureAtlas(atlasText, function(path){
+                    return imgTexture;
+                });
+                currentTexture = imgTexture;
+                var atlasLoader = new spine.AtlasAttachmentLoader(atlas);
+    
+                var baseId = loadingSkeleton.baseId;
+                var additionAnimations = Object.values(generalAdditionAnimations[baseId]);
+
+                var animationCount = 0;
+                var classAnimCount = currentClassAnimData.data.count;
+                animationCount += classAnimCount;
+                var unitAnimCount = currentCharaAnimData.data.count;
+                animationCount += unitAnimCount;
+                additionAnimations.forEach(function (i) {
+                    animationCount += i.count;
+                })
+                //assume always no more than 128 animations
+                var newBuffSize = generalBattleSkeletonData[baseId].byteLength - 64 + 1 +
+                        currentClassAnimData.data.data.byteLength +
+                        currentCharaAnimData.data.data.byteLength;
+                additionAnimations.forEach(function (i) {
+                    newBuffSize += i.data.byteLength;
+                })
+                var newBuff = new Uint8Array(newBuffSize);
+                var offset = 0;
+                newBuff.set(new Uint8Array(generalBattleSkeletonData[baseId].slice(64)), 0);
+                offset += generalBattleSkeletonData[baseId].byteLength - 64;
+                newBuff[offset] = animationCount;
+                offset++;
+                newBuff.set(new Uint8Array(currentClassAnimData.data.data), offset);
+                offset += currentClassAnimData.data.data.byteLength;
+                newBuff.set(new Uint8Array(currentCharaAnimData.data.data), offset);
+                offset += currentCharaAnimData.data.data.byteLength;
+                additionAnimations.forEach(function (i) {
+                    newBuff.set(new Uint8Array(i.data), offset);
+                    offset += i.data.byteLength;
+                })
+
+                var skeletonBinary = new spine.SkeletonBinary(atlasLoader);
+                var skeletonData = skeletonBinary.readSkeletonData(newBuff.buffer);
+                var skeleton = new spine.Skeleton(skeletonData);
+                skeleton.setSkinByName('default');
+                var bounds = calculateBounds(skeleton);
+
+                var animationStateData = new spine.AnimationStateData(skeleton.data);
+                var animationState = new spine.AnimationState(animationStateData);
+                animationState.setAnimation(0, getClass(currentClass) + '_idle', true);
+                animationState.addListener({
+                    /*start: function (track) {
+                        console.log("Animation on track " + track.trackIndex + " started");
+                    },
+                    interrupt: function (track) {
+                        console.log("Animation on track " + track.trackIndex + " interrupted");
+                    },
+                    end: function (track) {
+                        console.log("Animation on track " + track.trackIndex + " ended");
+                    },
+                    disposed: function (track) {
+                        console.log("Animation on track " + track.trackIndex + " disposed");
+                    },*/
+                    complete: function tick(track) {
+                        //console.log("Animation on track " + track.trackIndex + " completed");
+                        if (animationQueue.length) {
+                            var nextAnim = animationQueue.shift();
+                            if (nextAnim == 'stop') return;
+                            if (nextAnim == 'hold') return setTimeout(tick, 1e3);
+                            if (nextAnim.substr(0, 1) != '1') nextAnim = getClass(currentClassAnimData.type) + '_' + nextAnim;
+                            console.log(nextAnim);
+                            if((!animationQueue.length) && (looptmp))
+                            {
+                                animationQueue = $("#animationList")[0].value.split(',');
+                                animationQueue.push('idle');  
+                                nextAnim = animationQueue.shift();
+                                if (!/^\d{6}/.test(nextAnim)) nextAnim = getClass(currentClassAnimData.type) + '_' + nextAnim;
+                                
+                            }
+                            animationState.setAnimation(0, nextAnim, !animationQueue.length);
+                        }
+                    },
+                    /*event: function (track, event) {
+                        console.log("Event on track " + track.trackIndex + ": " + JSON.stringify(event));
+                    }*/
+                });
+                window.skeleton = { skeleton: skeleton, state: animationState, bounds: bounds, premultipliedAlpha: true }
+                loading = false;
+                loadingText.textContent = '';
+                (window.updateUI || setupUI)();
+                if (!created) {
+                    canvas.style.width = '99%';
+                    requestAnimationFrame(render);
+                    setTimeout(function () {
+                        canvas.style.width = '';
+                    }, 0)
+                }
+                activeSkeleton = loadingSkeleton.id;
+
+                currentSkeletonBuffer = newBuff.buffer;
+                if (navigator.platform == 'Win32') {
+                    //saveSkeleton.style.display = '';
+                }
+            }
+            img.src = URL.createObjectURL(blob);
+        },'blob',function(e){//由返回函数控制最后的进度条
+            var perc = e.loaded / e.total * 20 + 80;
+            progressBar.style.width = perc + '%';
+        });
     },'text');
-};
-function loadTextureNext(atlasText){
-    progressBar.style.width = '80%';
-    loadingText.textContent = '加载材质图片(6/6)';
-    loadData(localURL + loadingSkeleton.id + '.png',function(success,blob){
-        if (!success) return loading = false, loadingText.textContent = '加载材质图片失败', progressBar.width = '100%', progressBar.opacity = 0; 
-        var img = new Image();
-        img.onload = function(){
-            progressBar.style.width = '100%';
-            progressBar.opacity = 0; 
-            var created = !!window.skeleton.skeleton;
-            if(created){
-                window.skeleton.state.clearTracks();
-                window.skeleton.state.clearListeners();
-                gl.deleteTexture(currentTexture.texture);
-            }
-
-            var imgTexture = new spine.webgl.GLTexture(gl,img);
-            URL.revokeObjectURL(img.src);
-            atlas = new spine.TextureAtlas(atlasText, function(path){
-                return imgTexture;
-            });
-            currentTexture = imgTexture;
-            atlasLoader = new spine.AtlasAttachmentLoader(atles);
-  
-            var baseId = loadingSkeleton.baseId;
-            var additionAnimations = Object.values(generalAdditionAnimations[baseId]);
-
-            var animationCount = 0;
-            var classAnimCount = currentClassAnimData.data.count;
-            animationCount += classAnimCount;
-            var unitAnimCount = currentCharaAnimData.data.count;
-            animationCount += unitAnimCount;
-            additionAnimations.forEach(function (i) {
-                animationCount += i.count;
-            })
-            //assume always no more than 128 animations
-            var newBuffSize = generalBattleSkeletonData[baseId].byteLength - 64 + 1 +
-            currentClassAnimData.data.data.byteLength +
-            currentCharaAnimData.data.data.byteLength;
-            additionAnimations.forEach(function (i) {
-                newBuffSize += i.data.byteLength;
-            })
-            var newBuff = new Uint8Array(newBuffSize);
-            var offset = 0;
-            newBuff.set(new Uint8Array(generalBattleSkeletonData[baseId].slice(64)), 0);
-            offset += generalBattleSkeletonData[baseId].byteLength - 64;
-            newBuff[offset] = animationCount;
-            offset++;
-            newBuff.set(new Uint8Array(currentClassAnimData.data.data), offset);
-            offset += currentClassAnimData.data.data.byteLength;
-            newBuff.set(new Uint8Array(currentCharaAnimData.data.data), offset);
-            offset += currentCharaAnimData.data.data.byteLength;
-            additionAnimations.forEach(function (i) {
-                newBuff.set(new Uint8Array(i.data), offset);
-                offset += i.data.byteLength;
-            })
-
-            var skeletonBinary = new spine.SkeletonBinary(atlasLoader);
-            var skeletonData = skeletonBinary.readSkeletonData(newBuff.buffer);
-            var skeleton = new spine.Skeleton(skeletonData);
-            skeleton.setSkinByName('default');
-            var bounds = calculateBounds(skeleton);
-
-            animationStateData = new spine.AnimationStateData(skeleton.data);
-            var animationState = new spine.AnimationState(animationStateData);
-            animationState.setAnimation(0, getClass(currentClass) + '_idle', true);
-            animationState.addListener({
-                /*start: function (track) {
-                    console.log("Animation on track " + track.trackIndex + " started");
-                },
-                interrupt: function (track) {
-                    console.log("Animation on track " + track.trackIndex + " interrupted");
-                },
-                end: function (track) {
-                    console.log("Animation on track " + track.trackIndex + " ended");
-                },
-                disposed: function (track) {
-                    console.log("Animation on track " + track.trackIndex + " disposed");
-                },*/
-                complete: function tick(track) {
-                    //console.log("Animation on track " + track.trackIndex + " completed");
-                    if (animationQueue.length) {
-                        var nextAnim = animationQueue.shift();
-                        if (nextAnim == 'stop') return;
-                        if (nextAnim == 'hold') return setTimeout(tick, 1e3);
-                        if (nextAnim.substr(0, 1) != '1') nextAnim = getClass(currentClassAnimData.type) + '_' + nextAnim;
-                        console.log(nextAnim);
-                        animationState.setAnimation(0, nextAnim, !animationQueue.length);
-                    }
-                },
-                /*event: function (track, event) {
-                    console.log("Event on track " + track.trackIndex + ": " + JSON.stringify(event));
-                }*/
-            });
-            window.skeleton = { skeleton: skeleton, state: animationState, bounds: bounds, premultipliedAlpha: true }
-            loading = false;
-            loadingText.textContent = '';
-            (window.updateUI || setupUI)();
-            if (!created) {
-                canvas.style.width = '99%';
-                requestAnimationFrame(render);
-                setTimeout(function () {
-                    canvas.style.width = '';
-                }, 0)
-            }
-            activeSkeleton = loadingSkeleton.id;
-
-            currentSkeletonBuffer = newBuff.buffer;
-            // if (navigator.platform == 'Win32') {
-            //     saveSkeleton.style.display = '';
-            // }
-        }
-        img.src = URL.createObjectURL(blob);
-    },'blob',function(e){//由返回函数控制最后的进度条
-        var perc = e.loaded / e.total * 20 + 80;
-        progressBar.style.width = perc + '%';
-    });
 }
 
 function calculateBounds(skeleton) {
@@ -416,7 +430,7 @@ function setupUI() {
             ['攻击（扫荡）', 'attack_skipQuest'],
             ['庆祝-短', 'joy_short,hold,joy_short_return'],
             ['庆祝-长', 'joy_long,hold,joy_long_return'],
-            ['受伤', 'damage'],
+            ['受伤', 'landing,standBy,run_gamestart,damage,die'],
             ['死亡', 'die,stop'],
             ['合作-准备', 'multi_standBy'],
             ['合作-闲置', 'multi_idle_standBy'],
@@ -438,17 +452,25 @@ function setupUI() {
     $("#setAnimation").click(function () {
         var animationState = skeleton.state, forceNoLoop = false;
         animationQueue = $("#animationList")[0].value.split(',');
+        if(animationQueue[0] == 'landing') 
+            looptmp = 1;
+        else
+            looptmp = 0;
+
         if (animationQueue[0] == 'multi_standBy') {
             animationQueue.push('multi_idle_standBy');
-        } else if ([
+        } 
+        
+        else if ([
             'multi_idle_standBy', 'multi_idle_noWeapon', 'idle', 'walk', 'run', 'run_gamestart'
         ].indexOf(animationQueue[0]) == -1) {
-            animationQueue.push('idle');
+            animationQueue.push('idle');     
         }
         console.log(animationQueue);
         var nextAnim = animationQueue.shift();
         if (!/^\d{6}/.test(nextAnim)) nextAnim = getClass(currentClassAnimData.type) + '_' + nextAnim;
-        console.log(nextAnim);
+        
+        console.log(nextAnim,forceNoLoop);
         animationState.setAnimation(0, nextAnim, !animationQueue.length && !forceNoLoop);
     });
 
@@ -456,15 +478,18 @@ function setupUI() {
         setupAnimationUI();
     };
     setupAnimationUI();
-    $('#bg-color')[0].addEventListener('input', function () {
-        var val = this.value.toUpperCase();
-        if (!/^[0-9A-F]{6}$/.test(val)) return;
-        val = parseInt(val, 16);
+    colorInput.addEventListener('change', function (event) {
+        var newcolor = event.target.value;
+        newcolor = newcolor.replace('#', '');    
+        //console.log(newcolor);
+        if(newcolor.length != 6)    return;
+        newcolor = parseInt(newcolor,16);
         bgColor = [
-            (val >>> 16 & 0xFF) / 255,
-            (val >>> 8 & 0xFF) / 255,
-            (val & 0xFF) / 255
+            (newcolor >>> 16 & 0xFF) / 255,
+            (newcolor >>> 8 & 0xFF) / 255,
+            (newcolor & 0xFF) / 255
         ];
+        //console.log(bgColor);
     });
 }
 
@@ -492,8 +517,8 @@ function render() {
     {
         var progressCtx = animationProgressBar.getContext('2d');
         var track = state.tracks[0];
-        var width = 300 * ((track.animationLast - track.animationStart) / (track.animationEnd - track.animationStart));
-        progressCtx.clearRect(0, 0, 300, 4);
+        var width = 400 * ((track.animationLast - track.animationStart) / (track.animationEnd - track.animationStart));
+        progressCtx.clearRect(0, 0, 400, 4);
         progressCtx.fillStyle = '#40b5ff';
         progressCtx.fillRect(0, 0, width, 4);
     }
@@ -528,11 +553,8 @@ function render() {
 }
 
 function resize() {
-    var useBig = screen.width * devicePixelRatio > 1280;
-    //var w = useBig ? 1920 : 1280;
-    //var h = useBig ? 1080 : 720;
-    var w = canvas.clientWidth * devicePixelRatio;
-    var h = canvas.clientHeight * devicePixelRatio;
+    var w = viewportWidth;
+    var h = viewportHeight-footHeight-2;
     var bounds = window.skeleton.bounds;
     if (canvas.width != w || canvas.height != h) {
         canvas.width = w;
@@ -548,8 +570,8 @@ function resize() {
     if (scale < 1) scale = 1;
     var width = canvas.width * scale;
     var height = canvas.height * scale;
-
-    mvp.ortho2d(centerX - width / 2, centerY - height / 2, width, height);
+    //console.log("w",width,"h",height,"w1",(centerX - width / 2),"h1",(centerY - height / 2));    
+    mvp.ortho2d((centerX - width / 2) , (centerY - height / 2), width , height);
     gl.viewport(0, 0, canvas.width, canvas.height);
 }
 (function () {
