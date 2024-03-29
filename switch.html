@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang = "en">
 <head>
     <title>Pcr小人</title>
     <meta charset="UTF-8">
@@ -71,11 +71,28 @@
         
         <br>
         <span class="head-style">
-            <div id="loading-text">(0/6)</div>
+            <div id="loading-text"></div>
             <div><canvas id="animation-progress" width="400" height="4"  ></canvas></div>
         </span>
 
         
+    </div>
+    <button type="button" id="toggleButton"> ^ </button>
+    <div id="animation_control_panel">
+        <button type="button" class="button2" id="acp_up">1</button>
+        <button type="button" class="button2" id="acp_down">2</button>
+        <button type="button" class="button2" id="acp_left">3</button>
+        <button type="button" class="button2" id="acp_right">4</button>
+        <button type="button" class="button2" id="acp_zoomup">5</button>
+        <button type="button" class="button2" id="acp_zoomdown">6</button>
+        <button type="button" class="button2" id="acp_movereset">7</button>
+        <button type="button" class="button2" id="acp_zoomreset">8</button>
+        <button type="button" class="button2" id="downloadimg">9</button>
+        <div class="button2">
+            <label for="viewbackground">透明背景:</label>
+            <input type="checkbox"  id="viewbackground">
+        </div>
+       
     </div>
     <div><canvas id = "canvas" width="0" height="0"></canvas></div>
     

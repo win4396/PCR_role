@@ -43,6 +43,10 @@ body{
     width: 1px;
     box-shadow: -2px -2px 3px 5px #40b5ff;
 }
+.button2 {
+    display: block;
+    margin: auto;
+} 
 #bg-color{
     height: 20px;
     width: 20px;
@@ -52,6 +56,24 @@ body{
     height: 20px;
     width: 20px;
     vertical-align: middle;
+}
+#toggleButton{
+    position: absolute;
+    background-color: gray;
+    color:#fff;
+    cursor: pointer;
+    font-size: 20px;  
+    width: 200px;
+    border: none;
+    border-radius: 0px 0px 10px 10px;
+    transition: opacity 0.5s ease;
+    opacity: 0;
+}
+.flex-container:hover + #toggleButton{
+    opacity: 1;
+}
+#toggleButton:hover{
+    opacity: 1;
 }
 #skeletonList{
     height: 20px;
@@ -68,13 +90,22 @@ body{
     /* display:none; */
     opacity: 1;
 }
- #animation-progress{
+#animation-progress{
     height: 2px;
     width:60vw;
     background: #fff;
     margin: 5px 0 0 0vw;
 } 
-
+#animation_control_panel{
+    position: absolute;
+    width: 150px;
+    /* height: 150px; */
+    top: 100px;
+    left:5px;
+    padding: 6px 0px;
+    background: lightblue;
+    box-shadow: 2px 2px 5px black; 
+}
 
 #foot{
     color:#fff;

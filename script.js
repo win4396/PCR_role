@@ -1,5 +1,9 @@
+var download_temp = false;
+var pixelData = new Uint8Array(4);
+var acp = [0,0,0,0,0,0];
 var localURL = 'data/';
 var looptmp = 0;
+var animation_fps = 0;
 //var window = this;
 window.skeleton = {};
 
@@ -13,22 +17,35 @@ var skeletonRenderer;
 var debugRenderer;
 var debugShader;
 var shapes;
-
+var toggleButton;
 var activeSkeleton = "";
-var classMap;
-var loadingText = document.getElementById("loading-text");
 var pendingAnimation = "";
 var progressBar;
+var classMap;
 var animationQueue = [];
+
+var loadingText = document.getElementById("loading-text");
 var skeletonList = document.getElementById("skeletonList");
 var classList = document.getElementById("classList");
 var animationProgressBar = document.getElementById("animation-progress");
 var footHeight = document.getElementById("foot").offsetHeight; 
+var topHeight = document.getElementById("topbox").offsetHeight;
+var colorInput = document.getElementById('bg-color');  
+var topbox = document.getElementById("topbox");
+var animation_control_panel = document.getElementById("animation_control_panel");
+var acp_up = document.getElementById("acp_up");
+var acp_down = document.getElementById("acp_down");
+var acp_left = document.getElementById("acp_left");
+var acp_right = document.getElementById("acp_right");
+var acp_zoomup = document.getElementById("acp_zoomup");
+var acp_zoomdown = document.getElementById("acp_zoomdown");
+var acp_movereset = document.getElementById("acp_movereset");
+var acp_zoomreset = document.getElementById("acp_zoomreset");
+var downloadimg = document.getElementById("downloadimg");
 
 var viewportHeight = window.innerHeight;  
 var viewportWidth = window.innerWidth;
-const colorInput = document.getElementById('bg-color');  
-var topbox = document.getElementById("topbox");
+
 var firstElementChild = topbox.firstChild;
 var speedFactor = 1;
 $('#speedList').change(function () {
@@ -84,8 +101,14 @@ function sliceCyspAnimation(buf) {
 }
 
 function init() {
+
+    toggleButton = document.getElementById("toggleButton");
+    toggleButton.style.top = topbox.offsetHeight + "px";
+    toggleButton.style.left = (viewportWidth - toggleButton.offsetWidth)/2+ "px";
+
     canvas = document.getElementById("canvas");
-    var config = { alpha: false };
+   // var ctx = canvas.getContext("2d");
+    var config = { alpha: true };
     gl = canvas.getContext("webgl", config) || canvas.getContext("experimental-webgl", config);
     if (!gl) {
         alert("WebGL is unavailable.");
@@ -153,6 +176,83 @@ function init() {
         if (activeSkeleton == skeletonList.value && currentClass == classList.value) return;
         load(skeletonList.value, classList.value);
     });
+
+    window.addEventListener("resize",function(){
+        //console.log("窗口正在改变 h=",window.innerHeight,"w=",window.innerWidth,"a=",topbox.offsetHeight);
+        viewportWidth = window.innerWidth;
+        toggleButton.style.left = (viewportWidth - toggleButton.offsetWidth)/2+ "px";
+        if(toggleButton.style.top != "0px"){
+            toggleButton.style.top = topbox.offsetHeight  + "px"; 
+        }
+        else{
+            topbox.style.top = "-" + topbox.offsetHeight + "px"; 
+        }
+
+    });
+
+    toggleButton.addEventListener("click",function(){
+        if(toggleButton.style.top != "0px"){
+            topbox.style.top = "-" + toggleButton.style.top; 
+            toggleButton.style.top = "0px";   
+            toggleButton.textContent = "V";   
+        }
+        else{
+            toggleButton.style.top = topbox.style.top.replace(/^\-/, '');
+            topbox.style.top = "0px";
+            toggleButton.textContent = "^";   
+        }
+    });
+
+    animation_control_panel.addEventListener("mousedown",function(event){
+        var offsetX,offsetY;
+        offsetX = event.clientX - animation_control_panel.getBoundingClientRect().left;
+        offsetY = event.clientY - animation_control_panel.getBoundingClientRect().top;
+        function handleMouseMove(event) {
+            animation_control_panel.style.left = (event.clientX - offsetX) + "px"; 
+            animation_control_panel.style.top = (event.clientY - offsetY) + "px"; 
+        }
+        function handleMouseUp() {
+            document.removeEventListener("mousemove",handleMouseMove);
+            document.removeEventListener("mouseup",handleMouseUp);
+        }
+        
+        document.addEventListener('mousemove', handleMouseMove);  
+        document.addEventListener('mouseup', handleMouseUp);  
+    });
+
+    acp_up.addEventListener("click",function(){
+        acp[0] += 10;
+    }); 
+    acp_down.addEventListener("click",function(){
+        acp[1] += 10;
+    }); 
+    acp_left.addEventListener("click",function(){
+        acp[2] += 10;
+    }); 
+    acp_right.addEventListener("click",function(){
+        acp[3] += 10;
+    }); 
+    acp_zoomup.addEventListener("click",function(){
+        acp[4] += 0.05;
+    }); 
+    acp_zoomdown.addEventListener("click",function(){
+        acp[5] += 0.05;
+    }); 
+    acp_movereset.addEventListener("click",function(){
+        acp.fill(0,0,4);
+    });
+    acp_zoomreset.addEventListener("click",function(){
+        acp.fill(0,4,6);
+        
+    });  
+    downloadimg.addEventListener("click",function(){
+        download_temp = true;     
+    }); 
+    
+    // setInterval(function(){
+    //     console.log("fps=",animation_fps);
+    //     animation_fps = 0;
+    // },1000);
 }
 var additionAnimations = ['DEAR', 'NO_WEAPON', 'POSING', 'RACE', 'RUN_JUMP', 'SMILE'];
 
@@ -430,7 +530,7 @@ function setupUI() {
             ['攻击（扫荡）', 'attack_skipQuest'],
             ['庆祝-短', 'joy_short,hold,joy_short_return'],
             ['庆祝-长', 'joy_long,hold,joy_long_return'],
-            ['受伤', 'landing,standBy,run_gamestart,damage,die'],
+            ['受伤', 'damage'],
             ['死亡', 'die,stop'],
             ['合作-准备', 'multi_standBy'],
             ['合作-闲置', 'multi_idle_standBy'],
@@ -452,10 +552,7 @@ function setupUI() {
     $("#setAnimation").click(function () {
         var animationState = skeleton.state, forceNoLoop = false;
         animationQueue = $("#animationList")[0].value.split(',');
-        if(animationQueue[0] == 'landing') 
-            looptmp = 1;
-        else
-            looptmp = 0;
+        //looptmp = (animationQueue[0] == 'landing') ? 1 : 0;
 
         if (animationQueue[0] == 'multi_standBy') {
             animationQueue.push('multi_idle_standBy');
@@ -501,14 +598,17 @@ function render() {
 
     // Update the MVP matrix to adjust for canvas size changes
     resize();
-
-    gl.clearColor(bgColor[0], bgColor[1], bgColor[2], 1);
+    var viewbg = $("#viewbackground").is(':checked');
+    if(download_temp && viewbg)
+        gl.clearColor(0,0,0,0);
+    else
+        gl.clearColor(bgColor[0], bgColor[1], bgColor[2], 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     // Apply the animation state based on the delta time.
     var state = window.skeleton.state;
     var skeleton = window.skeleton.skeleton;
-    var bounds = window.skeleton.bounds;
+    //var bounds = window.skeleton.bounds;
     var premultipliedAlpha = window.skeleton.premultipliedAlpha;
     state.update(delta);
     state.apply(skeleton);
@@ -533,6 +633,8 @@ function render() {
 
     skeletonRenderer.premultipliedAlpha = premultipliedAlpha;
     skeletonRenderer.draw(batcher, skeleton);
+    
+ 
     batcher.end();
 
     shader.unbind();
@@ -550,6 +652,16 @@ function render() {
     }
 
     requestAnimationFrame(render);
+    if(download_temp)
+    {
+        var dataURL = canvas.toDataURL('image/png');  
+        let link = document.createElement('a');  
+        link.download = 'webgl-output.png';  
+        link.href = dataURL;  
+        link.click();
+        download_temp = false;
+    } 
+    //animation_fps ++;
 }
 
 function resize() {
@@ -568,11 +680,13 @@ function resize() {
     var scaleY = bounds.size.y / canvas.height;
     var scale = Math.max(scaleX, scaleY) * 1.2;
     if (scale < 1) scale = 1;
-    var width = canvas.width * scale;
-    var height = canvas.height * scale;
+    var width = canvas.width * (scale - acp[4] + acp[5]);
+    var height = canvas.height * (scale - acp[4] + acp[5]);
     //console.log("w",width,"h",height,"w1",(centerX - width / 2),"h1",(centerY - height / 2));    
-    mvp.ortho2d((centerX - width / 2) , (centerY - height / 2), width , height);
+    mvp.ortho2d((centerX - width / 2)+acp[2]-acp[3] , (centerY - height / 2)+acp[1]-acp[0], width , height);
+    //console.log("w:",(centerX - (width / 2)),"h:",(centerY - (height / 2)));
     gl.viewport(0, 0, canvas.width, canvas.height);
+    
 }
 (function () {
     init();
