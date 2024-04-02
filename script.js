@@ -655,7 +655,7 @@ function render() {
     if(download_temp)
     {
         var dataURL = canvas.toDataURL('image/png');  
-        let link = document.createElement('a');  
+        var link = document.createElement('a');  
         link.download = 'webgl-output.png';  
         link.href = dataURL;  
         link.click();

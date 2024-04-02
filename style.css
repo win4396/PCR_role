@@ -1,4 +1,9 @@
 body{
+    -webkit-user-select: none; /* Safari */  
+    -moz-user-select: none;    /* Firefox */  
+    -ms-user-select: none;     /* IE10+/Edge */  
+    user-select: none;         /* Standard syntax */ 
+    
     height: 100%;
     width : 100%;
     margin: 0;
@@ -45,7 +50,8 @@ body{
 }
 .button2 {
     display: block;
-    margin: auto;
+    font-size: xx-small; 
+    /* margin: auto; */
 } 
 #bg-color{
     height: 20px;
@@ -96,15 +102,47 @@ body{
     background: #fff;
     margin: 5px 0 0 0vw;
 } 
+.item1{grid-area: a;}
+.item2{grid-area: b;}
+.item3{grid-area: c;}
+.item4{grid-area: d;}
+.item5{grid-area: e;}
+.item6{grid-area: f;}
+.item7{grid-area: g;}
+.item8{grid-area: h;}
+.item9{grid-area: i;}
+.item10{
+    grid-area: j;
+    display:flex; 
+    align-items: center; 
+    justify-content: end;
+}
 #animation_control_panel{
+    
+    
+
     position: absolute;
-    width: 150px;
+    /* width: 150px; */
     /* height: 150px; */
     top: 100px;
     left:5px;
     padding: 6px 0px;
-    background: lightblue;
+    background: gray;
     box-shadow: 2px 2px 5px black; 
+    display: grid;
+
+    grid-template-columns: repeat(3,26px) 2.8em;
+    grid-template-rows: repeat(4,26px); 
+    grid-template-areas:
+    '... a ... e'
+    'b g d f'
+    '... c ... h'
+    ' j j j i';
+    
+    
+    padding: 5px; 
+    
+   
 }
 
 #foot{
