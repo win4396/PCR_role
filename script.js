@@ -1,6 +1,9 @@
 var download_temp = false;
+
 var pixelData = new Uint8Array(4);
 var acp = [0,0,0,0,0,0];
+var viewrectData = [0,0,0,0,0,0];
+var viewrectTemp = [false,false];
 var localURL = 'data/';
 var looptmp = 0;
 var animation_fps = 0;
@@ -23,7 +26,6 @@ var pendingAnimation = "";
 var progressBar;
 var classMap;
 var animationQueue = [];
-
 var loadingText = document.getElementById("loading-text");
 var skeletonList = document.getElementById("skeletonList");
 var classList = document.getElementById("classList");
@@ -32,17 +34,8 @@ var footHeight = document.getElementById("foot").offsetHeight;
 var topHeight = document.getElementById("topbox").offsetHeight;
 var colorInput = document.getElementById('bg-color');  
 var topbox = document.getElementById("topbox");
-var animation_control_panel = document.getElementById("animation_control_panel");
-var acp_up = document.getElementById("acp_up");
-var acp_down = document.getElementById("acp_down");
-var acp_left = document.getElementById("acp_left");
-var acp_right = document.getElementById("acp_right");
-var acp_zoomup = document.getElementById("acp_zoomup");
-var acp_zoomdown = document.getElementById("acp_zoomdown");
-var acp_movereset = document.getElementById("acp_movereset");
-var acp_zoomreset = document.getElementById("acp_zoomreset");
-var downloadimg = document.getElementById("downloadimg");
-
+var animationControlPanel = document.getElementById("animationControlPanel");
+var viewrect = document.getElementById("viewrect");
 var viewportHeight = window.innerHeight;  
 var viewportWidth = window.innerWidth;
 
@@ -203,13 +196,55 @@ function init() {
         }
     });
 
-    animation_control_panel.addEventListener("mousedown",function(event){
+    
+    viewrect.addEventListener("mousedown",function(event){
+        if(viewrectTemp[0] == true) return;
         var offsetX,offsetY;
-        offsetX = event.clientX - animation_control_panel.getBoundingClientRect().left;
-        offsetY = event.clientY - animation_control_panel.getBoundingClientRect().top;
+        offsetX = event.clientX - viewrect.offsetLeft;
+        offsetY = event.clientY - viewrect.offsetTop;
         function handleMouseMove(event) {
-            animation_control_panel.style.left = (event.clientX - offsetX) + "px"; 
-            animation_control_panel.style.top = (event.clientY - offsetY) + "px"; 
+            viewrect.style.left = (event.clientX - offsetX) + "px"; 
+            viewrect.style.top = (event.clientY - offsetY) + "px"; 
+        }
+        function handleMouseUp() {
+            viewDataUpdate();
+            document.removeEventListener("mousemove",handleMouseMove);
+            document.removeEventListener("mouseup",handleMouseUp);
+        }
+        
+        document.addEventListener('mousemove', handleMouseMove);  
+        document.addEventListener('mouseup', handleMouseUp);  
+    });
+    $("#viewrectResize").mousedown(function () {
+        viewrectTemp[0] = true;
+        viewrectData[0] = event.clientX;
+        viewrectData[1] = event.clientY;
+        viewrectData[2] = viewrect.offsetWidth;
+        viewrectData[3] = viewrect.offsetHeight;
+        function viewrectMouseMove(event){
+            if(viewrectTemp[0] == false)    return;
+            var dx = event.clientX - viewrectData[0];
+            var dy = event.clientY - viewrectData[1];
+            viewrect.style.width = (dx +viewrectData[2]) +"px";
+            viewrect.style.height = (dy +viewrectData[3]) +"px";
+        }
+        function handleMouseUp() {
+            viewrectTemp[0] = false;
+            viewDataUpdate();
+            document.removeEventListener("mousemove",viewrectMouseMove);
+            document.removeEventListener("mouseup",handleMouseUp);
+        }
+        document.addEventListener('mousemove', viewrectMouseMove);  
+        document.addEventListener("mouseup",handleMouseUp);
+    });
+
+    animationControlPanel.addEventListener("mousedown",function(event){
+        var offsetX,offsetY;
+        offsetX = event.clientX - animationControlPanel.getBoundingClientRect().left;
+        offsetY = event.clientY - animationControlPanel.getBoundingClientRect().top;
+        function handleMouseMove(event) {
+            animationControlPanel.style.left = (event.clientX - offsetX) + "px"; 
+            animationControlPanel.style.top = (event.clientY - offsetY) + "px"; 
         }
         function handleMouseUp() {
             document.removeEventListener("mousemove",handleMouseMove);
@@ -220,35 +255,47 @@ function init() {
         document.addEventListener('mouseup', handleMouseUp);  
     });
 
-    acp_up.addEventListener("click",function(){
+    $("#acp_up").click(function () {
         acp[0] += 10;
     }); 
-    acp_down.addEventListener("click",function(){
+    $("#acp_down").click(function () {
         acp[1] += 10;
     }); 
-    acp_left.addEventListener("click",function(){
+    $("#acp_left").click(function () {
         acp[2] += 10;
     }); 
-    acp_right.addEventListener("click",function(){
+    $("#acp_right").click(function () {
         acp[3] += 10;
     }); 
-    acp_zoomup.addEventListener("click",function(){
-        acp[4] += 0.05;
+    $("#acp_zoomup").click(function () {
+        if(acp[4] != (-16))
+            acp[4] --;
     }); 
-    acp_zoomdown.addEventListener("click",function(){
-        acp[5] += 0.05;
+    $("#acp_zoomdown").click(function () {
+        if(acp[4] != 16)
+            acp[4] ++;
     }); 
-    acp_movereset.addEventListener("click",function(){
+    $("#acp_movereset").click(function () {
         acp.fill(0,0,4);
     });
-    acp_zoomreset.addEventListener("click",function(){
+    $("#acp_zoomreset").click(function () {
         acp.fill(0,4,6);
-        
     });  
-    downloadimg.addEventListener("click",function(){
+
+    $("#SavePng").click(function () {
         download_temp = true;     
     }); 
+    $("#viewrange").click(function () {
+        viewrectTemp[1] = this.checked; 
+        viewrect.style.visibility = this.checked ? "visible":"hidden";
+    });
     
+    function viewDataUpdate(){
+        viewrectData[0] = viewrect.offsetLeft;
+        viewrectData[1] = viewrect.offsetTop;
+        viewrectData[2] = viewrect.offsetWidth;
+        viewrectData[3] = viewrect.offsetHeight;
+    }
     // setInterval(function(){
     //     console.log("fps=",animation_fps);
     //     animation_fps = 0;
@@ -323,7 +370,7 @@ function loadAdditionAnimation() {
             if(abort)   return;
             generalAdditionAnimations[baseId][i] = sliceCyspAnimation(data);   
             if(++doneCount == additionAnimations.length){
-                console.log("进了这里");
+                //console.log("进了这里");
                 return loadClassAnimation();   
             } 
             loadingText.textContent = '加载额外动画(2/6)[' + doneCount + '/6]';
@@ -336,7 +383,7 @@ function loadAdditionAnimation() {
 
 function loadClassAnimation(){
     progressBar.style.width = '25%';
-    console.log("加载了一次");
+    //console.log("加载了一次");
     if (currentClassAnimData.type == currentClass)  loadCharaSkillAnimation();    
     else{
         loadingText.textContent = '加载职介动画(3/6)';
@@ -469,6 +516,7 @@ function loadTexture(){
                                 
                             }
                             animationState.setAnimation(0, nextAnim, !animationQueue.length);
+                            console.log(window.skeleton.state.tracks[0].animationEnd);
                         }
                     },
                     /*event: function (track, event) {
@@ -553,7 +601,7 @@ function setupUI() {
         var animationState = skeleton.state, forceNoLoop = false;
         animationQueue = $("#animationList")[0].value.split(',');
         //looptmp = (animationQueue[0] == 'landing') ? 1 : 0;
-
+        
         if (animationQueue[0] == 'multi_standBy') {
             animationQueue.push('multi_idle_standBy');
         } 
@@ -593,9 +641,9 @@ function setupUI() {
 function render() {
     var now = Date.now() / 1000;
     var delta = now - lastFrameTime;
+    //console.log(delta);
     lastFrameTime = now;
     delta *= speedFactor;
-
     // Update the MVP matrix to adjust for canvas size changes
     resize();
     var viewbg = $("#viewbackground").is(':checked');
@@ -654,7 +702,20 @@ function render() {
     requestAnimationFrame(render);
     if(download_temp)
     {
-        var dataURL = canvas.toDataURL('image/png');  
+        if(viewrectTemp[1] == true){
+            console.log(viewrectData);
+            var cutImg = document.createElement('canvas');
+            var ctx = cutImg.getContext("2d");
+            cutImg.width = viewrectData[2];
+            cutImg.height = viewrectData[3];
+        
+            ctx.drawImage(gl.canvas,viewrectData[0],viewrectData[1],viewrectData[2],viewrectData[3],0,0,viewrectData[2],viewrectData[3]);
+            
+            var dataURL = cutImg.toDataURL('image/png');     
+        }
+        else  
+            var dataURL = canvas.toDataURL('image/png');  
+        
         var link = document.createElement('a');  
         link.download = 'webgl-output.png';  
         link.href = dataURL;  
@@ -676,12 +737,13 @@ function resize() {
     // magic
     var centerX = bounds.offset.x + bounds.size.x / 2;
     var centerY = bounds.offset.y + bounds.size.y / 2;
-    var scaleX = bounds.size.x / canvas.width;
-    var scaleY = bounds.size.y / canvas.height;
-    var scale = Math.max(scaleX, scaleY) * 1.2;
-    if (scale < 1) scale = 1;
-    var width = canvas.width * (scale - acp[4] + acp[5]);
-    var height = canvas.height * (scale - acp[4] + acp[5]);
+    //var scaleX = bounds.size.x / canvas.width;
+    //var scaleY = bounds.size.y / canvas.height;
+    // var scale = Math.max(scaleX, scaleY) * 1.2;
+    //if (scale < 1) scale = 1;
+    var scale = 2 + acp[4]*0.05;
+    var width = canvas.width * scale;
+    var height = canvas.height * scale;
     //console.log("w",width,"h",height,"w1",(centerX - width / 2),"h1",(centerY - height / 2));    
     mvp.ortho2d((centerX - width / 2)+acp[2]-acp[3] , (centerY - height / 2)+acp[1]-acp[0], width , height);
     //console.log("w:",(centerX - (width / 2)),"h:",(centerY - (height / 2)));

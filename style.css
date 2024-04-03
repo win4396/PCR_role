@@ -53,6 +53,10 @@ body{
     font-size: xx-small; 
     /* margin: auto; */
 } 
+.ckbox{
+    height: 18px; 
+    width: 18px;
+}
 #bg-color{
     height: 20px;
     width: 20px;
@@ -78,6 +82,7 @@ body{
 .flex-container:hover + #toggleButton{
     opacity: 1;
 }
+
 #toggleButton:hover{
     opacity: 1;
 }
@@ -102,6 +107,7 @@ body{
     background: #fff;
     margin: 5px 0 0 0vw;
 } 
+
 .item1{grid-area: a;}
 .item2{grid-area: b;}
 .item3{grid-area: c;}
@@ -117,10 +123,13 @@ body{
     align-items: center; 
     justify-content: end;
 }
-#animation_control_panel{
-    
-    
-
+.item11{
+    grid-area: o;
+    display:flex; 
+    align-items: center; 
+    justify-content: center;
+}
+#animationControlPanel{
     position: absolute;
     /* width: 150px; */
     /* height: 150px; */
@@ -132,19 +141,35 @@ body{
     display: grid;
 
     grid-template-columns: repeat(3,26px) 2.8em;
-    grid-template-rows: repeat(4,26px); 
+    grid-template-rows: repeat(6,26px); 
     grid-template-areas:
-    '... a ... e'
-    'b g d f'
-    '... c ... h'
-    ' j j j i';
-    
+    '...    a   ...     e'
+    'b      g   d       f'
+    '...    c   ...     h'
+    'j      j   j       i'
+    'o      o   o       o';
     
     padding: 5px; 
-    
-   
+    z-index: 999;
 }
-
+#viewrect{
+    position: absolute;
+    top:200px;
+    left: 200px;
+    width: 500px;
+    height:500px;
+    border:3px solid red;
+    visibility: hidden;
+  
+}
+#viewrectResize{
+    position: absolute;  
+    width: 20px;
+    height:20px;
+    bottom: 0;
+    right: 0;
+    cursor: se-resize;
+}
 #foot{
     color:#fff;
     position: fixed;

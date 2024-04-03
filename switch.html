@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 
     <script src="spine-webgl.min.js"></script>
-    <script src="jquery-3.3.1.min.js"></script> 
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="module" src="script.js?ver=1.0.1" defer></script>
     
 </head>
@@ -62,13 +62,10 @@
             <label for="debug">显示节点:</label>
             <input type="checkbox" id="debug">
         </span>
-   
         <span class="head-style">
             <span>背景颜色:</span>
             <input type="color" id="bg-color" value="#7F7F7F" autocomplete="off">
-        </span>   
-
-        
+        </span>  
         <br>
         <span class="head-style">
             <div id="loading-text"></div>
@@ -78,7 +75,7 @@
         
     </div>
     <button type="button" id="toggleButton"> ^ </button>
-    <div id="animation_control_panel">
+    <div id="animationControlPanel">
         <button type="button" class="button2 item1" id="acp_up">&#8679</button>
         <button type="button" class="button2 item3" id="acp_down">&#8681</button>
         <button type="button" class="button2 item2" id="acp_left">&#8678</button>
@@ -90,12 +87,17 @@
         <button type="button" class="button2 item9" id="downloadimg">截图</button>
         <div class="button2 item10" >
             <label for="viewbackground" >透明背景:</label>
-            <input type="checkbox"  id="viewbackground" >
+            <input type="checkbox" class="ckbox" id="viewbackground" >
         </div>
-       
+        <div class="button2 item11" >
+            <label for="viewrange" >选择截图范围:</label>
+            <input type="checkbox"  class="ckbox" id="viewrange" >
+        </div>
     </div>
     <div><canvas id = "canvas" width="0" height="0"></canvas></div>
-    
+    <div id="viewrect">
+        <div id="viewrectResize"></div>
+    </div>
     <footer id="foot">
         "Fan-made animation player. Resources copyright © "
         <a href="https://priconne-redive.jp/" target="_blank" style="color: #fff;">Cygames</a>
