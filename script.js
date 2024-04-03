@@ -282,7 +282,7 @@ function init() {
         acp.fill(0,4,6);
     });  
 
-    $("#SavePng").click(function () {
+    $("#downloadimg").click(function () {
         download_temp = true;     
     }); 
     $("#viewrange").click(function () {
