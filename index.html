@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+    <title>Pcr小人</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script src="spine-webgl.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.worker.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <script type="module" src="script.js?ver=1.0.1" defer></script>
+    
+</head>
+<body> 
+    <div id = "topbox" class="flex-container">
+        <span class="head-style">
+            <span>角色:</span>
+            <select id="skeletonList">
+                <option value="1">--</option>
+            </select>
+                
+            <select id="classList" autocomplete="off">
+                <option value="1">拳</option>       <!-- KNUCKLE -->
+                <option value="2">短剑</option>     <!-- SHORTSWORD -->
+                <option value="3">斧</option>       <!-- AX -->
+                <option value="4">剑</option>       <!-- SWORD -->
+                <option value="5">长剑</option>     <!-- LONGSWORD -->
+                <option value="6">矛</option>       <!-- SPEAR -->
+                <option value="7">杖</option>       <!-- WAND -->
+                <option value="8">弓</option>       <!-- ARROW -->
+                <option value="9">匕首</option>     <!-- DAGGER -->
+                <option value="10">长剑2</option>   <!-- LONGSWORD_2 -->
+                <option value="21">杖_振袖</option> <!-- WAND_KIMONO -->
+                <option value="22">剑_振袖</option> <!-- SWORD_KIMONO -->
+                <option value="23">无杖法师</option> <!-- NO_WAND_WITCH -->
+                <option value="24">Re:Zero</option> <!-- ??? -->
+                <option value="0" disabled>*特殊职介*</option>
+            </select>
+            <span>动画:</span>
+            <select id="animationList"></select>
+			<input type="button" class="button1" id="setAnimation"      value="播放" >
+            <input type="button" class="button1" id= "loadSkeleton"     value="加载" >
+            <input type="button" class="button1" id="SaveSkeletion"     value="保存skel" disabled>
+            <input type="button" class="button1" id="SavePng"           value="保存png素材" disabled>
+        </span>      
+   
+        <span class="head-style">
+            <span>播放倍率:</span>
+            <select id="speedList" autocomplete="off" style="width: 65px;">  
+                <option value="0.016">0.016x</option>
+                <option value="0.1">0.1x</option>
+                <option value="0.25">0.25x</option>
+                <option value="0.5">0.5x</option>
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option> 
+            </select>
+        </span>
+        <span class="head-style">
+            <label for="debug">显示节点:</label>
+            <input type="checkbox" id="debug">
+        </span>
+        <span class="head-style">
+            <span>背景颜色:</span>
+            <input type="color" id="bg-color" value="#7F7F7F" autocomplete="off">
+        </span>  
+        <br>
+        <span class="head-style">
+            <div id="loading-text"></div>
+            <div><canvas id="animation-progress" width="400" height="4"  ></canvas></div>
+        </span>
+
+        
+    </div>
+    <button type="button" id="toggleButton"> ^ </button>
+    <div class="setting">
+        <div id="animationControlPanel">
+            <input type="button" class="button2 item1" id="acp_up"          value = "&#8679">
+            <input type="button" class="button2 item3" id="acp_down"        value = "&#8681">
+            <input type="button" class="button2 item2" id="acp_left"        value = "&#8678">
+            <input type="button" class="button2 item4" id="acp_right"       value = "&#8680">
+            <input type="button" class="button2 item5" id="acp_zoomup"      value = "放大">
+            <input type="button" class="button2 item6" id="acp_zoomdown"    value = "缩小">
+            <input type="button" class="button2 item7" id="acp_movereset"   value = "&#10227">
+            <input type="button" class="button2 item8" id="acp_zoomreset"   value = "&#10227">
+            <input type="button" class="button2 item9" id="downloadImg"     value = "截图">
+            <input type="button" class="item12"        id="downloadGIF"     value = "生成GIF">
+            <input type="button" class="item14"        id="settingplay"     value = "播放">
+            <div class="button2 item10" >
+                <label for="viewbackground" >透明背景:</label>
+                <input type="checkbox" class="ckbox" id="viewbackground" >
+            </div>
+            <div class="button2 item11" >
+                <label for="viewrange" >指定范围:</label>
+                <input type="checkbox"  class="ckbox" id="viewrange" >
+            </div>
+            
+            <div class="button2 item13 ">
+                <label for ="advOption" >高级选项:</label>
+                <input type="checkbox" class = "ckbox" id="advOption">
+            </div>
+            <!-- <a>透明背景生成GIF会有白点,介意者慎用</a> -->
+        </div>
+        <div id="advOptionBox">
+            <div style="width: 100%;">
+                <div class = "advImgNameBox">
+                    <label for ="advImgNameCKBox" >自定义图片名称:</label>
+                    <input type="checkbox" class = "ckbox" id="advImgNameCKBox">
+                </div>   
+                <input type="text"  id="advImgNameInput"   value="PcrImage" disabled> 
+            </div>
+            
+            <span>
+                长:<input type = "number" id="advWidth"  value = "0" min = "20" step="1" disabled>
+                宽:<input type = "number" id="advHeight" value = "0" min = "20" step="1" disabled>
+            </span> 
+            <div>
+                <!-- <p style="margin: 0;font-size: small;">GIF参数</p> -->
+                <span>
+                    <label for ="gifWorkers" >workers:</label>
+                    <p class = "dataNum" id = "name01">2</p>   
+                </span> 
+                <input type="range" id="gifWorkers" value = "2" max = "12" min = "1" step="1">
+                <span>
+                    <label for ="gifQuality" >quality:</label>
+                    <p class = "dataNum" id = "name02">5</p>   
+                </span> 
+                <input type="range" id="gifQuality" value = "5" max = "20" min = "1" step="1">
+                <span>
+                    <label for ="gifFrame" >取帧间隔:</label> 
+                    <p class = "dataNum" id = "name03">4</p>   
+                </span>
+                <input type="range" id="gifFrame" value = "4" max = "10" min = "1" step="1">
+                <span>
+                    <label for ="gifDelay" >帧延时:</label> 
+                    <p class = "dataNum" id = "name04">0</p>     
+                </span>
+                <input type="range" id="gifDelay" value = "0" max = "100" min = "0" step="1">
+            </div>   
+        </div>
+    </div>
+    
+    <div><canvas id = "canvas" width="0" height="0"></canvas></div>
+    <div id="viewrect">
+        <div id="viewrectResize"></div>
+    </div>
+    <footer id="foot">
+        "Fan-made animation player. Resources copyright © "
+        <a href="https://priconne-redive.jp/" target="_blank" style="color: #fff;">Cygames</a>
+        " 2024"
+    </footer>
+
+</body>
+</html>

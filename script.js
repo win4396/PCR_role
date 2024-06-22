@@ -1,9 +1,9 @@
-var download_temp = false;
-
-var pixelData = new Uint8Array(4);
+let CustomName = "PcrImage";
+let FormalName = '';
+var bgColor = [.3, .3, .3, 1];
 var acp = [0,0,0,0,0,0];
-var viewrectData = [0,0,0,0,0,0];
-var viewrectTemp = [false,false];
+var viewrectData = [0,0,200,250];
+var viewrectTemp = {moving:false,sizing:false};
 var localURL = 'data/';
 var looptmp = 0;
 var animation_fps = 0;
@@ -30,22 +30,275 @@ var loadingText = document.getElementById("loading-text");
 var skeletonList = document.getElementById("skeletonList");
 var classList = document.getElementById("classList");
 var animationProgressBar = document.getElementById("animation-progress");
-var footHeight = document.getElementById("foot").offsetHeight; 
-var topHeight = document.getElementById("topbox").offsetHeight;
-var colorInput = document.getElementById('bg-color');  
 var topbox = document.getElementById("topbox");
-var animationControlPanel = document.getElementById("animationControlPanel");
+var setting = document.getElementsByClassName("setting")[0];
 var viewrect = document.getElementById("viewrect");
-var viewportHeight = window.innerHeight;  
-var viewportWidth = window.innerWidth;
+const footHeight = document.getElementById("foot").offsetHeight; 
+const viewportHeight = window.innerHeight;  
+let viewportWidth = window.innerWidth;
 
 var firstElementChild = topbox.firstChild;
 var speedFactor = 1;
+
+let cutImg = null;//
+let ctx = '';//cutImg.getContext("2d");
+let gif = null;
+let isDrawing = false;
+let isScreenShot = false;
+ 
+let gifConfig = {
+    fpsCount: 1,
+    fpsInit: 4,
+    gifNext: 0,
+    gifDeparted: 0,
+    gifStep: 0,
+    gifPage: 0,
+    gifLenth: 0,
+    gifDelay: 0,
+    gifDrawing: false,
+
+};
 $('#speedList').change(function () {
     var value = parseFloat($('#speedList')[0].value);
     !isNaN(value) && (speedFactor = value);
 });
-var bgColor = [.3, .3, .3, 1];
+$("#acp_up").on("click",function () {
+    acp[0] += 10;
+}); 
+$("#acp_down").on("click",function () {
+    acp[1] += 10;
+}); 
+$("#acp_left").on("click",function () {
+    acp[2] += 10;
+}); 
+$("#acp_right").on("click",function () {
+    acp[3] += 10;
+}); 
+$("#acp_zoomup").on("click",function () {
+    if(acp[4] != (-16))
+        acp[4] --;
+}); 
+$("#acp_zoomdown").on("click",function () {
+    if(acp[4] != 16)
+        acp[4] ++;
+}); 
+$("#acp_movereset").on("click",function () {
+    acp.fill(0,0,4);
+});
+$("#acp_zoomreset").on("click",function () {
+    acp.fill(0,4,6);
+});  
+$("#viewbackground").one("click",function () {
+    alert("透明背景生成GIF会有白点   介意者慎用!");
+});
+$("#viewrange").on("change",function () {
+    viewrectTemp.sizing = this.checked; 
+    $("#viewrect").css("visibility",this.checked ? "visible":"hidden");
+    $("#advWidth").prop("disabled",!viewrectTemp.sizing);
+    $("#advHeight").prop("disabled",!viewrectTemp.sizing);
+    $("#advWidth").val(viewrectData[2]);
+    $("#advHeight").val(viewrectData[3]);
+});
+$("#downloadImg").on("click",function () {
+    isScreenShot = true;     
+}); 
+
+$("#downloadGIF").on("click",function(){
+    var w,h;
+    if(viewrectTemp.sizing){
+        createCutImg();
+        w = viewrectData[2];
+        h = viewrectData[3];
+    }
+    else{
+        w = canvas.width;
+        h = canvas.height;
+    }
+    
+    gif = new GIF({
+        workers: Number($("#gifWorkers").val()),
+        quality: Number($("#gifQuality").val()),
+       // workerScript:"/gif.worker.js",
+        debug: false,
+        width: w,
+        height: h
+    });
+    gifConfig.fpsInit= Number($("#gifFrame").val());    
+    gifConfig.gifDelay= Number($("#gifDelay").val());
+    
+    isDrawing = true;
+    $("#setAnimation").click();
+});
+$("#settingplay").on("click",function(){
+    $("#setAnimation").click();
+});
+$("#advOption").on("change",function(){
+    $("#advOptionBox").css("visibility", this.checked ? "visible":"hidden");
+});
+$("#advImgNameCKBox").on("change",function(){
+    $("#advImgNameInput").prop("disabled",!this.checked);
+});
+$("#gifWorkers").on("change",function(){
+    $("#name01").text($(this).val());
+});
+$("#gifQuality").on("change",function(){
+    $("#name02").text($(this).val());
+});
+$("#gifFrame").on("change",function(){
+    $("#name03").text($(this).val());
+});
+$("#gifDelay").on("change",function(){
+    $("#name04").text($(this).val());
+});
+const resizeObserver = new ResizeObserver((entries)=>{
+    for (let entry of entries) {  
+        console.log('元素的高度变化:', entry.contentRect.height);  
+        viewportWidth = window.innerWidth;
+        toggleButton.style.left = (viewportWidth - toggleButton.offsetWidth)/2+ "px";
+        if(toggleButton.style.top != "0px"){
+            toggleButton.style.top = topbox.offsetHeight  + "px"; 
+        }
+        else{
+            topbox.style.top = "-" + topbox.offsetHeight + "px"; 
+        }
+        }  
+});
+resizeObserver.observe(topbox);
+
+$("#toggleButton").on("click",function(){
+    if(toggleButton.style.top != "0px"){
+        topbox.style.top = "-" + toggleButton.style.top; 
+        toggleButton.style.top = "0px";   
+        toggleButton.textContent = "V";   
+    }
+    else{
+        toggleButton.style.top = topbox.style.top.replace(/^\-/, '');
+        topbox.style.top = "0px";
+        toggleButton.textContent = "^";   
+    }
+});
+//触摸事件
+$("#viewrect").on("touchstart",function(event){
+    if(viewrectTemp.moving) return;
+    
+    var offsetX,offsetY;
+    offsetX = event.touches[0].clientX - viewrect.offsetLeft;
+    offsetY = event.touches[0].clientY - viewrect.offsetTop;
+    function handleTouchMove(event) {
+        event.preventDefault(); // 阻止页面滚动  
+        $("#viewrect").css({"left":(event.touches[0].clientX - offsetX) +"px",
+                            "top":(event.touches[0].clientY - offsetY) +"px"});
+    }
+    function handleTouchEnd() {
+        viewDataUpdate();
+        document.removeEventListener("touchmove",handleTouchMove);
+        document.removeEventListener("touchend",handleTouchEnd);
+    }
+    
+    document.addEventListener('touchmove', handleTouchMove);  
+    document.addEventListener('touchend', handleTouchEnd);  
+});
+$("#viewrectResize").on("touchstart",function (event) {
+    viewrectTemp.moving = true;
+    viewrectData = [event.touches[0].clientX,
+                    event.touches[0].clientY,
+                    viewrect.offsetWidth,
+                    viewrect.offsetHeight];
+    function handleTouchMove(event){
+        if(!viewrectTemp.moving)    return;
+        var dx = event.touches[0].clientX - viewrectData[0];
+        var dy = event.touches[0].clientY - viewrectData[1];
+        $("#viewrect").css({"width":(dx +viewrectData[2]) +"px",
+                            "height":(dy +viewrectData[3]) +"px"
+                        });
+        $("#advWidth").val = viewrect.offsetWidth;
+        $("#advHeight").val = viewrect.offsetHeight;
+        
+    }
+    function handleTouchEnd() {
+        viewrectTemp.moving = false;
+        viewDataUpdate();
+        document.removeEventListener("touchmove",handleTouchMove);
+        document.removeEventListener("touchend",handleTouchEnd);
+    }
+    document.addEventListener('touchmove', handleTouchMove);  
+    document.addEventListener("touchend",handleTouchEnd);
+});
+$("#animationControlPanel").on("touchstart",function (event) {
+    var offsetX,offsetY;
+    offsetX = event.touches[0].clientX - setting.getBoundingClientRect().left;
+    offsetY = event.touches[0].clientY - setting.getBoundingClientRect().top;
+    function handleTouchMove(event) {
+        $(".setting").css({"left":(event.touches[0].clientX - offsetX) +"px",
+                            "top":(event.touches[0].clientY - offsetY) +"px"});
+    }
+    function handleTouchEnd() {
+        document.removeEventListener("touchmove",handleTouchMove);
+        document.removeEventListener("touchend",handleTouchEnd);
+    }
+    
+    document.addEventListener('touchmove', handleTouchMove);  
+    document.addEventListener('touchend', handleTouchEnd);  
+});
+// 鼠标事件
+$("#viewrect").on("mousedown",function(event){
+    if(viewrectTemp.moving) return;
+    var offsetX,offsetY;
+    offsetX = event.clientX - viewrect.offsetLeft;
+    offsetY = event.clientY - viewrect.offsetTop;
+    function handleMouseMove(event) {
+        $("#viewrect").css({"left":(event.clientX - offsetX) +"px",
+                            "top":(event.clientY - offsetY) +"px"});
+    }
+    function handleMouseUp() {
+        viewDataUpdate();
+        document.removeEventListener("mousemove",handleMouseMove);
+        document.removeEventListener("mouseup",handleMouseUp);
+    }
+    
+    document.addEventListener('mousemove', handleMouseMove);  
+    document.addEventListener('mouseup', handleMouseUp);  
+});
+$("#viewrectResize").on("mousedown",function (event) {
+    viewrectTemp.moving = true;
+    viewrectData = [event.clientX,event.clientY,viewrect.offsetWidth,viewrect.offsetHeight];
+    function handleMouseMove(event){
+        if(!viewrectTemp.moving)    return;
+        var dx = event.clientX - viewrectData[0];
+        var dy = event.clientY - viewrectData[1];
+        $("#viewrect").css({"width":(dx +viewrectData[2]) +"px",
+                            "height":(dy +viewrectData[3]) +"px"});
+        $("#advWidth").val = viewrect.offsetWidth;
+        $("#advHeight").val = viewrect.offsetHeight;
+    }
+    function handleMouseUp() {
+        viewrectTemp.moving = false;
+        viewDataUpdate();
+        document.removeEventListener("mousemove",handleMouseMove);
+        document.removeEventListener("mouseup",handleMouseUp);
+    }
+    document.addEventListener('mousemove', handleMouseMove);  
+    document.addEventListener("mouseup",handleMouseUp);
+});
+$("#animationControlPanel").on("mousedown",function(event){
+    var offsetX,offsetY;
+    offsetX = event.clientX - setting.getBoundingClientRect().left;
+    offsetY = event.clientY - setting.getBoundingClientRect().top;
+    function handleMouseMove(event) {
+        $(".setting").css({"left":(event.clientX - offsetX) +"px",
+                            "top":(event.clientY - offsetY) +"px"});
+    
+    }
+    function handleMouseUp() {
+        document.removeEventListener("mousemove",handleMouseMove);
+        document.removeEventListener("mouseup",handleMouseUp);
+    }
+    
+    document.addEventListener('mousemove', handleMouseMove);  
+    document.addEventListener('mouseup', handleMouseUp);  
+});
+
+
 function _(e, t, n) {
     var r = null;
     if ("text" === e) return document.createTextNode(t);
@@ -93,6 +346,33 @@ function sliceCyspAnimation(buf) {
     };
 }
 
+function createCutImg(){
+    if(cutImg == null){
+        cutImg = document.createElement('canvas');
+        //ctx = cutImg.getContext('2d');
+        ctx = cutImg.getContext('2d',{willReadFrequently: true});
+        cutImg.width = viewrectData[2];
+        cutImg.height = viewrectData[3];
+       
+    }
+    console.log(viewrectData);          
+}
+function imgDownload(item,flag){
+    var link = document.createElement('a');  
+    if(flag) 
+        ctx.drawImage(gl.canvas,...viewrectData,0,0,viewrectData[2],viewrectData[3]);
+    
+    link.href = item.toDataURL('image/png'); 
+    link.download = ( $("#advImgNameCKBox").is(":checked") ? CustomName : FormalName) +'.png';
+       
+    link.click();                  
+}
+function viewDataUpdate(){
+    viewrectData = [viewrect.offsetLeft,viewrect.offsetTop,viewrect.offsetWidth,viewrect.offsetHeight];
+    $("#advWidth").val(viewrect.offsetWidth);
+    $("#advHeight").val(viewrect.offsetHeight);
+}
+
 function init() {
 
     toggleButton = document.getElementById("toggleButton");
@@ -100,14 +380,14 @@ function init() {
     toggleButton.style.left = (viewportWidth - toggleButton.offsetWidth)/2+ "px";
 
     canvas = document.getElementById("canvas");
-   // var ctx = canvas.getContext("2d");
+   
     var config = { alpha: true };
     gl = canvas.getContext("webgl", config) || canvas.getContext("experimental-webgl", config);
     if (!gl) {
         alert("WebGL is unavailable.");
         return;
     }
-    
+
     shader = spine.webgl.Shader.newTwoColoredTextured(gl);
     batcher = new spine.webgl.PolygonBatcher(gl);
     mvp.ortho2d(0, 0, canvas.width - 1, canvas.height - 1);
@@ -168,134 +448,10 @@ function init() {
         //判断输入与当前动画id是否相同,如果是,不执行
         if (activeSkeleton == skeletonList.value && currentClass == classList.value) return;
         load(skeletonList.value, classList.value);
-    });
-
-    window.addEventListener("resize",function(){
-        //console.log("窗口正在改变 h=",window.innerHeight,"w=",window.innerWidth,"a=",topbox.offsetHeight);
-        viewportWidth = window.innerWidth;
-        toggleButton.style.left = (viewportWidth - toggleButton.offsetWidth)/2+ "px";
-        if(toggleButton.style.top != "0px"){
-            toggleButton.style.top = topbox.offsetHeight  + "px"; 
-        }
-        else{
-            topbox.style.top = "-" + topbox.offsetHeight + "px"; 
-        }
-
-    });
-
-    toggleButton.addEventListener("click",function(){
-        if(toggleButton.style.top != "0px"){
-            topbox.style.top = "-" + toggleButton.style.top; 
-            toggleButton.style.top = "0px";   
-            toggleButton.textContent = "V";   
-        }
-        else{
-            toggleButton.style.top = topbox.style.top.replace(/^\-/, '');
-            topbox.style.top = "0px";
-            toggleButton.textContent = "^";   
-        }
-    });
-
-    
-    viewrect.addEventListener("mousedown",function(event){
-        if(viewrectTemp[0] == true) return;
-        var offsetX,offsetY;
-        offsetX = event.clientX - viewrect.offsetLeft;
-        offsetY = event.clientY - viewrect.offsetTop;
-        function handleMouseMove(event) {
-            viewrect.style.left = (event.clientX - offsetX) + "px"; 
-            viewrect.style.top = (event.clientY - offsetY) + "px"; 
-        }
-        function handleMouseUp() {
-            viewDataUpdate();
-            document.removeEventListener("mousemove",handleMouseMove);
-            document.removeEventListener("mouseup",handleMouseUp);
-        }
         
-        document.addEventListener('mousemove', handleMouseMove);  
-        document.addEventListener('mouseup', handleMouseUp);  
-    });
-    $("#viewrectResize").mousedown(function () {
-        viewrectTemp[0] = true;
-        viewrectData[0] = event.clientX;
-        viewrectData[1] = event.clientY;
-        viewrectData[2] = viewrect.offsetWidth;
-        viewrectData[3] = viewrect.offsetHeight;
-        function viewrectMouseMove(event){
-            if(viewrectTemp[0] == false)    return;
-            var dx = event.clientX - viewrectData[0];
-            var dy = event.clientY - viewrectData[1];
-            viewrect.style.width = (dx +viewrectData[2]) +"px";
-            viewrect.style.height = (dy +viewrectData[3]) +"px";
-        }
-        function handleMouseUp() {
-            viewrectTemp[0] = false;
-            viewDataUpdate();
-            document.removeEventListener("mousemove",viewrectMouseMove);
-            document.removeEventListener("mouseup",handleMouseUp);
-        }
-        document.addEventListener('mousemove', viewrectMouseMove);  
-        document.addEventListener("mouseup",handleMouseUp);
     });
 
-    animationControlPanel.addEventListener("mousedown",function(event){
-        var offsetX,offsetY;
-        offsetX = event.clientX - animationControlPanel.getBoundingClientRect().left;
-        offsetY = event.clientY - animationControlPanel.getBoundingClientRect().top;
-        function handleMouseMove(event) {
-            animationControlPanel.style.left = (event.clientX - offsetX) + "px"; 
-            animationControlPanel.style.top = (event.clientY - offsetY) + "px"; 
-        }
-        function handleMouseUp() {
-            document.removeEventListener("mousemove",handleMouseMove);
-            document.removeEventListener("mouseup",handleMouseUp);
-        }
-        
-        document.addEventListener('mousemove', handleMouseMove);  
-        document.addEventListener('mouseup', handleMouseUp);  
-    });
 
-    $("#acp_up").click(function () {
-        acp[0] += 10;
-    }); 
-    $("#acp_down").click(function () {
-        acp[1] += 10;
-    }); 
-    $("#acp_left").click(function () {
-        acp[2] += 10;
-    }); 
-    $("#acp_right").click(function () {
-        acp[3] += 10;
-    }); 
-    $("#acp_zoomup").click(function () {
-        if(acp[4] != (-16))
-            acp[4] --;
-    }); 
-    $("#acp_zoomdown").click(function () {
-        if(acp[4] != 16)
-            acp[4] ++;
-    }); 
-    $("#acp_movereset").click(function () {
-        acp.fill(0,0,4);
-    });
-    $("#acp_zoomreset").click(function () {
-        acp.fill(0,4,6);
-    });  
-
-    $("#downloadimg").click(function () {
-        download_temp = true;     
-    }); 
-    $("#viewrange").click(function () {
-        viewrectTemp[1] = this.checked; 
-        viewrect.style.visibility = this.checked ? "visible":"hidden";
-    });
-    
-    function viewDataUpdate(){
-        viewrectData[0] = viewrect.offsetLeft;
-        viewrectData[1] = viewrect.offsetTop;
-        viewrectData[2] = viewrect.offsetWidth;
-        viewrectData[3] = viewrect.offsetHeight;
-    }
     // setInterval(function(){
     //     console.log("fps=",animation_fps);
     //     animation_fps = 0;
@@ -516,7 +672,7 @@ function loadTexture(){
                                 
                             }
                             animationState.setAnimation(0, nextAnim, !animationQueue.length);
-                            console.log(window.skeleton.state.tracks[0].animationEnd);
+                            //console.log(window.skeleton.state.tracks[0].animationEnd);
                         }
                     },
                     /*event: function (track, event) {
@@ -530,6 +686,9 @@ function loadTexture(){
                 if (!created) {
                     canvas.style.width = '99%';
                     requestAnimationFrame(render);
+                    FormalName = $("#skeletonList option:selected").text() + " "+
+                                $("#classList option:selected").text()    +" "+
+                                $("#animationList option:selected").text() ;
                     setTimeout(function () {
                         canvas.style.width = '';
                     }, 0)
@@ -542,9 +701,10 @@ function loadTexture(){
                 }
             }
             img.src = URL.createObjectURL(blob);
+            $(".setting").css("visibility","visible");
         },'blob',function(e){//由返回函数控制最后的进度条
             var perc = e.loaded / e.total * 20 + 80;
-            progressBar.style.width = perc + '%';
+            progressBar.style.width = perc + '%';   
         });
     },'text');
 }
@@ -597,7 +757,7 @@ function setupUI() {
             ]));
         })
     }
-    $("#setAnimation").click(function () {
+    $("#setAnimation").on("click",function () {
         var animationState = skeleton.state, forceNoLoop = false;
         animationQueue = $("#animationList")[0].value.split(',');
         //looptmp = (animationQueue[0] == 'landing') ? 1 : 0;
@@ -617,13 +777,20 @@ function setupUI() {
         
         console.log(nextAnim,forceNoLoop);
         animationState.setAnimation(0, nextAnim, !animationQueue.length && !forceNoLoop);
+        
+        gifConfig.gifLenth = animationState.tracks[0].animationEnd.toFixed(3);
+        console.log("当前动作时长为"+gifConfig.gifLenth+"秒");
+
+        FormalName = $("#skeletonList option:selected").text() + " "+
+                     $("#classList option:selected").text()    +" "+
+                     $("#animationList option:selected").text() ;
     });
 
     window.updateUI = function () {
         setupAnimationUI();
     };
     setupAnimationUI();
-    colorInput.addEventListener('change', function (event) {
+    $("#bg-color").on('change', function (event) {
         var newcolor = event.target.value;
         newcolor = newcolor.replace('#', '');    
         //console.log(newcolor);
@@ -641,13 +808,14 @@ function setupUI() {
 function render() {
     var now = Date.now() / 1000;
     var delta = now - lastFrameTime;
+   
     //console.log(delta);
     lastFrameTime = now;
     delta *= speedFactor;
     // Update the MVP matrix to adjust for canvas size changes
     resize();
     var viewbg = $("#viewbackground").is(':checked');
-    if(download_temp && viewbg)
+    if((isScreenShot || isDrawing) && viewbg)
         gl.clearColor(0,0,0,0);
     else
         gl.clearColor(bgColor[0], bgColor[1], bgColor[2], 1);
@@ -669,6 +837,45 @@ function render() {
         progressCtx.clearRect(0, 0, 400, 4);
         progressCtx.fillStyle = '#40b5ff';
         progressCtx.fillRect(0, 0, width, 4);
+        //console.log(width)
+
+        if(isDrawing) {
+            if(width < 0)   {
+                gifConfig.fpsCount ++;
+                //gifConfig.gifLenth = track.animationEnd.toFixed(3);
+            }
+                
+            else{
+                gifConfig.gifStep += delta;
+                gifConfig.gifDeparted =  gifConfig.gifNext;
+                gifConfig.gifNext = width;   
+                if(gifConfig.gifDeparted > gifConfig.gifNext){
+                    console.log("当前动画帧数为",gifConfig.gifPage,",动画时长为"+gifConfig.gifLenth+"秒");
+                    isDrawing = false;
+                    gifConfig.gifDrawing = true;
+                    try{
+                        gif.on('finished',function(blob){
+                            const link = document.createElement('a');  
+                            //const url = URL.createObjectURL(blob);
+                            //console.log("url:",url)
+                            //link.href = url;
+                            link.href = URL.createObjectURL(blob);
+                            link.download = ( $("#advImgNameCKBox").is(":checked") ? CustomName : FormalName) +'.gif';  
+                            link.click();  
+        
+                            gif = null; 
+                            gifConfig.gifNext = 0;
+                            gifConfig.gifDeparted = 0;
+                            gifConfig.gifPage = 0;
+                            gifConfig.gifDrawing = false;   
+                        });   
+                        gif.render();
+                    } catch(error) {
+                        alert("生成GIF失败,请刷新页面重试!");
+                    }     
+                }
+            }       
+        }
     }
 
     // Bind the shader and set the texture and model-view-projection matrix.
@@ -700,27 +907,40 @@ function render() {
     }
 
     requestAnimationFrame(render);
-    if(download_temp)
+    if(isScreenShot)
     {
-        if(viewrectTemp[1] == true){
-            console.log(viewrectData);
-            var cutImg = document.createElement('canvas');
-            var ctx = cutImg.getContext("2d");
-            cutImg.width = viewrectData[2];
-            cutImg.height = viewrectData[3];
-        
-            ctx.drawImage(gl.canvas,viewrectData[0],viewrectData[1],viewrectData[2],viewrectData[3],0,0,viewrectData[2],viewrectData[3]);
-            
-            var dataURL = cutImg.toDataURL('image/png');     
+        if(viewrectTemp.sizing){
+            createCutImg(); 
+            ctx.clearRect(0, 0, cutImg.width, cutImg.height);        
+            imgDownload(cutImg,viewrectTemp.sizing);     
         }
         else  
-            var dataURL = canvas.toDataURL('image/png');  
+            imgDownload(canvas,viewrectTemp.sizing);       
         
-        var link = document.createElement('a');  
-        link.download = 'webgl-output.png';  
-        link.href = dataURL;  
-        link.click();
-        download_temp = false;
+        isScreenShot = false;
+    }
+    if(isDrawing)
+    {
+        if(--gifConfig.fpsCount == 0)
+        {  
+            const delay =  gifConfig.gifDelay+ Math.floor(gifConfig.gifStep * 1e3) ;
+            //console.log("帧时间:",delay,gifConfig.gifDelay);
+            gifConfig.gifStep = 0;
+            gifConfig.fpsCount = gifConfig.fpsInit;
+            gifConfig.gifPage ++;
+            if(viewrectTemp.sizing){
+                if(viewbg){
+                    ctx.clearRect(0, 0, cutImg.width, cutImg.height);
+                    //ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+                    //ctx.fillRect(0, 0, cutImg.width, cutImg.height);   
+                }
+                    
+                ctx.drawImage(gl.canvas, ...viewrectData,0,0,cutImg.width, cutImg.height);        
+                gif.addFrame(ctx, { copy: true, delay: delay});
+            }
+            else   
+                gif.addFrame(gl,{copy: true,delay: delay});
+        }    
     } 
     //animation_fps ++;
 }
