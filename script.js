@@ -315,7 +315,9 @@ function _(e, t, n) {
 function getClass(i){
     return (i < 10 ? "0"+i: i.toString());
 }
-
+function chagneAddress(i){
+    return (i < 100 ? "common_battle/"+getClass(i) : "special/"+getClass(i));
+}
 function loadData(url, cb, loadType, progress) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
@@ -475,6 +477,31 @@ var currentCharaAnimData = {
 var currentClass = '1';
 var currentSkeletonBuffer;
 
+function getGIF(){
+    console.log("当前动画帧数为",gifConfig.gifPage,",动画时长为"+gifConfig.gifLenth+"秒");
+    isDrawing = false;
+    gifConfig.gifDrawing = true;
+    try{
+        gif.on('finished',function(blob){
+            const link = document.createElement('a');  
+            //const url = URL.createObjectURL(blob);
+            //console.log("url:",url)
+            //link.href = url;
+            link.href = URL.createObjectURL(blob);
+            link.download = ( $("#advImgNameCKBox").is(":checked") ? CustomName : FormalName) +'.gif';  
+            link.click();  
+
+            gif = null; 
+            gifConfig.gifNext = 0;
+            gifConfig.gifDeparted = 0;
+            gifConfig.gifPage = 0;
+            gifConfig.gifDrawing = false;   
+        });   
+        gif.render();
+    } catch(error) {
+        alert("生成GIF失败,请刷新页面重试!");
+    }    
+}
 //  保存之后再写
 //saveSkeleton.addEventListener('click', function (e) {});
 
@@ -502,7 +529,7 @@ function load(unit_id, class_id) {
     if (!generalBattleSkeletonData[baseId]) {
         (loadingText.textContent = "加载骨骼(1/6)"),
             loadData(
-                localURL + baseId + "_CHARA_BASE.cysp",
+                localURL + "special/" + baseId + "_CHARA_BASE.cysp",
                 function (success, data) {
                     if (!success || data === null) return loading = false, loadingText.textContent = '加载共用骨架失败', progressBar.width = '100%', progressBar.opacity = 0;
                     generalBattleSkeletonData[baseId] = data;
@@ -521,7 +548,7 @@ function loadAdditionAnimation() {
     additionAnimations.forEach(function(i){
         if(generalAdditionAnimations[baseId][i])    return doneCount ++;  
         
-        loadData(localURL+baseId+'_'+i+'.cysp',function(success,data){
+        loadData(localURL+ "special/" +baseId+'_'+i+'.cysp',function(success,data){
             if (!success || data === null) return loading = false, loadingText.textContent = '加载共用骨架失败', progressBar.width = '100%', progressBar.opacity = 0;
             if(abort)   return;
             generalAdditionAnimations[baseId][i] = sliceCyspAnimation(data);   
@@ -543,7 +570,7 @@ function loadClassAnimation(){
     if (currentClassAnimData.type == currentClass)  loadCharaSkillAnimation();    
     else{
         loadingText.textContent = '加载职介动画(3/6)';
-        loadData(localURL + getClass(currentClass) + '_COMMON_BATTLE.cysp',function(success,data){
+        loadData(localURL  + chagneAddress(currentClass) + '_COMMON_BATTLE.cysp',function(success,data){
             if (!success || data === null)  return loading = false, loadingText.textContent = '加载角职介动画失败', progressBar.width = '100%', progressBar.opacity = 0;
             currentClassAnimData = {
                 type: currentClass,
@@ -562,7 +589,7 @@ function loadCharaSkillAnimation(){
     if(currentCharaAnimData.id == baseUnitId)   loadTexture();
     else{
         loadingText.textContent = '加载角色技能动画(4/6)';
-        loadData(localURL + baseUnitId + '_BATTLE.cysp',function(success,data){
+        loadData(localURL + "battle/" + baseUnitId + '_BATTLE.cysp',function(success,data){
             if (!success || data === null) return loading = false, loadingText.textContent = '加载角色技能动画失败', progressBar.width = '100%', progressBar.opacity = 0; 
             currentCharaAnimData = {
                 id: baseUnitId,
@@ -575,11 +602,11 @@ function loadCharaSkillAnimation(){
 function loadTexture(){
     progressBar.style.width = '60%';
     loadingText.textContent = '加载材质(5/6)';
-    loadData(localURL + loadingSkeleton.id + '.atlas',function(success,atlasText){
+    loadData(localURL+ "atlas/" + loadingSkeleton.id + '.atlas',function(success,atlasText){
         if (!success) return loading = false, loadingText.textContent = '加载材质失败', progressBar.width = '100%', progressBar.opacity = 0; 
         progressBar.style.width = '80%';
         loadingText.textContent = '加载材质图片(6/6)';
-        loadData(localURL + loadingSkeleton.id + '.png',function(success,blob){
+        loadData(localURL + "texture2D/" + loadingSkeleton.id + '.png',function(success,blob){
             if (!success) return loading = false, loadingText.textContent = '加载材质图片失败'; 
             var img = new Image();
             img.onload = function(){
@@ -659,14 +686,21 @@ function loadTexture(){
                         //console.log("Animation on track " + track.trackIndex + " completed");
                         if (animationQueue.length) {
                             var nextAnim = animationQueue.shift();
-                            if (nextAnim == 'stop') return;
+                            if (nextAnim == 'stop') {
+                                if(isDrawing){
+                                    getGIF(); 
+                                }
+                                return;
+                            }
+
+                                
                             if (nextAnim == 'hold') return setTimeout(tick, 1e3);
                             if (nextAnim.substr(0, 1) != '1') nextAnim = getClass(currentClassAnimData.type) + '_' + nextAnim;
                             console.log(nextAnim);
                             if((!animationQueue.length) && (looptmp))
                             {
                                 animationQueue = $("#animationList")[0].value.split(',');
-                                animationQueue.push('idle');  
+                                  
                                 nextAnim = animationQueue.shift();
                                 if (!/^\d{6}/.test(nextAnim)) nextAnim = getClass(currentClassAnimData.type) + '_' + nextAnim;
                                 
@@ -850,29 +884,7 @@ function render() {
                 gifConfig.gifDeparted =  gifConfig.gifNext;
                 gifConfig.gifNext = width;   
                 if(gifConfig.gifDeparted > gifConfig.gifNext){
-                    console.log("当前动画帧数为",gifConfig.gifPage,",动画时长为"+gifConfig.gifLenth+"秒");
-                    isDrawing = false;
-                    gifConfig.gifDrawing = true;
-                    try{
-                        gif.on('finished',function(blob){
-                            const link = document.createElement('a');  
-                            //const url = URL.createObjectURL(blob);
-                            //console.log("url:",url)
-                            //link.href = url;
-                            link.href = URL.createObjectURL(blob);
-                            link.download = ( $("#advImgNameCKBox").is(":checked") ? CustomName : FormalName) +'.gif';  
-                            link.click();  
-        
-                            gif = null; 
-                            gifConfig.gifNext = 0;
-                            gifConfig.gifDeparted = 0;
-                            gifConfig.gifPage = 0;
-                            gifConfig.gifDrawing = false;   
-                        });   
-                        gif.render();
-                    } catch(error) {
-                        alert("生成GIF失败,请刷新页面重试!");
-                    }     
+                    getGIF();       
                 }
             }       
         }
