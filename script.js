@@ -413,7 +413,7 @@ function init() {
 
             Object.keys(json).forEach(function (i) {
                 var name = json[i].name;
-                var noAdded = json[i].type == "0" && !json[i].hasSpecialBase;
+                var noAdded = json[i].type == 0 && !json[i].hasSpecialBase;
 
                 if (noAdded) {
                     skeletonList.appendChild(_("option", { value: i, disabled: "" }, [_("text", name + "(未实装)")]));
@@ -560,7 +560,8 @@ function loadAdditionAnimation() {
             progressBar.style.width = (10 + 15 * doneCount /6)+'%';
         },'arraybuffer');
     });
-    if(doneCount == additionAnimations.length) return loadClassAnimation();
+    //if(doneCount == additionAnimations.length) return loadClassAnimation();
+    if(additionAnimations.length) return loadClassAnimation();
     loadingText.textContent = '加载额外动画(2/6)[' + doneCount + '/6]';
 }
 
