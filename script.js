@@ -412,9 +412,11 @@ function init() {
             skeletonList.firstElementChild.remove();
 
             Object.keys(json).forEach(function (i) {
-                var name = json[i].name;
+                var name = json[i].chinese_name;
                 var noAdded = json[i].type == 0 && !json[i].hasSpecialBase;
 
+                if (i == '190801')
+                    skeletonList.appendChild(_("option", { value: '', disabled: "" }, [_("text", "以下为剧情过场角色")]));
                 if (noAdded) {
                     skeletonList.appendChild(_("option", { value: i, disabled: "" }, [_("text", name + "(未实装)")]));
                 } else {
@@ -591,7 +593,8 @@ function loadCharaSkillAnimation(){
     else{
         loadingText.textContent = '加载角色技能动画(4/6)';
         loadData(localURL + "battle/" + baseUnitId + '_BATTLE.cysp',function(success,data){
-            if (!success || data === null) return loading = false, loadingText.textContent = '加载角色技能动画失败', progressBar.width = '100%', progressBar.opacity = 0; 
+            if (!success || data === null)
+                return loading = false, loadingText.textContent = '加载角色技能动画失败', progressBar.width = '100%', progressBar.opacity = 0; 
             currentCharaAnimData = {
                 id: baseUnitId,
                 data: sliceCyspAnimation(data)

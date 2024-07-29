@@ -3701,7 +3701,7 @@
         "place": 1,
         "position": 245,
         "elemental": 0,
-        "hasRarity6": false,
+        "hasRarity6": true,
         "hasSpecialBase": false
     },
     "180101": {
