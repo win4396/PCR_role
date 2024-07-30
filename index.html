@@ -7,21 +7,26 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 
     <script src="spine-webgl.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.worker.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
-    <script type="module" src="script.js?ver=1.2.8" defer></script>
+    <script type="module" src="script.js?ver=1.3.0" defer></script>
     
 </head>
 <body> 
     <div id = "topbox" class="flex-container">
         <span class="head-style">
-            <span>角色:</span>
+            <span>切换查询方式:</span>
+            
+            <input type="checkbox" class="checkbox" id="inputview" title="点击切换查询方式">
+            <input type="text"     class="hidden" id="search-box" placeholder="请输入中文名"> 
+            <select class="hidden" id="star-box"></select>
+            
             <select id="skeletonList">
                 <option value="1">--</option>
             </select>
-                
+
             <select id="classList" autocomplete="off">
                 <option value="1">拳</option>       <!-- KNUCKLE -->
                 <option value="2">短剑</option>     <!-- SHORTSWORD -->
@@ -63,7 +68,7 @@
         </span>
         <span class="head-style">
             <label for="debug">显示节点:</label>
-            <input type="checkbox" id="debug">
+            <input type="checkbox" class="checkbox" id="debug">
         </span>
         <span class="head-style">
             <span>背景颜色:</span>
@@ -80,6 +85,7 @@
     <button type="button" id="toggleButton"> ^ </button>
     <div class="setting">
         <div id="animationControlPanel">
+            <input type="button" class="item15"        id="unfold"          value = "&#8895">
             <input type="button" class="button2 item1" id="acp_up"          value = "&#8679">
             <input type="button" class="button2 item3" id="acp_down"        value = "&#8681">
             <input type="button" class="button2 item2" id="acp_left"        value = "&#8678">
@@ -90,7 +96,7 @@
             <input type="button" class="button2 item8" id="acp_zoomreset"   value = "&#10227">
             <input type="button" class="button2 item9" id="downloadImg"     value = "截图">
             <input type="button" class="item12"        id="downloadGIF"     value = "生成GIF">
-            <input type="button" class="item14"        id="settingplay"     value = "播放">
+            <input type="button" class="item14"        id="settingplay"     value = "播放">  
             <div class="button2 item10" >
                 <label for="viewbackground" >透明背景:</label>
                 <input type="checkbox" class="ckbox" id="viewbackground" >
@@ -106,7 +112,7 @@
             </div>
             <!-- <a>透明背景生成GIF会有白点,介意者慎用</a> -->
         </div>
-        <div id="advOptionBox">
+        <div class="hidden" id="advOptionBox" >
             <div style="width: 100%;">
                 <div class = "advImgNameBox">
                     <label for ="advImgNameCKBox" >自定义图片名称:</label>

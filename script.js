@@ -1,5 +1,6 @@
 let CustomName = "PcrImage";
 let FormalName = '';
+let switchClassList = {'before':'1','after':'1'}
 var bgColor = [.3, .3, .3, 1];
 var acp = [0,0,0,0,0,0];
 var viewrectData = [0,0,200,250];
@@ -28,8 +29,6 @@ var classMap;
 var animationQueue = [];
 var loadingText = document.getElementById("loading-text");
 var skeletonList = document.getElementById("skeletonList");
-var classList = document.getElementById("classList");
-var animationProgressBar = document.getElementById("animation-progress");
 var topbox = document.getElementById("topbox");
 var setting = document.getElementsByClassName("setting")[0];
 var viewrect = document.getElementById("viewrect");
@@ -89,7 +88,7 @@ $("#acp_zoomreset").on("click",function () {
     acp.fill(0,4,6);
 });  
 $("#viewbackground").one("click",function () {
-    alert("透明背景生成GIF会有白点   介意者慎用!");
+    alert("透明背景生成GIF会有噪点   介意者慎用!");
 });
 $("#viewrange").on("change",function () {
     viewrectTemp.sizing = this.checked; 
@@ -130,10 +129,10 @@ $("#downloadGIF").on("click",function(){
     $("#setAnimation").click();
 });
 $("#settingplay").on("click",function(){
-    $("#setAnimation").click();
+    $("#setAnimation").trigger('click');
 });
 $("#advOption").on("change",function(){
-    $("#advOptionBox").css("visibility", this.checked ? "visible":"hidden");
+    $("#advOptionBox").toggleClass('hidden');
 });
 $("#advImgNameCKBox").on("change",function(){
     $("#advImgNameInput").prop("disabled",!this.checked);
@@ -150,6 +149,90 @@ $("#gifFrame").on("change",function(){
 $("#gifDelay").on("change",function(){
     $("#name04").text($(this).val());
 });
+$("#classList").on("change",function(){
+    if($('#inputview').is(':checked'))
+        switchClassList.after = $(this).val()
+    else   
+        switchClassList.before = $(this).val()
+    // console.log(switchClassList)
+});
+$('#unfold').on('click',function(){
+    $(this).toggleClass('hidden');
+    $('#animationControlPanel').toggleClass('collapsed');
+    $('#animationControlPanel').children().each(function(){
+        $(this).toggleClass('hidden');
+    });
+    if($('#downloadGIF').hasClass('hidden') && (!$('#advOptionBox').hasClass('hidden'))){
+        $('#advOption').prop('checked',false);
+        $('#advOption').trigger('change');
+    }
+});
+
+$('#inputview').on("change",function(){
+    $("#search-box").toggleClass('hidden');
+    $("#star-box").toggleClass('hidden');
+    $("#skeletonList").toggleClass("hidden");
+    $('#results').toggleClass('hidden');
+    if ($(this).is(":checked")){   
+        $("#classList").val(switchClassList.after ? switchClassList.after:'0')
+    }
+    else{
+         $("#classList").val(switchClassList.before? switchClassList.before:'0')
+    }
+});
+
+$('#search-box').on('input',function(){
+    var query = $(this).val(); 
+    if (query.trim() !== '') {  
+        searchClasses(query);  
+    }else {  
+        $('#results').remove();
+    }  
+});
+
+
+function searchClasses(query){
+    $.getJSON('classMap.json',function(data){
+        var results = []
+        $('#star-box').empty();
+        $('#results').remove();  
+        for(var key in data){
+            if(data[key].chinese_name.includes(query)){
+                if(data[key].type != 0 || data[key].hasSpecialBase)
+                    results.push({id:key,...data[key]})
+            }
+        }
+        if(results.length === 0)    return;
+        
+        var offest = $('#search-box').offset();
+        $('#viewrect').after(`<div class='get' id="results" style='top:${offest.top+20}px;left:${offest.left}px;'></div>`).queue(function(next){
+            results.forEach(function(item) {  
+                $('#results').append(`<div class='show' data-val= ${item.id} data-has6= ${item.hasRarity6}>${item.chinese_name}</div>`);     
+            });
+            $('#results').on('click','.show',function(event){
+                resultDisplay($(event.currentTarget))
+            });
+            next();  
+        })
+    });
+}
+
+function resultDisplay($eve){
+    $('#search-box').val($eve.text());
+    var val = $eve.data('val') | 0;
+    $('#star-box').append(`<option value= ${val + 10}>1★</option>`)
+    $('#star-box').append(`<option value= ${val + 30}>3★</option>`)
+    if($eve.data('has6'))    $('#star-box').append(`<option value= ${val + 60}>6★</option>`)
+    var classList = $("#classList")[0];
+    var val = classMap[val].type;
+    classList.value = val;
+    if (!classList.value) {
+        classList.appendChild(_("option", { value: val }, [_("text", val)]));
+        classList.value = val;  
+    }    
+    $("#classList").trigger("change");
+    $('#results').remove();    
+}
 const resizeObserver = new ResizeObserver((entries)=>{
     for (let entry of entries) {  
         console.log('元素的高度变化:', entry.contentRect.height);  
@@ -170,11 +253,13 @@ $("#toggleButton").on("click",function(){
         topbox.style.top = "-" + toggleButton.style.top; 
         toggleButton.style.top = "0px";   
         toggleButton.textContent = "V";   
+        $('#results').addClass('hidden')
     }
     else{
         toggleButton.style.top = topbox.style.top.replace(/^\-/, '');
         topbox.style.top = "0px";
         toggleButton.textContent = "^";   
+        $('#results').removeClass('hidden')
     }
 });
 //触摸事件
@@ -435,9 +520,10 @@ function init() {
                 var val = classMap[baseUnitId].type;
                 classList.value = val;
                 if (!classList.value) {
-                    classList.appendChild(_("option", { value: val }, [_("text", val)]));
-                    classList.value = val;
+                    classList.appendChild(_("option", { value: val }, [_("text", val)]));     
+                    classList.value = val;                  
                 }
+                $("#classList").trigger("change");
             });
             if (location.hash.slice(1)) {
                 skeletonList.value = location.hash.slice(1);
@@ -448,10 +534,12 @@ function init() {
         "json"
     );
     document.getElementById("loadSkeleton").addEventListener("click", function () {
-        if (!skeletonList.value || !classList.value) return;
+
+        var data = $("#inputview").is(':checked')? $("#star-box").val():skeletonList.value
+        if (!data || !classList.value) return;
         //判断输入与当前动画id是否相同,如果是,不执行
-        if (activeSkeleton == skeletonList.value && currentClass == classList.value) return;
-        load(skeletonList.value, classList.value);
+        if (activeSkeleton == data && currentClass == classList.value) return;
+        load(data, classList.value);
         
     });
 
@@ -512,7 +600,7 @@ function load(unit_id, class_id) {
     //判断是否在加载动画,如果是,不执行
     if (loading) return;
     loading = true;
-    if ((activeSkeleton == unit_id) && (currentClass == classList.value)) return;
+    if ((activeSkeleton == unit_id) && (currentClass == $("#classList").val())) return;
     currentClass = class_id;
     var baseUnitId = unit_id | 0;
     baseUnitId -= (baseUnitId % 100) - 1;
@@ -869,7 +957,7 @@ function render() {
     skeleton.updateWorldTransform();
 
     {
-        var progressCtx = animationProgressBar.getContext('2d');
+        var progressCtx = $('#animation-progress')[0].getContext('2d');
         var track = state.tracks[0];
         var width = 400 * ((track.animationLast - track.animationStart) / (track.animationEnd - track.animationStart));
         progressCtx.clearRect(0, 0, 400, 4);

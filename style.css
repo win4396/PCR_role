@@ -13,6 +13,16 @@ body{
     font-family: Arial, Meiryo;
     color:#fff;
 }
+span,label#debug{
+    vertical-align: middle; 
+    font-size: 18px;  
+}
+select,input[type='text']{
+    height: 20px;
+    padding: 0;
+    border: 0;
+    vertical-align: middle;   
+}
 
 .flex-container{
     position: fixed;
@@ -67,11 +77,12 @@ body{
     width: 20px;
     vertical-align: middle;
 }
-#debug{
+input.checkbox{
     height: 20px;
     width: 20px;
     vertical-align: middle;
 }
+
 #toggleButton{
     position: absolute;
     background-color: gray;
@@ -109,10 +120,7 @@ body{
     justify-content: center;
     box-sizing: border-box;
 }
-#advOptionBox{
-    visibility: hidden;
-    
-}
+
 
 #advOptionBox>span{
     display: flex;
@@ -144,6 +152,16 @@ body{
     margin: 0;
     display: inline-block;
 }
+.hidden{
+    display: none !important;
+}
+
+#search-box{
+    width: 130px;
+}
+#star-box{
+    width: 45px;
+}
 #skeletonList{
     height: 20px;
     width: 180px;
@@ -165,6 +183,26 @@ body{
     background: #fff;
     margin: 5px 0 0 0vw;
 } 
+
+#results{
+    position: fixed;
+    z-index: 999;
+}
+.get{
+    width: 120px;
+    border:1px solid black; 
+}
+.none{
+    width: 120px;
+    display: none;
+}
+
+div.show{
+    margin: 0;
+}
+div.show:hover{
+    background-color: rgb(35, 35, 35);
+}
 
 .item1{grid-area: a;}
 .item2{grid-area: b;}
@@ -204,14 +242,19 @@ body{
     text-align: center;
     padding: 0;
 }
-
+.item15{
+    grid-area: s;
+    /* font-size: 10px; */
+    text-align: center;
+    padding: 0;
+}
 #animationControlPanel{  
     display: grid;
 
     grid-template-columns: repeat(3,26px) 2.8em;
     grid-template-rows: repeat(4,26px); 
     grid-template-areas:
-    '...    a   ...     e'
+    's      a   ...     e'
     'b      g   d       h'
     '...    c   ...     f'
     'j      j   j       r'
@@ -219,6 +262,10 @@ body{
     'q      q   q       p';
     padding: 5px; 
     z-index: 999;
+}
+#animationControlPanel.collapsed{
+    width: 25px;
+    height:25px;
 }
 /* #advOptionBox{
     display: grid;  

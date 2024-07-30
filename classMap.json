@@ -299,7 +299,7 @@
         "hasSpecialBase": false
     },
     "102601": {
-        "chinese_name": "铃凛",
+        "chinese_name": "铃",
         "name": "リン",
         "real_name": "りん",
         "exclusive": 0,
@@ -1495,7 +1495,7 @@
         "hasSpecialBase": false
     },
     "112501": {
-        "chinese_name": "铃凛（偶像大师）",
+        "chinese_name": "凛（偶像大师）",
         "name": "リン（デレマス）",
         "real_name": "りんでれます",
         "exclusive": 1,
@@ -1521,7 +1521,7 @@
         "hasSpecialBase": false
     },
     "112701": {
-        "chinese_name": "铃凛（游骑兵）",
+        "chinese_name": "铃（游骑兵）",
         "name": "リン（レンジャー）",
         "real_name": "りん",
         "exclusive": 0,
@@ -2769,7 +2769,7 @@
         "hasSpecialBase": false
     },
     "123501": {
-        "chinese_name": "铃凛（万圣节）",
+        "chinese_name": "铃（万圣节）",
         "name": "リン（ハロウィン）",
         "real_name": "りん",
         "exclusive": 1,
@@ -3701,7 +3701,7 @@
         "place": 1,
         "position": 245,
         "elemental": 0,
-        "hasRarity6": true,
+        "hasRarity6": false,
         "hasSpecialBase": false
     },
     "180101": {
