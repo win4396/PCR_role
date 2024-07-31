@@ -907,9 +907,14 @@ function setupUI() {
         gifConfig.gifLenth = animationState.tracks[0].animationEnd.toFixed(3);
         console.log("当前动作时长为"+gifConfig.gifLenth+"秒");
 
-        FormalName = $("#skeletonList option:selected").text() + " "+
-                     $("#classList option:selected").text()    +" "+
-                     $("#animationList option:selected").text() ;
+        if($('#inputview').is('checked'))
+            FormalName = $("#skeletonList option:selected").text() + " "+
+                        $("#classList option:selected").text()    +" "+
+                        $("#animationList option:selected").text() ;
+        else
+            FormalName = $("#star-box option:selected").text() + " "+
+                        $('#search-box').val()    +" "+
+                        $("#animationList option:selected").text() ;
     });
 
     window.updateUI = function () {
