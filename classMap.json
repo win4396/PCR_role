@@ -663,7 +663,7 @@
         "hasSpecialBase": false
     },
     "105701": {
-        "chinese_name": "姬塔",
+        "chinese_name": "姬塔（6★前）",
         "name": "ジータ",
         "real_name": "じーた",
         "exclusive": 0,
@@ -3691,8 +3691,21 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "131701": {
+        "chinese_name": "爱梅斯（夏日）",
+        "name": "アメス（サマー）",
+        "real_name": "あめす",
+        "exclusive": 1,
+        "type": 53,
+        "ex_type": 44,
+        "place": 3,
+        "position": 743,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "170101": {
-        "chinese_name": "姬塔",
+        "chinese_name": "姬塔（6★后）",
         "name": "ジータ",
         "real_name": "じーた",
         "exclusive": 0,
@@ -3702,7 +3715,7 @@
         "position": 245,
         "elemental": 0,
         "hasRarity6": false,
-        "hasSpecialBase": false
+        "hasSpecialBase": true
     },
     "180101": {
         "chinese_name": "日和莉（公主）",
@@ -3884,7 +3897,7 @@
         "position": 850,
         "elemental": 0,
         "hasRarity6": false,
-        "hasSpecialBase": false
+        "hasSpecialBase": true
     },
     "191401": {
         "chinese_name": "可可萝",
