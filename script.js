@@ -57,7 +57,7 @@ let gifConfig = {
     gifDrawing: false,
 
 };
-$('#speedList').change(function () {
+$('#speedList').on('change',function () {
     var value = parseFloat($('#speedList')[0].value);
     !isNaN(value) && (speedFactor = value);
 });
@@ -440,7 +440,6 @@ function createCutImg(){
         ctx = cutImg.getContext('2d',{willReadFrequently: true});
         cutImg.width = viewrectData[2];
         cutImg.height = viewrectData[3];
-       
     }
     console.log(viewrectData);          
 }
@@ -452,7 +451,8 @@ function imgDownload(item,flag){
     link.href = item.toDataURL('image/png'); 
     link.download = ( $("#advImgNameCKBox").is(":checked") ? CustomName : FormalName) +'.png';
        
-    link.click();                  
+    link.click();    
+    cutImg = null;              
 }
 function viewDataUpdate(){
     viewrectData = [viewrect.offsetLeft,viewrect.offsetTop,viewrect.offsetWidth,viewrect.offsetHeight];
@@ -908,13 +908,14 @@ function setupUI() {
         console.log("当前动作时长为"+gifConfig.gifLenth+"秒");
 
         if($('#inputview').is('checked'))
-            FormalName = $("#skeletonList option:selected").text() + " "+
-                        $("#classList option:selected").text()    +" "+
-                        $("#animationList option:selected").text() ;
-        else
             FormalName = $("#star-box option:selected").text() + " "+
                         $('#search-box').val()    +" "+
                         $("#animationList option:selected").text() ;
+        else
+            FormalName = $("#skeletonList option:selected").text() + " "+
+                        $("#classList option:selected").text()    +" "+
+                        $("#animationList option:selected").text() ;
+            
     });
 
     window.updateUI = function () {
