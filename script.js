@@ -1,6 +1,6 @@
 let CustomName = "PcrImage";
 let FormalName = '';
-let switchClassList = {'before':'1','after':'1'}
+let switchClassList = {'before':'1','after':'1'};
 var bgColor = [.3, .3, .3, 1];
 var acp = [0,0,0,0,0,0];
 var viewrectData = [0,0,200,250];
@@ -189,7 +189,16 @@ $('#search-box').on('input',function(){
         $('#results').remove();
     }  
 });
-
+function get_animationFileName(){
+    if($('#inputview').prop('checked'))
+        FormalName = $("#star-box option:selected").text() + " "+
+                    $('#search-box').val()    +" "+
+                    $("#animationList option:selected").text() ;
+    else
+        FormalName = $("#skeletonList option:selected").text() + " "+
+                    $("#classList option:selected").text()    +" "+
+                    $("#animationList option:selected").text() ;
+}
 
 function searchClasses(query){
     $.getJSON('classMap.json',function(data){
@@ -828,6 +837,7 @@ function loadTexture(){
             }
             img.src = URL.createObjectURL(blob);
             $(".setting").css("visibility","visible");
+            get_animationFileName();
         },'blob',function(e){//由返回函数控制最后的进度条
             var perc = e.loaded / e.total * 20 + 80;
             progressBar.style.width = perc + '%';   
@@ -907,14 +917,8 @@ function setupUI() {
         gifConfig.gifLenth = animationState.tracks[0].animationEnd.toFixed(3);
         console.log("当前动作时长为"+gifConfig.gifLenth+"秒");
 
-        if($('#inputview').is('checked'))
-            FormalName = $("#star-box option:selected").text() + " "+
-                        $('#search-box').val()    +" "+
-                        $("#animationList option:selected").text() ;
-        else
-            FormalName = $("#skeletonList option:selected").text() + " "+
-                        $("#classList option:selected").text()    +" "+
-                        $("#animationList option:selected").text() ;
+        get_animationFileName();
+        
             
     });
 

@@ -2377,7 +2377,7 @@
         "mage": 2,
         "elemental": 4,
         "hasRarity6": false,
-        "hasSpecialBase": false
+        "hasSpecialBase": true
     },
     "119001": {
         "chinese_name": "伊绪（黑暗）",
