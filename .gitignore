@@ -1,0 +1,4 @@
+/node_modules/
+CNAME
+*.code-workspace
+.gitgnore
