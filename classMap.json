@@ -4003,6 +4003,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "131801": {
+        "chinese_name": "帆稀（夏日）",
+        "name": "ホマレ（サマー）",
+        "real_name": "ほまれ",
+        "exclusive": 0,
+        "type": 21,
+        "ex_type": 7,
+        "place": 3,
+        "position": 709,
+        "mage": 2,
+        "elemental": 5,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "170101": {
         "chinese_name": "姬塔（6★后）",
         "name": "ジータ",
