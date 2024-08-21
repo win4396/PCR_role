@@ -1,4 +1,4 @@
-$folders = @("data", "atlas","common_battle","special") 
+$folders = @("battle", "atlas","common_battle","special") 
 
 foreach($folder in $folders){   
     $txtFiles = Get-ChildItem -Path ".\$folder" -Filter *.txt -Recurse
