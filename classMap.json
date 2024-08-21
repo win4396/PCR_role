@@ -4282,5 +4282,19 @@
         "elemental": 0,
         "hasRarity6": false,
         "hasSpecialBase": true
+    },
+    "192701": {
+        "chinese_name": "雪菲（公主）",
+        "name": "シェフィ",
+        "real_name": "しぇふぃ",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 0,
+        "position": 855,
+        "mage": 1,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
     }
 }
