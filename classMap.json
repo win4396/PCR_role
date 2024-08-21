@@ -4295,6 +4295,6 @@
         "mage": 1,
         "elemental": 0,
         "hasRarity6": false,
-        "hasSpecialBase": false
+        "hasSpecialBase": true
     }
 }
