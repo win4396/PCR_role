@@ -4017,6 +4017,34 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "131901": {
+        "chinese_name": "爱蜜莉雅（夏日）",
+        "name": "エミリア（サマー）",
+        "real_name": "えみりあ",
+        "exclusive": 1,
+        "type": 23,
+        "ex_type": 7,
+        "place": 3,
+        "position": 725,
+        "mage": 2,
+        "elemental": 3,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
+    "132101": {
+        "chinese_name": "雷姆（夏日）",
+        "name": "レム（サマー）",
+        "real_name": "れむ",
+        "exclusive": 1,
+        "type": 24,
+        "ex_type": 13,
+        "place": 1,
+        "position": 146,
+        "mage": 1,
+        "elemental": 4,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "170101": {
         "chinese_name": "姬塔（6★后）",
         "name": "ジータ",
@@ -4182,6 +4210,20 @@
         "position": 551,
         "mage": 1,
         "elemental": 4,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "181201": {
+        "chinese_name": "雪菲（公主）",
+        "name": "シェフィ（プリンセス）",
+        "real_name": "しぇふぃ",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 2,
+        "position": 368,
+        "mage": 1,
+        "elemental": 2,
         "hasRarity6": false,
         "hasSpecialBase": true
     },
