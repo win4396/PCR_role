@@ -98,6 +98,13 @@ $("#viewrange").on("change",function () {
     $("#advWidth").val(viewrectData[2]);
     $("#advHeight").val(viewrectData[3]);
 });
+$("#advWidth").on('input',function(){
+    $("#viewrect").css("width",$(this).val() +"px");
+});
+$("#advHeight").on('input',function(){
+    $("#viewrect").css("height",$(this).val() +"px");
+});
+
 $("#downloadImg").on("click",function () {
     isScreenShot = true;     
 }); 
@@ -126,7 +133,7 @@ $("#downloadGIF").on("click",function(){
     gifConfig.gifDelay= Number($("#gifDelay").val());
     
     isDrawing = true;
-    $("#setAnimation").click();
+    $("#setAnimation").trigger('click');
 });
 $("#settingplay").on("click",function(){
     $("#setAnimation").trigger('click');
@@ -271,110 +278,78 @@ $("#toggleButton").on("click",function(){
         $('#results').removeClass('hidden')
     }
 });
-//触摸事件
-$("#viewrect").on("touchstart",function(event){
+
+// 拖拽事件
+$("#viewrect").on("mousedown touchstart",function(event){
     if(viewrectTemp.moving) return;
-    
-    var offsetX,offsetY;
-    offsetX = event.touches[0].clientX - viewrect.offsetLeft;
-    offsetY = event.touches[0].clientY - viewrect.offsetTop;
-    function handleTouchMove(event) {
-        event.preventDefault(); // 阻止页面滚动  
-        $("#viewrect").css({"left":(event.touches[0].clientX - offsetX) +"px",
-                            "top":(event.touches[0].clientY - offsetY) +"px"});
-    }
-    function handleTouchEnd() {
-        viewDataUpdate();
-        document.removeEventListener("touchmove",handleTouchMove);
-        document.removeEventListener("touchend",handleTouchEnd);
-    }
-    
-    document.addEventListener('touchmove', handleTouchMove);  
-    document.addEventListener('touchend', handleTouchEnd);  
-});
-$("#viewrectResize").on("touchstart",function (event) {
-    viewrectTemp.moving = true;
-    viewrectData = [event.touches[0].clientX,
-                    event.touches[0].clientY,
-                    viewrect.offsetWidth,
-                    viewrect.offsetHeight];
-    function handleTouchMove(event){
-        if(!viewrectTemp.moving)    return;
-        var dx = event.touches[0].clientX - viewrectData[0];
-        var dy = event.touches[0].clientY - viewrectData[1];
-        $("#viewrect").css({"width":(dx +viewrectData[2]) +"px",
-                            "height":(dy +viewrectData[3]) +"px"
-                        });
-        $("#advWidth").val = viewrect.offsetWidth;
-        $("#advHeight").val = viewrect.offsetHeight;
-        
-    }
-    function handleTouchEnd() {
-        viewrectTemp.moving = false;
-        viewDataUpdate();
-        document.removeEventListener("touchmove",handleTouchMove);
-        document.removeEventListener("touchend",handleTouchEnd);
-    }
-    document.addEventListener('touchmove', handleTouchMove);  
-    document.addEventListener("touchend",handleTouchEnd);
-});
-$("#animationControlPanel").on("touchstart",function (event) {
-    var offsetX,offsetY;
-    offsetX = event.touches[0].clientX - setting.getBoundingClientRect().left;
-    offsetY = event.touches[0].clientY - setting.getBoundingClientRect().top;
-    function handleTouchMove(event) {
-        $(".setting").css({"left":(event.touches[0].clientX - offsetX) +"px",
-                            "top":(event.touches[0].clientY - offsetY) +"px"});
-    }
-    function handleTouchEnd() {
-        document.removeEventListener("touchmove",handleTouchMove);
-        document.removeEventListener("touchend",handleTouchEnd);
-    }
-    
-    document.addEventListener('touchmove', handleTouchMove);  
-    document.addEventListener('touchend', handleTouchEnd);  
-});
-// 鼠标事件
-$("#viewrect").on("mousedown",function(event){
-    if(viewrectTemp.moving) return;
+
     var offsetX,offsetY;
     offsetX = event.clientX - viewrect.offsetLeft;
     offsetY = event.clientY - viewrect.offsetTop;
     function handleMouseMove(event) {
+        event.preventDefault(); // 阻止页面滚动  
         $("#viewrect").css({"left":(event.clientX - offsetX) +"px",
                             "top":(event.clientY - offsetY) +"px"});
     }
     function handleMouseUp() {
         viewDataUpdate();
-        document.removeEventListener("mousemove",handleMouseMove);
-        document.removeEventListener("mouseup",handleMouseUp);
+        if(event.type === 'touchstart'){
+            document.removeEventListener("touchmove",handleMouseMove);
+            document.removeEventListener("touchend",handleMouseUp);
+        }
+        else{
+            document.removeEventListener("mousemove",handleMouseMove);
+            document.removeEventListener("mouseup",handleMouseUp);
+        }
     }
     
-    document.addEventListener('mousemove', handleMouseMove);  
-    document.addEventListener('mouseup', handleMouseUp);  
+    if(event.type === 'touchstart'){
+        document.addEventListener("touchmove",handleMouseMove);
+        document.addEventListener("touchend",handleMouseUp);
+    }
+    else{
+        document.addEventListener('mousemove', handleMouseMove);  
+        document.addEventListener("mouseup",handleMouseUp);
+    }
 });
-$("#viewrectResize").on("mousedown",function (event) {
+
+// 缩放事件
+$("#viewrectResize").on("mousedown touchstart",function (event) {
     viewrectTemp.moving = true;
     viewrectData = [event.clientX,event.clientY,viewrect.offsetWidth,viewrect.offsetHeight];
     function handleMouseMove(event){
         if(!viewrectTemp.moving)    return;
+        event.preventDefault(); // 阻止页面滚动  
         var dx = event.clientX - viewrectData[0];
         var dy = event.clientY - viewrectData[1];
         $("#viewrect").css({"width":(dx +viewrectData[2]) +"px",
                             "height":(dy +viewrectData[3]) +"px"});
-        $("#advWidth").val = viewrect.offsetWidth;
-        $("#advHeight").val = viewrect.offsetHeight;
+        $("#advWidth").val(viewrect.offsetWidth);
+        $("#advHeight").val(viewrect.offsetHeight);
     }
     function handleMouseUp() {
         viewrectTemp.moving = false;
         viewDataUpdate();
-        document.removeEventListener("mousemove",handleMouseMove);
-        document.removeEventListener("mouseup",handleMouseUp);
+        if(event.type === 'touchstart'){
+            document.removeEventListener("touchmove",handleMouseMove);
+            document.removeEventListener("touchend",handleMouseUp);
+        }
+        else{
+            document.removeEventListener("mousemove",handleMouseMove);
+            document.removeEventListener("mouseup",handleMouseUp);
+        }
     }
-    document.addEventListener('mousemove', handleMouseMove);  
-    document.addEventListener("mouseup",handleMouseUp);
+    if(event.type === 'touchstart'){
+        document.addEventListener("touchmove",handleMouseMove);
+        document.addEventListener("touchend",handleMouseUp);
+    }
+    else{
+        document.addEventListener('mousemove', handleMouseMove);  
+        document.addEventListener("mouseup",handleMouseUp);
+    }
 });
-$("#animationControlPanel").on("mousedown",function(event){
+
+$("#animationControlPanel").on("mousedown touchstart",function(event){
     var offsetX,offsetY;
     offsetX = event.clientX - setting.getBoundingClientRect().left;
     offsetY = event.clientY - setting.getBoundingClientRect().top;
@@ -384,12 +359,24 @@ $("#animationControlPanel").on("mousedown",function(event){
     
     }
     function handleMouseUp() {
-        document.removeEventListener("mousemove",handleMouseMove);
-        document.removeEventListener("mouseup",handleMouseUp);
+        if(event.type === 'touchstart'){
+            document.removeEventListener("touchmove",handleMouseMove);
+            document.removeEventListener("touchend",handleMouseUp);
+        }
+        else{
+            document.removeEventListener("mousemove",handleMouseMove);
+            document.removeEventListener("mouseup",handleMouseUp);
+        }
     }
     
-    document.addEventListener('mousemove', handleMouseMove);  
-    document.addEventListener('mouseup', handleMouseUp);  
+    if(event.type === 'touchstart'){
+        document.addEventListener("touchmove",handleMouseMove);
+        document.addEventListener("touchend",handleMouseUp);
+    }
+    else{
+        document.addEventListener('mousemove', handleMouseMove);  
+        document.addEventListener("mouseup",handleMouseUp);
+    }
 });
 
 
@@ -926,7 +913,7 @@ function setupUI() {
         setupAnimationUI();
     };
     setupAnimationUI();
-    $("#bg-color").on('change', function (event) {
+    $("#bg-color").on('input', function (event) {
         var newcolor = event.target.value;
         newcolor = newcolor.replace('#', '');    
         //console.log(newcolor);
