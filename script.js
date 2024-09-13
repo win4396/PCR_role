@@ -578,6 +578,7 @@ function getGIF(){
             link.click();  
 
             gif = null; 
+            cutImg = null;
             gifConfig.gifNext = 0;
             gifConfig.gifDeparted = 0;
             gifConfig.gifPage = 0;

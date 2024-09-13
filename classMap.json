@@ -4031,6 +4031,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "132001": {
+        "chinese_name": "艾姬多娜（夏日）",
+        "name": "エキドナ（サマー）",
+        "real_name": "えきどな",
+        "exclusive": 1,
+        "type": 21,
+        "ex_type": 7,
+        "place": 3,
+        "position": 775,
+        "mage": 2,
+        "elemental": 5,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "132101": {
         "chinese_name": "雷姆（夏日）",
         "name": "レム（サマー）",
@@ -4326,7 +4340,7 @@
         "hasSpecialBase": true
     },
     "192701": {
-        "chinese_name": "雪菲（公主）",
+        "chinese_name": "雪菲（公主）（助战）",
         "name": "シェフィ",
         "real_name": "しぇふぃ",
         "exclusive": 1,
