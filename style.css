@@ -273,8 +273,8 @@ div.show:hover{
 } */
 #viewrect{
     position: absolute;
-    top:200px;
-    left: 200px;
+    top:290px;
+    left: 10px;
     width: 200px;
     height:250px;
     border:3px solid red;

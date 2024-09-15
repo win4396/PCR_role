@@ -283,13 +283,22 @@ $("#toggleButton").on("click",function(){
 $("#viewrect").on("mousedown touchstart",function(event){
     if(viewrectTemp.moving) return;
 
-    var offsetX,offsetY;
-    offsetX = event.clientX - viewrect.offsetLeft;
-    offsetY = event.clientY - viewrect.offsetTop;
+    let offsetX,offsetY,input;
+    if(event.type === 'touchstart')
+        input = event.touches[0];
+    else
+        input = event;
+    
+    offsetX = input.clientX - viewrect.offsetLeft;
+    offsetY = input.clientY - viewrect.offsetTop;
     function handleMouseMove(event) {
         event.preventDefault(); // 阻止页面滚动  
-        $("#viewrect").css({"left":(event.clientX - offsetX) +"px",
-                            "top":(event.clientY - offsetY) +"px"});
+        if(event.type === 'touchmove')
+            $("#viewrect").css({"left":(event.touches[0].clientX - offsetX) +"px",
+                                "top":(event.touches[0].clientY - offsetY) +"px"});
+        else
+            $("#viewrect").css({"left":(event.clientX - offsetX) +"px",
+                                "top":(event.clientY - offsetY) +"px"});
     }
     function handleMouseUp() {
         viewDataUpdate();
@@ -316,12 +325,24 @@ $("#viewrect").on("mousedown touchstart",function(event){
 // 缩放事件
 $("#viewrectResize").on("mousedown touchstart",function (event) {
     viewrectTemp.moving = true;
-    viewrectData = [event.clientX,event.clientY,viewrect.offsetWidth,viewrect.offsetHeight];
+    if(event.type === 'touchstart')
+        viewrectData = [event.touches[0].clientX,event.touches[0].clientY,viewrect.offsetWidth,viewrect.offsetHeight];
+    else 
+        viewrectData = [event.clientX,event.clientY,viewrect.offsetWidth,viewrect.offsetHeight];
     function handleMouseMove(event){
+        
         if(!viewrectTemp.moving)    return;
         event.preventDefault(); // 阻止页面滚动  
-        var dx = event.clientX - viewrectData[0];
-        var dy = event.clientY - viewrectData[1];
+        let dx,dy;
+        if(event.type === 'touchmove'){
+            dx = event.touches[0].clientX - viewrectData[0];
+            dy = event.touches[0].clientY - viewrectData[1];
+        }
+        else{
+            dx = event.clientX - viewrectData[0];
+            dy = event.clientY - viewrectData[1];
+        }
+ 
         $("#viewrect").css({"width":(dx +viewrectData[2]) +"px",
                             "height":(dy +viewrectData[3]) +"px"});
         $("#advWidth").val(viewrect.offsetWidth);
@@ -350,13 +371,20 @@ $("#viewrectResize").on("mousedown touchstart",function (event) {
 });
 
 $("#animationControlPanel").on("mousedown touchstart",function(event){
-    var offsetX,offsetY;
-    offsetX = event.clientX - setting.getBoundingClientRect().left;
-    offsetY = event.clientY - setting.getBoundingClientRect().top;
+    let offsetX,offsetY,input;
+    if(event.type === 'touchstart')
+        input = event.touches[0];
+    else
+        input = event;
+    offsetX = input.clientX - setting.getBoundingClientRect().left;
+    offsetY = input.clientY - setting.getBoundingClientRect().top;
     function handleMouseMove(event) {
-        $(".setting").css({"left":(event.clientX - offsetX) +"px",
-                            "top":(event.clientY - offsetY) +"px"});
-    
+        if(event.type === 'touchmove')
+            $(".setting").css({"left":(event.touches[0].clientX - offsetX) +"px",
+                "top":(event.touches[0].clientY - offsetY) +"px"});
+        else
+            $(".setting").css({"left":(event.clientX - offsetX) +"px",
+                                "top":(event.clientY - offsetY) +"px"}); 
     }
     function handleMouseUp() {
         if(event.type === 'touchstart'){
