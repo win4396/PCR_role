@@ -189,8 +189,10 @@ input.checkbox{
     z-index: 999;
 }
 .get{
-    width: 120px;
+    max-height:300px;
+    width: 130px;
     border:1px solid black; 
+    overflow: auto;
 }
 .none{
     width: 120px;
@@ -199,6 +201,8 @@ input.checkbox{
 
 div.show{
     margin: 0;
+    white-space: nowrap;
+    overflow-x: hidden;
 }
 div.show:hover{
     background-color: rgb(35, 35, 35);
