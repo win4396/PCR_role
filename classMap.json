@@ -1228,7 +1228,7 @@
         "position": 540,
         "mage": 1,
         "elemental": 2,
-        "hasRarity6": false,
+        "hasRarity6": true,
         "hasSpecialBase": false
     },
     "109801": {
@@ -1242,7 +1242,7 @@
         "position": 545,
         "mage": 2,
         "elemental": 3,
-        "hasRarity6": false,
+        "hasRarity6": true,
         "hasSpecialBase": false
     },
     "109901": {
@@ -1256,7 +1256,7 @@
         "position": 725,
         "mage": 2,
         "elemental": 1,
-        "hasRarity6": false,
+        "hasRarity6": true,
         "hasSpecialBase": false
     },
     "110001": {

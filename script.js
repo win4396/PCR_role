@@ -214,7 +214,7 @@ function searchClasses(query){
         $('#results').remove();  
         for(var key in data){
             if(data[key].chinese_name.includes(query)){
-                if(data[key].type != 0 || data[key].hasSpecialBase)
+                if((data[key].type != 0 && data[key].place != 0)|| data[key].hasSpecialBase)
                     results.push({id:key,...data[key]})
             }
         }
@@ -251,7 +251,7 @@ function resultDisplay($eve){
 }
 const resizeObserver = new ResizeObserver((entries)=>{
     for (let entry of entries) {  
-        console.log('元素的高度变化:', entry.contentRect.height);  
+        // console.log('元素的高度变化:', entry.contentRect.height);  
         viewportWidth = window.innerWidth;
         toggleButton.style.left = (viewportWidth - toggleButton.offsetWidth)/2+ "px";
         if(toggleButton.style.top != "0px"){
@@ -522,7 +522,7 @@ function init() {
 
             Object.keys(json).forEach(function (i) {
                 var name = json[i].chinese_name;
-                var noAdded = json[i].type == 0 && !json[i].hasSpecialBase;
+                var noAdded = json[i].type == 0 && !json[i].hasSpecialBase && json[i].place == 0;
 
                 if (i == '190801')
                     skeletonList.appendChild(_("option", { value: '', disabled: "" }, [_("text", "以下为剧情过场角色")]));
