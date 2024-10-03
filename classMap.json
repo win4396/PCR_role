@@ -718,7 +718,7 @@
         "name": "ジータ",
         "real_name": "じーた",
         "exclusive": 0,
-        "type": 4,
+        "type": 0,
         "ex_type": 4,
         "place": 1,
         "position": 245,
@@ -4059,6 +4059,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "132201": {
+        "chinese_name": "望（炼金术士）",
+        "name": "ノゾミ（アルケミスト）",
+        "real_name": "のぞみ",
+        "exclusive": 1,
+        "type": 7,
+        "ex_type": 7,
+        "place": 3,
+        "position": 721,
+        "mage": 2,
+        "elemental": 2,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "170101": {
         "chinese_name": "姬塔（6★后）",
         "name": "ジータ",
@@ -4340,7 +4354,7 @@
         "hasSpecialBase": true
     },
     "192701": {
-        "chinese_name": "雪菲（公主）（助战）",
+        "chinese_name": "雪菲（公主）（助战））",
         "name": "シェフィ",
         "real_name": "しぇふぃ",
         "exclusive": 1,
