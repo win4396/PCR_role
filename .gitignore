@@ -3,3 +3,4 @@ CNAME
 *.code-workspace
 .gitgnore
 .vscode
+data/去掉txt.ps1
