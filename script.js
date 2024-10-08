@@ -1,168 +1,493 @@
-let CustomName = "PcrImage";
-let FormalName = '';
-let switchClassList = {'before':'1','after':'1'};
-var bgColor = [.3, .3, .3, 1];
-var acp = [0,0,0,0,0,0];
-var viewrectData = [0,0,200,250];
-var viewrectTemp = {moving:false,sizing:false};
-var localURL = 'data/';
-var looptmp = 0;
-var animation_fps = 0;
-//var window = this;
-window.skeleton = {};
+let classMap;
+let myCanvas;
+let num = 0;
+let gifLoaded = false;
 
-var lastFrameTime = Date.now() / 1000;
-var canvas;
-var shader;
-var batcher;
-var gl;
-var mvp = new spine.webgl.Matrix4();
-var skeletonRenderer;
-var debugRenderer;
-var debugShader;
-var shapes;
-var toggleButton;
-var activeSkeleton = "";
-var pendingAnimation = "";
-var progressBar;
-var classMap;
-var animationQueue = [];
-var loadingText = document.getElementById("loading-text");
-var skeletonList = document.getElementById("skeletonList");
-var topbox = document.getElementById("topbox");
-var setting = document.getElementsByClassName("setting")[0];
-var viewrect = document.getElementById("viewrect");
-const footHeight = document.getElementById("foot").offsetHeight; 
-const viewportHeight = window.innerHeight;  
-let viewportWidth = window.innerWidth;
+const skeletonList = $('#skeletonList');
+const loadSkeleton = $('#loadSkeleton');
+const charaList = $('#charaList');
+const classList = $('#classList');
+const inputview = $('#inputview');
+const toggleButton =  document.getElementById("toggleButton");
+const topBox = document.getElementById("topBox");
+const setting = document.getElementsByClassName("setting")[0];
+const viewRect = document.getElementById("viewRect");
 
-var firstElementChild = topbox.firstChild;
-var speedFactor = 1;
+const outStopRule = [
+    'idle',
+    'idol',
+    'jigi',
+    '_run',
+    'rpet',
+    'uper',
+    'loop',
+];
 
-let cutImg = null;//
-let ctx = '';//cutImg.getContext("2d");
-let gif = null;
-let isDrawing = false;
-let isScreenShot = false;
- 
-let gifConfig = {
-    fpsCount: 1,
-    fpsInit: 4,
-    gifNext: 0,
-    gifDeparted: 0,
-    gifStep: 0,
-    gifPage: 0,
-    gifLenth: 0,
-    gifDelay: 0,
-    gifDrawing: false,
+function createTag(e,t,n){
+    if(e === 'text')
+        return document.createTextNode(t);
+    let r = document.createElement(e);
+    for(let i in t){
+        if ("style" === i) 
+            for (let a in t.style) 
+                r.style[a] = t.style[a];
+        else
+            r.setAttribute(i,t[i]);
+    }
+    if(n) 
+        r.appendChild(n);
+    return r;
+}
 
-};
-$('#speedList').on('change',function () {
-    var value = parseFloat($('#speedList')[0].value);
-    !isNaN(value) && (speedFactor = value);
-});
-$("#acp_up").on("click",function () {
-    acp[0] += 10;
-}); 
-$("#acp_down").on("click",function () {
-    acp[1] += 10;
-}); 
-$("#acp_left").on("click",function () {
-    acp[2] += 10;
-}); 
-$("#acp_right").on("click",function () {
-    acp[3] += 10;
-}); 
-$("#acp_zoomup").on("click",function () {
-    if(acp[4] != (-16))
-        acp[4] --;
-}); 
-$("#acp_zoomdown").on("click",function () {
-    if(acp[4] != 16)
-        acp[4] ++;
-}); 
-$("#acp_movereset").on("click",function () {
-    acp.fill(0,0,4);
-});
-$("#acp_zoomreset").on("click",function () {
-    acp.fill(0,4,6);
-});  
-$("#viewbackground").one("click",function () {
-    alert("透明背景生成GIF会有噪点   介意者慎用!");
-});
-$("#viewrange").on("change",function () {
-    viewrectTemp.sizing = this.checked; 
-    $("#viewrect").css("visibility",this.checked ? "visible":"hidden");
-    $("#advWidth").prop("disabled",!viewrectTemp.sizing);
-    $("#advHeight").prop("disabled",!viewrectTemp.sizing);
-    $("#advWidth").val(viewrectData[2]);
-    $("#advHeight").val(viewrectData[3]);
-});
-$("#advWidth").on('input',function(){
-    $("#viewrect").css("width",$(this).val() +"px");
-});
-$("#advHeight").on('input',function(){
-    $("#viewrect").css("height",$(this).val() +"px");
+function weaponCalc(str){
+    return str.length < 2 ? '0'+ str : str;
+}
+
+function removeStar(num){
+    let str = String(num);
+    const t = str.lastIndexOf('1')-1;
+    return [num - Number(str[t])*10 + '',str.slice(t,t+1)];
+}
+
+function viewDataUpdate(){
+    myCanvas.camera.viewRectData = [viewRect.offsetLeft,viewRect.offsetTop,viewRect.offsetWidth,viewRect.offsetHeight];
+    $("#advWidth").val(viewRect.offsetWidth);
+    $("#advHeight").val(viewRect.offsetHeight);
+}
+
+function loadAnimation(num,f){
+    const select = $('#charaSpan'+num);
+    select.empty();
+    [
+        ['闲置', 'idle'],
+        ['准备', 'standBy'],
+        ['走', 'walk'],
+        ['跑', 'run'],
+        ['跑（入场）', 'run_gamestart'],
+        ['落地', 'landing'],
+        ['攻击', 'attack'],
+        ['攻击（扫荡）', 'attack_skipQuest'],
+        ['庆祝-短', 'joy_short,hold,joy_short_return'],
+        ['庆祝-长', 'joy_long,hold,joy_long_return'],
+        ['受伤', 'damage'],
+        ['死亡', 'die,stop'],
+        ['合作-准备', 'multi_standBy'],
+        ['合作-闲置', 'multi_idle_standBy'],
+        ['合作-闲置（无武器）', 'multi_idle_noWeapon']
+    ].forEach((i)=>{
+        select.append(createTag('option',{value: i[1]},createTag('text',i[0])));
+    })
+    select.append(createTag('option',{value:'', disabled:''},createTag('text','---')));
+    f.forEach((i)=>{
+        i = i.name;
+        if(!/^\d{6}_/.test(i)) return;
+        let val = i;
+        if(!/skill/.test(i) && /^\d{6}_/.test(i)) {
+            if(outStopRule.indexOf(i.slice(i.length-4)) == -1) 
+                val = i+',stop';
+        }
+              
+        select.append(createTag('option',{value: val},
+            createTag('text',i.replace(/\d{6}_skill(.+)/, '技能$1').replace(/\d{6}_joyResult/, '庆祝-角色特有'))));
+    });
+}
+
+function animationQueueReset(order){
+    [...spineGirl[order].nowQueue]= spineGirl[order].animationQueue;
+    let a = spineGirl[order].nowQueue;
+    
+    if (a[0] == 'multi_standBy') {
+        a.push('multi_idle_standBy');
+    } 
+    else if([
+        'multi_idle_standBy', 
+        'multi_idle_noWeapon',
+        'idle', 
+        'walk',
+        'run', 
+        'run_gamestart'
+    ].indexOf(a[0]) == -1){
+        if(outStopRule.indexOf(a[0].slice(a[0].length-4)) == -1)
+                a.push('idle');   
+    }
+    let nextAnim = a.shift();
+    if(!/^\d{6}/.test(nextAnim))
+        nextAnim = spineGirl[order].weapon +'_'+ nextAnim;
+    // spineGirl[num].animationQueue = a;
+    spineGirl[order].spine.state.setAnimation(0, nextAnim, !a.length);
+}
+
+function changeClassList(weapon){
+    let t = false;
+   classList.find('option').each(function(){
+       if($(this).val() == weapon){
+           t = true;
+           return false;
+       }
+   })
+   if(!t){
+       classList.append(createTag('option',{value: weapon},createTag('text',weapon )));
+   }
+   classList.val(weapon);
+}
+
+function searchClasses(query){
+    
+    let results = [];
+    $('#star-box').empty();
+    $('#results').remove();  
+    for(let key in classMap){
+        if(classMap[key].chinese_name.includes(query)){
+            if((classMap[key].type != 0 && classMap[key].place != 0)|| classMap[key].hasSpecialBase)
+                results.push({id:key,...classMap[key]})
+        }
+    }
+    if(results.length === 0)    return;
+    
+    let offest = $('#search-box').offset();
+    // $('#viewRect').after(`<div class='get' id="results" style='top:${offest.top+20}px;left:${offest.left}px;'></div>`)
+    $('#viewRect').after(createTag('div',{class:'get',id:'results',style:{top:offest.top+20+'px',left:offest.left+'px'}})).queue(function(next){
+        results.forEach(function(item) {    
+            $('#results').append(createTag('div',{class:'show','data-val':item.id,'data-has6':item.hasRarity6},createTag("text",item.chinese_name)));  
+            
+        });
+        $('#results').on('click','.show',function(event){
+            resultDisplay($(event.currentTarget))
+        });
+        next();  
+    })
+    
+}
+
+function resultDisplay($eve){
+    $('#search-box').val($eve.text());
+    const val = $eve.data('val') | 0;
+    if($eve.data('has6'))    $('#star-box').append(`<option value= ${val + 60}>6★</option>`);
+        $('#star-box').append(`<option value= ${val + 30}>3★</option>`);
+    $('#star-box').append(`<option value= ${val + 10}>1★</option>`);
+    
+    changeClassList(classMap[val].type);
+    $('#results').remove();    
+}
+
+function appendCharaDiv(num,str){
+    let a = `<div id = chara${num}>
+        <span class="head-style">
+        <span class = "charaSpanTitle" id = "charaSpanTitle${num}">${num+1}:${str}:</span><select class = "charaSpanSelect" id = "charaSpan${num}" title="动画列表"></select>
+        <span>同步:</span><input type="checkbox" class="checkbox" data-id ="${num}a">
+        <input type="button" class="button1" id = "charaButton${num}" value="播放" data-id ="${num}b" > 
+        <span> X:</span><input type="number" value = "0" class="inputNumber" data-id ="${num}x">
+        <span> Y:</span><input type="number" value = "0" class="inputNumber" data-id ="${num}y">
+        <span>镜像:</span><input type="checkbox" class="checkbox" data-id ="${num}c">
+        <span>翻转:</span><input type="checkbox" class="checkbox" data-id ="${num}d">  
+        <span>去阴影:</span><input type="checkbox" class="checkbox" data-id ="${num}f">  
+        <input type="button" class="button1" value="删除" data-id ="${num}e" > 
+        </span></div>`;
+    if(!document.getElementById("charaDiv").childNodes.length){
+        $('#charaDiv').append(a);
+        return;
+    }
+    for(let i of spineGirl){ 
+        if(i != {}){
+            if(i.order == num - 1){
+                $('#chara'+i.order).after(a);
+                return;
+            }
+            else if(i.order > num){
+                $('#chara'+i.order).before(a);
+                return;
+            }  
+        }
+    }
+    $('#charaDiv').append(a);
+}
+
+$('#charaDiv').on('click','div span input[type="button"]',function(){
+    const id = $(this).data('id');
+    const num = id.slice(0,1);
+    const type = id.slice(1);
+
+    
+    if(type === 'e'){
+        const renum = Number(num) + 1;
+        charaList.find('option[value='+renum+']').text(renum+'');
+        spineGirl[num] = {};
+        $('#chara'+num).remove();
+    }
+    else if(type === 'b'){      
+        if('control' in spineGirl[num] && spineGirl[num].control.ready === true){
+            const select = $('#charaSpan'+num);
+               
+            if(spineGirl[num].control.sync){
+                myCanvas.camera.pause = true;
+                spineGirl.forEach((i) => {
+                    if('control' in i && i.control.ready && i.control.sync ){
+                        const k = $('#charaSpan'+i.order).val();
+                        i.selected.animation = k;
+                        i.animationQueue = k.split(',');    
+                        animationQueueReset(i.order);   
+                    }
+                });
+                myCanvas.camera.pause = false;
+            }
+            else {
+                const k = select.val();
+                spineGirl[num].selected.animation = k;
+                spineGirl[num].animationQueue = k.split(','); 
+                animationQueueReset(num);  
+            }   
+        }
+    }
+
+        
+})
+$('#charaDiv').on('change','div span input[type="checkbox"]',function(){
+    const id = $(this).data('id');
+    const num = id.slice(0,1);
+    const type = id.slice(1);
+    const val = $(this).prop('checked');
+    if(type === 'a'){
+        spineGirl[num].control.sync = val;
+    }
+    else if(type === 'c'){
+        spineGirl[num].control.flipX = val;
+    }
+    else if(type === 'd'){
+        spineGirl[num].control.flipY = val;
+    }
+    else if(type === 'f'){
+        spineGirl[num].control.shadow = val;
+    }
+})
+$('#charaDiv').on('change','div span input[type="number"]',function(){
+    const id = $(this).data('id');
+    const num = id.slice(0,1);
+    const type = id.slice(1);
+    const val = Number($(this).val());
+    if(type === 'x'){
+        spineGirl[num].control.x = val;
+    }
+    else if(type === 'y'){
+        spineGirl[num].control.y = val;
+    }
+})
+
+charaList.on('change',function(){
+    num = charaList.val() - 1;
+    myCanvas.nowCharacter = num;
+})
+
+
+skeletonList.on('change',function(){
+    let [character,] = removeStar(skeletonList.val());
+    changeClassList(classMap[character].type);
+})
+
+
+loadSkeleton.on('click',async function(){
+
+    const str = inputview.prop('checked') ? $("#star-box").val() : skeletonList.val();
+    const [character,star] = removeStar(str);
+    const characterMap = classMap[character];
+    let weapon = characterMap.hasSpecialBase ? character : weaponCalc(classList.val());
+    let t = spineGirl[num];
+    let characterName;
+    if('control' in t && t.control.ready === true){
+        if(character === t.character && star === t.star && weapon === t.weapon)
+            return;
+        if(t != {})
+            t.control.ready = false;
+    }
+    if(inputview.prop('checked'))
+        characterName = $('#star-box').find(':selected').text()+characterMap.chinese_name;
+    else
+        characterName = skeletonList.find(':selected').text();
+    charaList.find(':selected').text(characterName);
+    spineGirl[num] ={
+        order: num,
+        character :character,
+        characterName: characterName,
+        weapon:weapon,
+        star:star,
+        spine_scale:0.4,
+        spine:'',
+        hasSpecialBase:characterMap.hasSpecialBase, 
+        animationQueue:['idle'],
+        nowQueue:[],
+        control:{
+            ready:false,
+            flipX:false,
+            flipY:false,
+            sync:false,
+            shadow:0,
+            visable:-1,
+            x:0,
+            y:0,
+        },
+        selected:{
+            class:classList.val(),
+            animation:'idle'
+        },
+    };
+    
+    t = spineGirl[num];
+    
+    const errorInfo = {
+        errorType: false,
+        errorFileName: ''  
+    }
+
+    let c1 = charaLoad(t);
+    
+    if(c1.necessaryItem.length || c1.probablyItem.length){
+        logInfo('加载主要文件...');
+        let promises = c1.necessaryItem.map((i,e) =>      
+            loadFile(c1.necessarySrc[e],i,getType(i))
+            .then((data)=>{
+                processData(c1.necessarySrc[e],i,data);
+                LoadedID.push(i);
+            })
+        );    
+        await Promise.all(promises).then(()=>{
+            logInfo('加载次要文件...');
+        })
+        .catch((error)=>{
+            errorInfo.errorType = true;
+            errorInfo.errorFileName = error.fileName;
+        })
+        .finally(()=>{
+            if(errorInfo.errorType){
+                logErrorInfo(errorInfo.errorFileName);
+                logClear();
+                return;
+            }  
+        }); 
+
+        promises = c1.probablyItem.map((i,e) =>    
+            loadFile(c1.probablySrc[e],i,getType(i))
+            .then((data)=>{
+                processData(c1.probablySrc[e],i,data);
+                LoadedID.push(i);
+            })              
+        );
+        await Promise.allSettled(promises).then((result)=>{
+            if(result.some((i)=>{return i.status == 'rejected'})){
+                let cnt = 0;
+                result.forEach((i,e)=>{
+                    if(i.status == 'rejected'){
+                        // console.log(c1.probablyItem[e]);
+                        cnt ++;
+                    }
+                });
+                logErrorInfo(cnt+'');
+            }else
+                logInfo('加载成功','success');   
+            
+        });
+
+    }
+    await loadSpineGirl(t,myCanvas).then(
+        (data)=>{
+            
+            t.spine = data;    
+            // t.spine.skeleton.x = -120 * t.order;
+            // t.control.x = t.spine.skeleton.x;
+            // t.control.y = t.spine.skeleton.y;
+            
+
+            if($('#chara'+num).length){
+                $('#charaSpanTitle'+num).text(num+1+":"+characterName+":");
+                $('#chara'+num+' span input[type="checkbox"]').trigger('change');
+                $('#chara'+num+' span input[type="number"]').trigger('change');
+            }
+            else
+                appendCharaDiv(num,characterName);
+            loadAnimation(num,t.spine.state.data.skeletonData.animations);  
+            t.control.ready = true;
+
+    });
+    //  console.log(t);
+    logClear();
+    
 });
 
-$("#downloadImg").on("click",function () {
-    isScreenShot = true;     
-}); 
 
-$("#downloadGIF").on("click",function(){
-    var w,h;
-    if(viewrectTemp.sizing){
-        createCutImg();
-        w = viewrectData[2];
-        h = viewrectData[3];
+const resizeObserver = new ResizeObserver((entries)=>{
+    for (let entry of entries) {  
+        // //console.log('元素的高度变化:', entry.contentRect.height);  
+        // viewportWidth = window.innerWidth;
+        toggleButton.style.left = (window.innerWidth - toggleButton.offsetWidth)/2+ "px";
+        if(toggleButton.style.top != "0px"){
+            toggleButton.style.top = topBox.offsetHeight  + "px"; 
+        }
+        else{
+            topBox.style.top = "-" + topBox.offsetHeight + "px"; 
+        }
+    }  
+}).observe(topBox);
+
+$("#toggleButton").on("click",function(){
+    if(this.style.top != "0px"){
+        topBox.style.top = "-" + this.style.top; 
+        this.style.top = "0px";   
+        this.textContent = "\u25BC";   
+        $('#results').addClass('hidden');
     }
     else{
-        w = canvas.width;
-        h = canvas.height;
+        this.style.top = topBox.style.top.replace(/^\-/, '');
+        topBox.style.top = "0px";
+        this.textContent = "\u25B2";   
+        $('#results').removeClass('hidden');
     }
-    
-    gif = new GIF({
-        workers: Number($("#gifWorkers").val()),
-        quality: Number($("#gifQuality").val()),
-       // workerScript:"/gif.worker.js",
-        debug: false,
-        width: w,
-        height: h
-    });
-    gifConfig.fpsInit= Number($("#gifFrame").val());    
-    gifConfig.gifDelay= Number($("#gifDelay").val());
-    
-    isDrawing = true;
-    $("#setAnimation").trigger('click');
 });
-$("#settingplay").on("click",function(){
-    $("#setAnimation").trigger('click');
+
+$("#bg-color").on('input', function (event) {
+    let newcolor = event.target.value;
+    newcolor = newcolor.replace('#', '');    
+    // if(newcolor.length != 6)    return;
+    newcolor = parseInt(newcolor,16);
+    myCanvas.bgColor.R = (newcolor >>> 16 & 0xFF) / 255;
+    myCanvas.bgColor.G = (newcolor >>> 8 & 0xFF) / 255;
+    myCanvas.bgColor.B = (newcolor  & 0xFF) / 255;
 });
-$("#advOption").on("change",function(){
-    $("#advOptionBox").toggleClass('hidden');
+
+inputview.on("change",function () {
+    $("#search-box").toggleClass('hidden');
+    $("#star-box").toggleClass('hidden');
+    skeletonList.toggleClass("hidden");
+    $('#results').toggleClass('hidden');
+    if ($(this).prop("checked")){   
+        classList.val(myCanvas.switchClassList.after ? myCanvas.switchClassList.after:'0');
+    }
+    else{
+        classList.val(myCanvas.switchClassList.before? myCanvas.switchClassList.before:'0');
+    }
+})
+
+classList.on("change",function(){
+    if(inputview.prop('checked'))   myCanvas.switchClassList.after = $(this).val();
+    else                            myCanvas.switchClassList.before = $(this).val();
+})
+
+$('#speedList').on('change',function(){
+    let value = parseFloat($('#speedList')[0].value);
+    if(!isNaN(value))  (myCanvas.camera.speed = value);
+})
+
+$('#search-box').on('input',function(){
+    let query = $(this).val(); 
+    if (query.trim() !== '') {  
+        searchClasses(query);  
+    }else {  
+        $('#results').remove();
+    }  
 });
-$("#advImgNameCKBox").on("change",function(){
-    $("#advImgNameInput").prop("disabled",!this.checked);
+
+$('#advImgNameInput').on('input',function(){
+    myCanvas.customName = $(this).val(); 
+ 
 });
-$("#gifWorkers").on("change",function(){
-    $("#name01").text($(this).val());
-});
-$("#gifQuality").on("change",function(){
-    $("#name02").text($(this).val());
-});
-$("#gifFrame").on("change",function(){
-    $("#name03").text($(this).val());
-});
-$("#gifDelay").on("change",function(){
-    $("#name04").text($(this).val());
-});
-$("#classList").on("change",function(){
-    if($('#inputview').is(':checked'))
-        switchClassList.after = $(this).val()
-    else   
-        switchClassList.before = $(this).val()
-    // console.log(switchClassList)
-});
+
 $('#unfold').on('click',function(){
     $(this).toggleClass('hidden');
     $('#animationControlPanel').toggleClass('collapsed');
@@ -175,113 +500,23 @@ $('#unfold').on('click',function(){
     }
 });
 
-$('#inputview').on("change",function(){
-    $("#search-box").toggleClass('hidden');
-    $("#star-box").toggleClass('hidden');
-    $("#skeletonList").toggleClass("hidden");
-    $('#results').toggleClass('hidden');
-    if ($(this).is(":checked")){   
-        $("#classList").val(switchClassList.after ? switchClassList.after:'0')
-    }
-    else{
-         $("#classList").val(switchClassList.before? switchClassList.before:'0')
-    }
+
+$("#viewRange").on("change",function () {
+    const t = myCanvas.camera.viewRectTemp;
+    const f = myCanvas.camera.viewRectData;
+    
+    t.sizing = $(this).prop('checked'); 
+    $("#viewRect").css("visibility",t.sizing ? "visible":"hidden");
+    $("#advWidth").prop("disabled",!t.sizing);
+    $("#advHeight").prop("disabled",!t.sizing);
+    $("#advWidth").val(f[2]);
+    $("#advHeight").val(f[3]);
 });
 
-$('#search-box').on('input',function(){
-    var query = $(this).val(); 
-    if (query.trim() !== '') {  
-        searchClasses(query);  
-    }else {  
-        $('#results').remove();
-    }  
-});
-function get_animationFileName(){
-    if($('#inputview').prop('checked'))
-        FormalName = $("#star-box option:selected").text() + " "+
-                    $('#search-box').val()    +" "+
-                    $("#animationList option:selected").text() ;
-    else
-        FormalName = $("#skeletonList option:selected").text() + " "+
-                    $("#classList option:selected").text()    +" "+
-                    $("#animationList option:selected").text() ;
-}
-
-function searchClasses(query){
-    $.getJSON('classMap.json',function(data){
-        var results = []
-        $('#star-box').empty();
-        $('#results').remove();  
-        for(var key in data){
-            if(data[key].chinese_name.includes(query)){
-                if((data[key].type != 0 && data[key].place != 0)|| data[key].hasSpecialBase)
-                    results.push({id:key,...data[key]})
-            }
-        }
-        if(results.length === 0)    return;
-        
-        var offest = $('#search-box').offset();
-        $('#viewrect').after(`<div class='get' id="results" style='top:${offest.top+20}px;left:${offest.left}px;'></div>`).queue(function(next){
-            results.forEach(function(item) {  
-                $('#results').append(`<div class='show' data-val= ${item.id} data-has6= ${item.hasRarity6}>${item.chinese_name}</div>`);     
-            });
-            $('#results').on('click','.show',function(event){
-                resultDisplay($(event.currentTarget))
-            });
-            next();  
-        })
-    });
-}
-
-function resultDisplay($eve){
-    $('#search-box').val($eve.text());
-    var val = $eve.data('val') | 0;
-    $('#star-box').append(`<option value= ${val + 10}>1★</option>`)
-    $('#star-box').append(`<option value= ${val + 30}>3★</option>`)
-    if($eve.data('has6'))    $('#star-box').append(`<option value= ${val + 60}>6★</option>`)
-    var classList = $("#classList")[0];
-    var val = classMap[val].type;
-    classList.value = val;
-    if (!classList.value) {
-        classList.appendChild(_("option", { value: val }, [_("text", val)]));
-        classList.value = val;  
-    }    
-    $("#classList").trigger("change");
-    $('#results').remove();    
-}
-const resizeObserver = new ResizeObserver((entries)=>{
-    for (let entry of entries) {  
-        // console.log('元素的高度变化:', entry.contentRect.height);  
-        viewportWidth = window.innerWidth;
-        toggleButton.style.left = (viewportWidth - toggleButton.offsetWidth)/2+ "px";
-        if(toggleButton.style.top != "0px"){
-            toggleButton.style.top = topbox.offsetHeight  + "px"; 
-        }
-        else{
-            topbox.style.top = "-" + topbox.offsetHeight + "px"; 
-        }
-        }  
-});
-resizeObserver.observe(topbox);
-
-$("#toggleButton").on("click",function(){
-    if(toggleButton.style.top != "0px"){
-        topbox.style.top = "-" + toggleButton.style.top; 
-        toggleButton.style.top = "0px";   
-        toggleButton.textContent = "V";   
-        $('#results').addClass('hidden')
-    }
-    else{
-        toggleButton.style.top = topbox.style.top.replace(/^\-/, '');
-        topbox.style.top = "0px";
-        toggleButton.textContent = "^";   
-        $('#results').removeClass('hidden')
-    }
-});
 
 // 拖拽事件
-$("#viewrect").on("mousedown touchstart",function(event){
-    if(viewrectTemp.moving) return;
+$("#viewRect").on("mousedown touchstart",function(event){
+    if(myCanvas.camera.viewRectTemp.moving) return;
 
     let offsetX,offsetY,input;
     if(event.type === 'touchstart')
@@ -289,15 +524,15 @@ $("#viewrect").on("mousedown touchstart",function(event){
     else
         input = event;
     
-    offsetX = input.clientX - viewrect.offsetLeft;
-    offsetY = input.clientY - viewrect.offsetTop;
+    offsetX = input.clientX - viewRect.offsetLeft;
+    offsetY = input.clientY - viewRect.offsetTop;
     function handleMouseMove(event) {
         event.preventDefault(); // 阻止页面滚动  
         if(event.type === 'touchmove')
-            $("#viewrect").css({"left":(event.touches[0].clientX - offsetX) +"px",
+            $("#viewRect").css({"left":(event.touches[0].clientX - offsetX) +"px",
                                 "top":(event.touches[0].clientY - offsetY) +"px"});
         else
-            $("#viewrect").css({"left":(event.clientX - offsetX) +"px",
+            $("#viewRect").css({"left":(event.clientX - offsetX) +"px",
                                 "top":(event.clientY - offsetY) +"px"});
     }
     function handleMouseUp() {
@@ -323,33 +558,35 @@ $("#viewrect").on("mousedown touchstart",function(event){
 });
 
 // 缩放事件
-$("#viewrectResize").on("mousedown touchstart",function (event) {
-    viewrectTemp.moving = true;
+$("#viewRectResize").on("mousedown touchstart",function (event) {
+    const viewRectTemp = myCanvas.camera.viewRectTemp;
+    
+    viewRectTemp.moving = true;
     if(event.type === 'touchstart')
-        viewrectData = [event.touches[0].clientX,event.touches[0].clientY,viewrect.offsetWidth,viewrect.offsetHeight];
+        myCanvas.camera.viewRectData = [event.touches[0].clientX,event.touches[0].clientY,viewRect.offsetWidth,viewRect.offsetHeight];
     else 
-        viewrectData = [event.clientX,event.clientY,viewrect.offsetWidth,viewrect.offsetHeight];
+        myCanvas.camera.viewRectData = [event.clientX,event.clientY,viewRect.offsetWidth,viewRect.offsetHeight];
     function handleMouseMove(event){
-        
-        if(!viewrectTemp.moving)    return;
+        const viewRectData = myCanvas.camera.viewRectData;
+        if(!viewRectTemp.moving)    return;
         event.preventDefault(); // 阻止页面滚动  
         let dx,dy;
         if(event.type === 'touchmove'){
-            dx = event.touches[0].clientX - viewrectData[0];
-            dy = event.touches[0].clientY - viewrectData[1];
+            dx = event.touches[0].clientX - viewRectData[0];
+            dy = event.touches[0].clientY - viewRectData[1];
         }
         else{
-            dx = event.clientX - viewrectData[0];
-            dy = event.clientY - viewrectData[1];
+            dx = event.clientX - viewRectData[0];
+            dy = event.clientY - viewRectData[1];
         }
  
-        $("#viewrect").css({"width":(dx +viewrectData[2]) +"px",
-                            "height":(dy +viewrectData[3]) +"px"});
-        $("#advWidth").val(viewrect.offsetWidth);
-        $("#advHeight").val(viewrect.offsetHeight);
+        $("#viewRect").css({"width":(dx + viewRectData[2]) +"px",
+                            "height":(dy + viewRectData[3]) +"px"});
+        $("#advWidth").val(viewRect.offsetWidth);
+        $("#advHeight").val(viewRect.offsetHeight);
     }
     function handleMouseUp() {
-        viewrectTemp.moving = false;
+        viewRectTemp.moving = false;
         viewDataUpdate();
         if(event.type === 'touchstart'){
             document.removeEventListener("touchmove",handleMouseMove);
@@ -407,699 +644,210 @@ $("#animationControlPanel").on("mousedown touchstart",function(event){
     }
 });
 
+$("#advWidth").on('input',function(){
+    $("#viewRect").css("width",$(this).val() +"px");
+});
+$("#advHeight").on('input',function(){
+    $("#viewRect").css("height",$(this).val() +"px");
+});
 
-function _(e, t, n) {
-    var r = null;
-    if ("text" === e) return document.createTextNode(t);
-    r = document.createElement(e);
-    for (var l in t)
-        if ("style" === l) for (var a in t.style) r.style[a] = t.style[a];
-        else if ("className" === l) r.className = t[l];
-        else if ("event" === l) for (var a in t[l]) r.addEventListener(a, t[l][a]);
-        else r.setAttribute(l, t[l]);
-    if (n) for (var s = 0; s < n.length; s++) null != n[s] && r.appendChild(n[s]);
-    return r;
-}
+$("#advOption").on("change",function(){
+    $("#advOptionBox").toggleClass('hidden');
+});
+$("#advImgNameCKBox").on("change",function(){
+    $("#advImgNameInput").prop("disabled",!this.checked);
+});
+$("#gifWorkers").on("change",function(){
+    $("#name01").text($(this).val());
+});
+$("#gifQuality").on("change",function(){
+    $("#name02").text($(this).val());
+});
+$("#gifFrame").on("change",function(){
+    $("#name03").text($(this).val());
+});
+$("#gifDelay").on("change",function(){
+    $("#name04").text($(this).val());
+});
+$("#acp_up").on("click",function () {
+    myCanvas.camera.acp.top += 10;
+}); 
+$("#acp_down").on("click",function () {
+    myCanvas.camera.acp.bottom += 10;
+}); 
+$("#acp_left").on("click",function () {
+    myCanvas.camera.acp.left += 10;
+}); 
+$("#acp_right").on("click",function () {
+    myCanvas.camera.acp.right += 10;
+}); 
+$("#acp_zoomup").on("click",function () {
+    const t = myCanvas.camera.acp;
+    if(t.scale < 19)  t.scale ++;     
+}); 
+$("#acp_zoomdown").on("click",function () { 
+    const t = myCanvas.camera.acp;
+    if(t.scale > -19) t.scale --;
+}); 
+$("#acp_movereset").on("click",function () {
+    const t = myCanvas.camera.acp;
+    t.top = 0;
+    t.left = 0;
+    t.bottom = 0;
+    t.right = 0;
+});
+$("#acp_zoomreset").on("click",function () {
+    const t = myCanvas.camera.acp;
+    t.scale = 0;
+}); 
 
-function getClass(i){
-    return (i < 10 ? "0"+i: i.toString());
-}
-function chagneAddress(i){
-    return (i < 100 ? "common_battle/"+getClass(i) : "special/"+getClass(i));
-}
-function loadData(url, cb, loadType, progress) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    if (loadType) xhr.responseType = loadType;
-    if (progress) xhr.onprogress = progress;
-    xhr.onload = function () {
-        if (xhr.status == 200) {
-            //console.log("Response received:", xhr.response);
-            cb(true, xhr.response);
-        } else {
-            //console.error("Request failed with status:", xhr.status);
-            cb(false);
-        }
-    };
-    xhr.onerror = function () {
-        //console.error("Request encountered an error");
-        cb(false);
-    };
-    xhr.send();
-}
-function sliceCyspAnimation(buf) {
-    var view = new DataView(buf);
-    var count = view.getInt32(12,true);
+$("#downloadImg").on("click",function () {
+    myCanvas.isScreenShot = true;     
+}); 
 
-    return {
-        count:count,
-        data:buf.slice((count+1)*32)
-    };
-}
+$("#viewbackground").on("change",function () {
+    myCanvas.viewBg = $(this).prop('checked');   
+}); 
 
-function createCutImg(){
-    if(cutImg == null){
-        cutImg = document.createElement('canvas');
-        //ctx = cutImg.getContext('2d');
-        ctx = cutImg.getContext('2d',{willReadFrequently: true});
-        cutImg.width = viewrectData[2];
-        cutImg.height = viewrectData[3];
-    }
-    console.log(viewrectData);          
-}
-function imgDownload(item,flag){
-    var link = document.createElement('a');  
-    if(flag) 
-        ctx.drawImage(gl.canvas,...viewrectData,0,0,viewrectData[2],viewrectData[3]);
-    
-    link.href = item.toDataURL('image/png'); 
-    link.download = ( $("#advImgNameCKBox").is(":checked") ? CustomName : FormalName) +'.png';
+$("#downloadGIF").on("click", async function(){
+
+    if(!gifLoaded){
+        logInfo('加载GIF文件...');
+        try{
+            await Promise.all([  
+                import('https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.js'),  
+                import('https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.worker.js')  
+            ]); 
        
-    link.click();    
-    cutImg = null;              
-}
-function viewDataUpdate(){
-    viewrectData = [viewrect.offsetLeft,viewrect.offsetTop,viewrect.offsetWidth,viewrect.offsetHeight];
-    $("#advWidth").val(viewrect.offsetWidth);
-    $("#advHeight").val(viewrect.offsetHeight);
-}
-
-function init() {
-
-    toggleButton = document.getElementById("toggleButton");
-    toggleButton.style.top = topbox.offsetHeight + "px";
-    toggleButton.style.left = (viewportWidth - toggleButton.offsetWidth)/2+ "px";
-
-    canvas = document.getElementById("canvas");
-   
-    var config = { alpha: true };
-    gl = canvas.getContext("webgl", config) || canvas.getContext("experimental-webgl", config);
-    if (!gl) {
-        alert("WebGL is unavailable.");
-        return;
-    }
-
-    shader = spine.webgl.Shader.newTwoColoredTextured(gl);
-    batcher = new spine.webgl.PolygonBatcher(gl);
-    mvp.ortho2d(0, 0, canvas.width - 1, canvas.height - 1);
-    skeletonRenderer = new spine.webgl.SkeletonRenderer(gl);
-    debugRenderer = new spine.webgl.SkeletonDebugRenderer(gl);
-    debugRenderer.drawRegionAttachments = true;
-    debugRenderer.drawBoundingBoxes = true;
-    debugRenderer.drawMeshHull = true;
-    debugRenderer.drawMeshTriangles = true;
-    debugRenderer.drawPaths = true;
-    debugShader = spine.webgl.Shader.newColored(gl);
-    shapes = new spine.webgl.ShapeRenderer(gl);
-
-    loadData(
-        "classMap.json",
-        function (success, json) {
-            if (!success) return alert("加载角色信息失败");
-
-            classMap = json;
-            skeletonList.firstElementChild.remove();
-
-            Object.keys(json).forEach(function (i) {
-                var name = json[i].chinese_name;
-                var noAdded = json[i].type == 0 && !json[i].hasSpecialBase && json[i].place == 0;
-
-                if (i == '190801')
-                    skeletonList.appendChild(_("option", { value: '', disabled: "" }, [_("text", "以下为剧情过场角色")]));
-                if (noAdded) {
-                    skeletonList.appendChild(_("option", { value: i, disabled: "" }, [_("text", name + "(未实装)")]));
-                } else {
-                    skeletonList.appendChild(_("option", { value: i * 1 + 10 }, [_("text", "1★" + name)]));
-                    skeletonList.appendChild(_("option", { value: i * 1 + 30 }, [_("text", "3★" + name)]));
-                    if (json[i].hasRarity6) skeletonList.appendChild(_("option", { value: i * 1 + 60 }, [_("text", "6★" + name)]));
-                }
-            });
-
-            loadingText.textContent = "";
-
-            $(skeletonList).change(function () {
-                var baseUnitId = skeletonList.value | 0;
-                baseUnitId -= (baseUnitId % 100) - 1;
-                var classList = $("#classList")[0];
-                var val = classMap[baseUnitId].type;
-                classList.value = val;
-                if (!classList.value) {
-                    classList.appendChild(_("option", { value: val }, [_("text", val)]));     
-                    classList.value = val;                  
-                }
-                $("#classList").trigger("change");
-            });
-            if (location.hash.slice(1)) {
-                skeletonList.value = location.hash.slice(1);
-                skeletonList.dispatchEvent(new Event("change"));
-                document.getElementById("loadSkeleton").click();
-            }
-        },
-        "json"
-    );
-    document.getElementById("loadSkeleton").addEventListener("click", function () {
-
-        var data = $("#inputview").is(':checked')? $("#star-box").val():skeletonList.value
-        if (!data || !classList.value) return;
-        //判断输入与当前动画id是否相同,如果是,不执行
-        if (activeSkeleton == data && currentClass == classList.value) return;
-        load(data, classList.value);
-        
-    });
-
-
-    // setInterval(function(){
-    //     console.log("fps=",animation_fps);
-    //     animation_fps = 0;
-    // },1000);
-}
-var additionAnimations = ['DEAR', 'NO_WEAPON', 'POSING', 'RACE', 'RUN_JUMP', 'SMILE'];
-
-var loading = false;
-var loadingSkeleton;
-var generalBattleSkeletonData = {};
-var generalAdditionAnimations = {};
-var currentTexture;
-var currentClassAnimData = {
-    type: 0,
-    data: {}
-};
-var currentCharaAnimData = {
-    id: 0,
-    data: {}
-};
-var currentClass = '1';
-var currentSkeletonBuffer;
-
-function getGIF(){
-    console.log("当前动画帧数为",gifConfig.gifPage,",动画时长为"+gifConfig.gifLenth+"秒");
-    isDrawing = false;
-    gifConfig.gifDrawing = true;
-    try{
-        gif.on('finished',function(blob){
-            const link = document.createElement('a');  
-            //const url = URL.createObjectURL(blob);
-            //console.log("url:",url)
-            //link.href = url;
-            link.href = URL.createObjectURL(blob);
-            link.download = ( $("#advImgNameCKBox").is(":checked") ? CustomName : FormalName) +'.gif';  
-            link.click();  
-
-            gif = null; 
-            cutImg = null;
-            gifConfig.gifNext = 0;
-            gifConfig.gifDeparted = 0;
-            gifConfig.gifPage = 0;
-            gifConfig.gifDrawing = false;   
-        });   
-        gif.render();
-    } catch(error) {
-        alert("生成GIF失败,请刷新页面重试!");
-    }    
-}
-//  保存之后再写
-//saveSkeleton.addEventListener('click', function (e) {});
-
-function load(unit_id, class_id) {
-    //saveSkeleton.style.display = "none";
-    //判断是否在加载动画,如果是,不执行
-    if (loading) return;
-    loading = true;
-    if ((activeSkeleton == unit_id) && (currentClass == $("#classList").val())) return;
-    currentClass = class_id;
-    var baseUnitId = unit_id | 0;
-    baseUnitId -= (baseUnitId % 100) - 1;
-    loadingSkeleton = { id: unit_id | 0, info: classMap[baseUnitId], baseId: "000000" };
-    if (progressBar) progressBar.remove();
-    progressBar = document.body.appendChild(_("div", { className: "img-progress", style: { width: "5px", opacity: 1} }));
-    topbox.insertBefore(progressBar,firstElementChild);
-    progressBar.style.width = "0";
-
-    if (loadingSkeleton.info.hasSpecialBase) {
-        loadingSkeleton.baseId = baseUnitId;
-        currentClass = baseUnitId;
-    }
-    var baseId = loadingSkeleton.baseId;
-
-    if (!generalBattleSkeletonData[baseId]) {
-        (loadingText.textContent = "加载骨骼(1/6)"),
-            loadData(
-                localURL + "special/" + baseId + "_CHARA_BASE.cysp",
-                function (success, data) {
-                    if (!success || data === null) return loading = false, loadingText.textContent = '加载共用骨架失败', progressBar.width = '100%', progressBar.opacity = 0;
-                    generalBattleSkeletonData[baseId] = data;
-                    loadAdditionAnimation();
-                },
-                "arraybuffer"
-            );
-    } else 
-    loadAdditionAnimation();
-}
-function loadAdditionAnimation() {
-    progressBar.style.width = '10%';
-    var doneCount = 0,abort = false;
-    var baseId = loadingSkeleton.baseId;
-    generalAdditionAnimations[baseId] = generalAdditionAnimations[baseId] || {};
-    additionAnimations.forEach(function(i){
-        if(generalAdditionAnimations[baseId][i])    return doneCount ++;  
-        
-        loadData(localURL+ "special/" +baseId+'_'+i+'.cysp',function(success,data){
-            if (!success || data === null) return loading = false, loadingText.textContent = '加载共用骨架失败', progressBar.width = '100%', progressBar.opacity = 0;
-            if(abort)   return;
-            generalAdditionAnimations[baseId][i] = sliceCyspAnimation(data);   
-            if(++doneCount == additionAnimations.length){
-                //console.log("进了这里");
-                return loadClassAnimation();   
-            } 
-            loadingText.textContent = '加载额外动画(2/6)[' + doneCount + '/6]';
-            progressBar.style.width = (10 + 15 * doneCount /6)+'%';
-        },'arraybuffer');
-    });
-    //if(doneCount == additionAnimations.length) return loadClassAnimation();
-    if(additionAnimations.length) return loadClassAnimation();
-    loadingText.textContent = '加载额外动画(2/6)[' + doneCount + '/6]';
-}
-
-function loadClassAnimation(){
-    progressBar.style.width = '25%';
-    //console.log("加载了一次");
-    if (currentClassAnimData.type == currentClass)  loadCharaSkillAnimation();    
-    else{
-        loadingText.textContent = '加载职介动画(3/6)';
-        loadData(localURL  + chagneAddress(currentClass) + '_COMMON_BATTLE.cysp',function(success,data){
-            if (!success || data === null)  return loading = false, loadingText.textContent = '加载角职介动画失败', progressBar.width = '100%', progressBar.opacity = 0;
-            currentClassAnimData = {
-                type: currentClass,
-                data: sliceCyspAnimation(data)
-            }
-            loadCharaSkillAnimation();
-        },'arraybuffer');
-    }
-        
-
-}
-function loadCharaSkillAnimation(){
-    progressBar.style.width = '40%';
-    var baseUnitId = loadingSkeleton.id;
-    baseUnitId -= baseUnitId%100 - 1;
-    if(currentCharaAnimData.id == baseUnitId)   loadTexture();
-    else{
-        loadingText.textContent = '加载角色技能动画(4/6)';
-        loadData(localURL + "battle/" + baseUnitId + '_BATTLE.cysp',function(success,data){
-            if (!success || data === null)
-                return loading = false, loadingText.textContent = '加载角色技能动画失败', progressBar.width = '100%', progressBar.opacity = 0; 
-            currentCharaAnimData = {
-                id: baseUnitId,
-                data: sliceCyspAnimation(data)
-            }
-            loadTexture();
-        },'arraybuffer');
-    }   
-};
-function loadTexture(){
-    progressBar.style.width = '60%';
-    loadingText.textContent = '加载材质(5/6)';
-    loadData(localURL+ "atlas/" + loadingSkeleton.id + '.atlas',function(success,atlasText){
-        if (!success) return loading = false, loadingText.textContent = '加载材质失败', progressBar.width = '100%', progressBar.opacity = 0; 
-        progressBar.style.width = '80%';
-        loadingText.textContent = '加载材质图片(6/6)';
-        loadData(localURL + "texture2D/" + loadingSkeleton.id + '.png',function(success,blob){
-            if (!success) return loading = false, loadingText.textContent = '加载材质图片失败'; 
-            var img = new Image();
-            img.onload = function(){
-                progressBar.style.width = '100%';
-                progressBar.style.opacity = 0;
-                var created = !!window.skeleton.skeleton;
-                if(created){
-                    window.skeleton.state.clearTracks();
-                    window.skeleton.state.clearListeners();
-                    gl.deleteTexture(currentTexture.texture);
-                }
-
-                var imgTexture = new spine.webgl.GLTexture(gl,img);
-                URL.revokeObjectURL(img.src);
-                var atlas = new spine.TextureAtlas(atlasText, function(path){
-                    return imgTexture;
-                });
-                currentTexture = imgTexture;
-                var atlasLoader = new spine.AtlasAttachmentLoader(atlas);
-    
-                var baseId = loadingSkeleton.baseId;
-                var additionAnimations = Object.values(generalAdditionAnimations[baseId]);
-
-                var animationCount = 0;
-                var classAnimCount = currentClassAnimData.data.count;
-                animationCount += classAnimCount;
-                var unitAnimCount = currentCharaAnimData.data.count;
-                animationCount += unitAnimCount;
-                additionAnimations.forEach(function (i) {
-                    animationCount += i.count;
-                })
-                //assume always no more than 128 animations
-                var newBuffSize = generalBattleSkeletonData[baseId].byteLength - 64 + 1 +
-                        currentClassAnimData.data.data.byteLength +
-                        currentCharaAnimData.data.data.byteLength;
-                additionAnimations.forEach(function (i) {
-                    newBuffSize += i.data.byteLength;
-                })
-                var newBuff = new Uint8Array(newBuffSize);
-                var offset = 0;
-                newBuff.set(new Uint8Array(generalBattleSkeletonData[baseId].slice(64)), 0);
-                offset += generalBattleSkeletonData[baseId].byteLength - 64;
-                newBuff[offset] = animationCount;
-                offset++;
-                newBuff.set(new Uint8Array(currentClassAnimData.data.data), offset);
-                offset += currentClassAnimData.data.data.byteLength;
-                newBuff.set(new Uint8Array(currentCharaAnimData.data.data), offset);
-                offset += currentCharaAnimData.data.data.byteLength;
-                additionAnimations.forEach(function (i) {
-                    newBuff.set(new Uint8Array(i.data), offset);
-                    offset += i.data.byteLength;
-                })
-
-                var skeletonBinary = new spine.SkeletonBinary(atlasLoader);
-                var skeletonData = skeletonBinary.readSkeletonData(newBuff.buffer);
-                var skeleton = new spine.Skeleton(skeletonData);
-                skeleton.setSkinByName('default');
-                var bounds = calculateBounds(skeleton);
-
-                var animationStateData = new spine.AnimationStateData(skeleton.data);
-                var animationState = new spine.AnimationState(animationStateData);
-                animationState.setAnimation(0, getClass(currentClass) + '_idle', true);
-                animationState.addListener({
-                    /*start: function (track) {
-                        console.log("Animation on track " + track.trackIndex + " started");
-                    },
-                    interrupt: function (track) {
-                        console.log("Animation on track " + track.trackIndex + " interrupted");
-                    },
-                    end: function (track) {
-                        console.log("Animation on track " + track.trackIndex + " ended");
-                    },
-                    disposed: function (track) {
-                        console.log("Animation on track " + track.trackIndex + " disposed");
-                    },*/
-                    complete: function tick(track) {
-                        //console.log("Animation on track " + track.trackIndex + " completed");
-                        if (animationQueue.length) {
-                            var nextAnim = animationQueue.shift();
-                            if (nextAnim == 'stop') {
-                                if(isDrawing){
-                                    getGIF(); 
-                                }
-                                return;
-                            }
-
-                                
-                            if (nextAnim == 'hold') return setTimeout(tick, 1e3);
-                            if (nextAnim.substr(0, 1) != '1') nextAnim = getClass(currentClassAnimData.type) + '_' + nextAnim;
-                            console.log(nextAnim);
-                            if((!animationQueue.length) && (looptmp))
-                            {
-                                animationQueue = $("#animationList")[0].value.split(',');
-                                  
-                                nextAnim = animationQueue.shift();
-                                if (!/^\d{6}/.test(nextAnim)) nextAnim = getClass(currentClassAnimData.type) + '_' + nextAnim;
-                                
-                            }
-                            animationState.setAnimation(0, nextAnim, !animationQueue.length);
-                            //console.log(window.skeleton.state.tracks[0].animationEnd);
-                        }
-                    },
-                    /*event: function (track, event) {
-                        console.log("Event on track " + track.trackIndex + ": " + JSON.stringify(event));
-                    }*/
-                });
-                window.skeleton = { skeleton: skeleton, state: animationState, bounds: bounds, premultipliedAlpha: true }
-                loading = false;
-                loadingText.textContent = '';
-                (window.updateUI || setupUI)();
-                if (!created) {
-                    canvas.style.width = '99%';
-                    requestAnimationFrame(render);
-                    FormalName = $("#skeletonList option:selected").text() + " "+
-                                $("#classList option:selected").text()    +" "+
-                                $("#animationList option:selected").text() ;
-                    setTimeout(function () {
-                        canvas.style.width = '';
-                    }, 0)
-                }
-                activeSkeleton = loadingSkeleton.id;
-
-                currentSkeletonBuffer = newBuff.buffer;
-                if (navigator.platform == 'Win32') {
-                    //saveSkeleton.style.display = '';
-                }
-            }
-            img.src = URL.createObjectURL(blob);
-            $(".setting").css("visibility","visible");
-            get_animationFileName();
-        },'blob',function(e){//由返回函数控制最后的进度条
-            var perc = e.loaded / e.total * 20 + 80;
-            progressBar.style.width = perc + '%';   
-        });
-    },'text');
-}
-
-function calculateBounds(skeleton) {
-    skeleton.setToSetupPose();
-    skeleton.updateWorldTransform();
-    var offset = new spine.Vector2();
-    var size = new spine.Vector2();
-    skeleton.getBounds(offset, size, []);
-    offset.y = 0
-    return { offset: offset, size: size };
-}
-
-function setupUI() {
-    var skeletonList = $("#skeletonList");
-    var setupAnimationUI = function () {
-        var animationList = $("#animationList");
-        animationList.empty();
-        var skeleton = window.skeleton.skeleton;
-        var state = window.skeleton.state;
-        var activeAnimation = state.tracks[0].animation.name;
-        [
-            ['闲置', 'idle'],
-            ['准备', 'standBy'],
-            ['走', 'walk'],
-            ['跑', 'run'],
-            ['跑（入场）', 'run_gamestart'],
-            ['落地', 'landing'],
-            ['攻击', 'attack'],
-            ['攻击（扫荡）', 'attack_skipQuest'],
-            ['庆祝-短', 'joy_short,hold,joy_short_return'],
-            ['庆祝-长', 'joy_long,hold,joy_long_return'],
-            ['受伤', 'damage'],
-            ['死亡', 'die,stop'],
-            ['合作-准备', 'multi_standBy'],
-            ['合作-闲置', 'multi_idle_standBy'],
-            ['合作-闲置（无武器）', 'multi_idle_noWeapon']
-        ].forEach(function (i) {
-            animationList[0].appendChild(_('option', { value: i[1] }, [_('text', i[0])]));
-        });
-        animationList[0].appendChild(_('option', { disabled: '' }, [_('text', '---')]));
-        skeleton.data.animations.forEach(function (i) {
-            i = i.name;
-            if (!/^\d{6}_/.test(i)) return;
-            var val = i;
-            if (!/skill/.test(i)) val = i + ',stop';
-            animationList[0].appendChild(_('option', { value: val }, [
-                _('text', i.replace(/\d{6}_skill(.+)/, '技能$1').replace(/\d{6}_joyResult/, '庆祝-角色特有'))
-            ]));
-        })
-    }
-    $("#setAnimation").on("click",function () {
-        var animationState = skeleton.state, forceNoLoop = false;
-        animationQueue = $("#animationList")[0].value.split(',');
-        //looptmp = (animationQueue[0] == 'landing') ? 1 : 0;
-        
-        if (animationQueue[0] == 'multi_standBy') {
-            animationQueue.push('multi_idle_standBy');
-        } 
-        
-        else if ([
-            'multi_idle_standBy', 'multi_idle_noWeapon', 'idle', 'walk', 'run', 'run_gamestart'
-        ].indexOf(animationQueue[0]) == -1) {
-            animationQueue.push('idle');     
+            gifLoaded = true;
+            logClear();
         }
-        console.log(animationQueue);
-        var nextAnim = animationQueue.shift();
-        if (!/^\d{6}/.test(nextAnim)) nextAnim = getClass(currentClassAnimData.type) + '_' + nextAnim;
+        catch(error){
+            logInfo('加载失败,刷新试试?','error');
+            logClear();
+            return;
+        }
         
-        console.log(nextAnim,forceNoLoop);
-        animationState.setAnimation(0, nextAnim, !animationQueue.length && !forceNoLoop);
-        
-        gifConfig.gifLenth = animationState.tracks[0].animationEnd.toFixed(3);
-        console.log("当前动作时长为"+gifConfig.gifLenth+"秒");
-
-        get_animationFileName();
-        
+    }
+    if('control' in spineGirl[num] && spineGirl[num].control.ready === true){
+        let w,h;
+        createPngCanvas(myCanvas.camera);
+        if(myCanvas.camera.viewRectTemp.sizing){
             
+            w = myCanvas.camera.viewRectData[2];
+            h = myCanvas.camera.viewRectData[3];
+        }
+        else{
+            w = myCanvas.canvas.width;
+            h = myCanvas.canvas.height;
+            spineRole_canvas.width = w;
+            spineRole_canvas.height = h;
+        }
+        myCanvas.gif = new GIF({
+            workers: Number($("#gifWorkers").val()),
+            quality: Number($("#gifQuality").val()),
+        // workerScript:"/gif.worker.js",
+            debug: false,
+            width: w,
+            height: h
+        })
+        myCanvas.gifConfig.fpsInit= Number($("#gifFrame").val());    
+        myCanvas.gifConfig.gifDelay= Number($("#gifDelay").val());
+        myCanvas.isDrawing = true;
+        $("#charaButton"+num).trigger('click');
+    }
+});
+
+$("#settingPlay").on("click", async function(){
+    if('control' in spineGirl[num] && spineGirl[num].control.ready)
+        $("#charaButton"+num).trigger('click');
+})
+
+$("#charaSub").on("click",function(){
+    const len = charaList.find('option').length;
+    
+    charaList.prop('selectedIndex',((num === 0 ? len  : num) - 1)%len);
+    charaList.trigger('change');
+})
+
+$("#charaAdd").on("click",function(){
+    const len = charaList.find('option').length;
+    
+    charaList.prop('selectedIndex',(num+1)%len);
+    charaList.trigger('change');
+})
+
+$("#canvasOpacity").on("change",function(){
+    let opacity = $(this).val();
+    if(opacity>100) opacity = 100;
+    if(opacity<0) opacity = 0;
+
+    myCanvas.bgColor.A = (100-opacity)/100;
+    console.log(myCanvas.bgColor);
+    
+})
+
+$('#bgMode input[name="gender"]').on("change",function(){
+    $('#myImg').css("object-fit",$(this).val());
+})  
+
+$("#fileInput").on("change",function(event){
+    const fileInput = document.getElementById('fileInput');  
+    const myImg = document.getElementById('myImg');  
+    let files = event.target.files;
+    if (files.length){
+        const reader = new FileReader();
+        reader.onload = function(e) {  
+            myImg.src = e.target.result;  
+            myCanvas.hasBgImg = true;
+        } 
+        reader.readAsDataURL(files[0]);   
+    }
+})
+
+$("#upLoadImg").on("click",function(){
+    $("#fileInput").trigger('click');
+})
+
+function init(){
+    
+    toggleButton.style.top = topBox.offsetHeight + "px";
+    toggleButton.style.left = (window.innerWidth - toggleButton.offsetWidth)/2+ "px";
+
+
+    myCanvas = canvasInit('canvas');
+    // console.log(myCanvas);
+    
+    lastFrameTime = Date.now() / 1000;
+    requestAnimationFrame(()=>{
+        render(myCanvas);
     });
-
-    window.updateUI = function () {
-        setupAnimationUI();
-    };
-    setupAnimationUI();
-    $("#bg-color").on('input', function (event) {
-        var newcolor = event.target.value;
-        newcolor = newcolor.replace('#', '');    
-        //console.log(newcolor);
-        if(newcolor.length != 6)    return;
-        newcolor = parseInt(newcolor,16);
-        bgColor = [
-            (newcolor >>> 16 & 0xFF) / 255,
-            (newcolor >>> 8 & 0xFF) / 255,
-            (newcolor & 0xFF) / 255
-        ];
-        //console.log(bgColor);
-    });
-}
-
-function render() {
-    var now = Date.now() / 1000;
-    var delta = now - lastFrameTime;
-   
-    //console.log(delta);
-    lastFrameTime = now;
-    delta *= speedFactor;
-    // Update the MVP matrix to adjust for canvas size changes
-    resize();
-    var viewbg = $("#viewbackground").is(':checked');
-    if((isScreenShot || isDrawing) && viewbg)
-        gl.clearColor(0,0,0,0);
-    else
-        gl.clearColor(bgColor[0], bgColor[1], bgColor[2], 1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    // Apply the animation state based on the delta time.
-    var state = window.skeleton.state;
-    var skeleton = window.skeleton.skeleton;
-    //var bounds = window.skeleton.bounds;
-    var premultipliedAlpha = window.skeleton.premultipliedAlpha;
-    state.update(delta);
-    state.apply(skeleton);
-    skeleton.updateWorldTransform();
-
-    {
-        var progressCtx = $('#animation-progress')[0].getContext('2d');
-        var track = state.tracks[0];
-        var width = 400 * ((track.animationLast - track.animationStart) / (track.animationEnd - track.animationStart));
-        progressCtx.clearRect(0, 0, 400, 4);
-        progressCtx.fillStyle = '#40b5ff';
-        progressCtx.fillRect(0, 0, width, 4);
-        //console.log(width)
-
-        if(isDrawing) {
-            if(width < 0)   {
-                gifConfig.fpsCount ++;
-                //gifConfig.gifLenth = track.animationEnd.toFixed(3);
-            }
-                
+    loadFile('','classMap.json','json').then((json)=>{
+        classMap = json;   
+        skeletonList.children().first().remove();
+        Object.keys(json).forEach((i)=>{
+            let name = json[i].chinese_name;
+            let noAdded = json[i].type == 0 && !json[i].hasSpecialBase && json[i].place == 0;
+            if(i=='190801') 
+                skeletonList.append(createTag('option',{value: '',disabled:''},createTag('text','以下为剧情过场角色')));
+            if(noAdded)
+                skeletonList.append(createTag('option',{value: '',disabled:''},createTag('text',name +'(未实装)')));
             else{
-                gifConfig.gifStep += delta;
-                gifConfig.gifDeparted =  gifConfig.gifNext;
-                gifConfig.gifNext = width;   
-                if(gifConfig.gifDeparted > gifConfig.gifNext){
-                    getGIF();       
-                }
-            }       
-        }
-    }
-
-    // Bind the shader and set the texture and model-view-projection matrix.
-    shader.bind();
-    shader.setUniformi(spine.webgl.Shader.SAMPLER, 0);
-    shader.setUniform4x4f(spine.webgl.Shader.MVP_MATRIX, mvp.values);
-
-    // Start the batch and tell the SkeletonRenderer to render the active skeleton.
-    batcher.begin(shader);
-
-    skeletonRenderer.premultipliedAlpha = premultipliedAlpha;
-    skeletonRenderer.draw(batcher, skeleton);
-    
- 
-    batcher.end();
-
-    shader.unbind();
-
-    // draw debug information
-    var debug = $('#debug').is(':checked');
-    if (debug) {
-        debugShader.bind();
-        debugShader.setUniform4x4f(spine.webgl.Shader.MVP_MATRIX, mvp.values);
-        debugRenderer.premultipliedAlpha = premultipliedAlpha;
-        shapes.begin(debugShader);
-        debugRenderer.draw(shapes, skeleton);
-        shapes.end();
-        debugShader.unbind();
-    }
-
-    requestAnimationFrame(render);
-    if(isScreenShot)
-    {
-        if(viewrectTemp.sizing){
-            createCutImg(); 
-            ctx.clearRect(0, 0, cutImg.width, cutImg.height);        
-            imgDownload(cutImg,viewrectTemp.sizing);     
-        }
-        else  
-            imgDownload(canvas,viewrectTemp.sizing);       
-        
-        isScreenShot = false;
-    }
-    if(isDrawing)
-    {
-        if(--gifConfig.fpsCount == 0)
-        {  
-            const delay =  gifConfig.gifDelay+ Math.floor(gifConfig.gifStep * 1e3) ;
-            //console.log("帧时间:",delay,gifConfig.gifDelay);
-            gifConfig.gifStep = 0;
-            gifConfig.fpsCount = gifConfig.fpsInit;
-            gifConfig.gifPage ++;
-            if(viewrectTemp.sizing){
-                if(viewbg){
-                    ctx.clearRect(0, 0, cutImg.width, cutImg.height);
-                    //ctx.fillStyle = 'rgba(0, 0, 0, 0)';
-                    //ctx.fillRect(0, 0, cutImg.width, cutImg.height);   
-                }
-                    
-                ctx.drawImage(gl.canvas, ...viewrectData,0,0,cutImg.width, cutImg.height);        
-                gif.addFrame(ctx, { copy: true, delay: delay});
+                skeletonList.append(createTag('option',{value: i*1+ 10},createTag('text','1★'+name )));
+                skeletonList.append(createTag('option',{value: i*1+ 30},createTag('text','3★'+name )));
+                if(json[i].hasRarity6)
+                    skeletonList.append(createTag('option',{value: i*1+ 60},createTag('text','6★'+name )));
             }
-            else   
-                gif.addFrame(gl,{copy: true,delay: delay});
-        }    
-    } 
-    //animation_fps ++;
+        })
+        for(let i=1;i<=6;i++)
+            charaList.append(createTag('option',{value: i },createTag('text',i)));
+        loadSkeleton.prop('disabled',false);
+
+    }).catch(()=>{
+        logErrorInfo('classMap.json');
+    })
 }
 
-function resize() {
-    var w = viewportWidth;
-    var h = viewportHeight-footHeight-2;
-    var bounds = window.skeleton.bounds;
-    if (canvas.width != w || canvas.height != h) {
-        canvas.width = w;
-        canvas.height = h;
-    }
-
-    // magic
-    var centerX = bounds.offset.x + bounds.size.x / 2;
-    var centerY = bounds.offset.y + bounds.size.y / 2;
-    //var scaleX = bounds.size.x / canvas.width;
-    //var scaleY = bounds.size.y / canvas.height;
-    // var scale = Math.max(scaleX, scaleY) * 1.2;
-    //if (scale < 1) scale = 1;
-    var scale = 2 + acp[4]*0.05;
-    var width = canvas.width * scale;
-    var height = canvas.height * scale;
-    //console.log("w",width,"h",height,"w1",(centerX - width / 2),"h1",(centerY - height / 2));    
-    mvp.ortho2d((centerX - width / 2)+acp[2]-acp[3] , (centerY - height / 2)+acp[1]-acp[0], width , height);
-    //console.log("w:",(centerX - (width / 2)),"h:",(centerY - (height / 2)));
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    
-}
-(function () {
+window.onload = function(){
     init();
-})();
+}
