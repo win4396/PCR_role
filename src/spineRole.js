@@ -132,11 +132,101 @@ function createPngCanvas(camera){
     if(spineRole_canvas == null){
         spineRole_canvas = document.createElement('canvas');
         spineRole_ctx = spineRole_canvas.getContext('2d',{willReadFrequently: true});
+        spineRole_ctx.globalAlpha = 0;
         spineRole_canvas.width = camera.viewRectData[2];
         spineRole_canvas.height = camera.viewRectData[3];
     }        
 }
+function objectFit(t,a,m,w,h,x,y,k){
 
+    let p = Array(8).fill(0);
+    let scaleA = Array(2).fill(1);
+    let scaleB = Array(2).fill(1);
+    const x1 = Math.abs((w - x)/2);
+    const y1 = Math.abs((h - y)/2);
+    const wh = w/h;
+    const xy = x/y;
+
+    if(t === 'none'){
+        if(w - x > 0){
+            p[0] = x1;
+            p[2] = p[6] = x;
+        }
+        else{
+            p[4] = x1;
+            p[2] = p[6] = w;
+        }
+        if(h - y > 0){
+            p[1] = y1;
+            p[3] = p[7] = y;
+        }
+       else{
+            p[5] = y1;
+            p[3] = p[7] = h;
+        }
+
+    }
+    else if(t === 'contain'){
+        let b;
+        if(wh > xy){        
+            scaleA = [x/w,x/w];
+            scaleB = [w/x,w/x];
+            
+            b = (y*scaleB[0]-h)/2;
+            p[5] = Number((b*scaleA[0]).toFixed(0));   
+        }
+        else{
+            scaleA = [y/h,y/h];
+            scaleB = [h/y,h/y];
+
+            b = (x*scaleB[0]-w)/2;
+            p[4] = Number(b.toFixed(0));  
+            
+        }
+
+        p[2] = p[6] = w;
+        p[3] = p[7] = h;    
+        
+    }
+    else if(t === 'cover'){
+        let b;
+        if(wh > xy){
+            scaleA = [y/h,y/h];
+            scaleB = [h/y,h/y];
+            b = (w - scaleB[0]*x)/2;
+            p[0] = b;
+        }
+        else{
+            scaleA = [x/w,x/w];
+            scaleB = [w/x,w/x];
+            b = (h - scaleB[0]*y)/2;
+            p[1] = b;
+        }
+        p[2] = p[6] = scaleA[0]*x;
+        p[3] = p[7] = scaleA[0]*y;
+        
+    }
+    else
+        return;
+    if(k){
+        const  canvas = document.createElement('canvas');
+        const  ctx = canvas.getContext('2d',{willReadFrequently: true});
+        ctx.globalAlpha = 0;
+        canvas.width = x;
+        canvas.height = y;
+        if(t === 'contain' || t === 'cover')    ctx.scale(...scaleA);
+        ctx.drawImage(m,...p);
+        if(t === 'contain' || t === 'cover')    ctx.scale(...scaleB);
+        a.putImageData(ctx.getImageData(...k),0,0);
+    }
+    else{
+        if(t === 'contain' || t === 'cover')    a.scale(...scaleA);
+        a.drawImage(m,...p);
+        if(t === 'contain' || t === 'cover')    a.scale(...scaleB);
+    }
+    
+        
+}
 
 function imgDownload(e,f,b){
     const link = document.createElement('a');  
@@ -144,13 +234,24 @@ function imgDownload(e,f,b){
     if(!f){
         spineRole_canvas.width = e.canvas.width;
         spineRole_canvas.height = e.canvas.height;
-        if(e.hasBgImg && !e.viewBg)
-            spineRole_ctx.drawImage($("#myImg")[0],0,0,e.canvas.width,e.canvas.height,0,0,e.canvas.width,e.canvas.height);
+        if(e.hasBgImg && !e.viewBg){
+            const i = document.getElementById("myImg");
+            const iWidth = i.naturalWidth;
+            const iHeight = i.naturalHeight;
+            objectFit(e.bgMode,spineRole_ctx,$("#myImg")[0],iWidth,iHeight,e.canvas.width,e.canvas.height);
+            // spineRole_ctx.drawImage($("#myImg")[0],...objectFit(e.bgMode,iWidth,iHeight,e.canvas.width,e.canvas.height));
+        }
+            
         spineRole_ctx.drawImage(e.gl.canvas,0,0,e.canvas.width,e.canvas.height,0,0,e.canvas.width,e.canvas.height);   
     }
     else{
-        if(e.hasBgImg && !e.viewBg)
-            spineRole_ctx.drawImage($("#myImg")[0],...b,0,0,b[2],b[3]);
+        if(e.hasBgImg && !e.viewBg){
+            const i = document.getElementById("myImg");
+            const iWidth = i.naturalWidth;
+            const iHeight = i.naturalHeight;
+            objectFit(e.bgMode,spineRole_ctx,$("#myImg")[0],iWidth,iHeight,e.canvas.width,e.canvas.height,b);
+        }
+            // spineRole_ctx.drawImage($("#myImg")[0],...b,0,0,b[2],b[3]);
         spineRole_ctx.drawImage(e.gl.canvas,...b,0,0,b[2],b[3]);   
     }
          
@@ -227,7 +328,7 @@ function render(canvas){
     if(canvas.viewBg && (canvas.isScreenShot || canvas.isDrawing))
         gl.clearColor(0,0,0,0);
     else
-    gl.clearColor(bgColor.R,bgColor.G,bgColor.B,bgColor.A);
+    gl.clearColor(bgColor.R*bgColor.A,bgColor.G*bgColor.A,bgColor.B*bgColor.A,bgColor.A);
     gl.clear(gl.COLOR_BUFFER_BIT);
     if(!camera.pause){
         spineGirl.forEach((i)=>{
@@ -301,15 +402,23 @@ function render(canvas){
            
             if(camera.viewRectTemp.sizing){
                 spineRole_ctx.clearRect(0,0,camera.viewRectData[2],camera.viewRectData[3]); 
-                if(canvas.hasBgImg)
-                    spineRole_ctx.drawImage($("#myImg")[0], ...camera.viewRectData,0,0,camera.viewRectData[2],camera.viewRectData[3]);  
+                if(canvas.hasBgImg){
+                    const i = document.getElementById("myImg");
+                    const iWidth = i.naturalWidth;
+                    const iHeight = i.naturalHeight;
+                    objectFit(canvas.bgMode,spineRole_ctx,$("#myImg")[0],iWidth,iHeight,canvas.canvas.width,canvas.canvas.height,camera.viewRectData);
+                } 
                 spineRole_ctx.drawImage(gl.canvas, ...camera.viewRectData,0,0,camera.viewRectData[2],camera.viewRectData[3]);
 
             }
             else{
                 spineRole_ctx.clearRect(0,0,canvas.canvas.width,canvas.canvas.height); 
-                if(canvas.hasBgImg)
-                    spineRole_ctx.drawImage($("#myImg")[0],0,0,canvas.canvas.width,canvas.canvas.height,0,0,canvas.canvas.width,canvas.canvas.height);
+                if(canvas.hasBgImg){
+                    const i = document.getElementById("myImg");
+                    const iWidth = i.naturalWidth;
+                    const iHeight = i.naturalHeight;
+                    objectFit(canvas.bgMode,spineRole_ctx,$("#myImg")[0],iWidth,iHeight,canvas.canvas.width,canvas.canvas.height);
+                } 
                 spineRole_ctx.drawImage(gl.canvas,0,0,canvas.canvas.width,canvas.canvas.height,0,0,canvas.canvas.width,canvas.canvas.height);
             }  
                      

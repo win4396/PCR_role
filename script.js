@@ -816,6 +816,7 @@ $("#canvasOpacity").on("change",function(){
 
 $('#bgMode input[name="gender"]').on("change",function(){
     $('#myImg').css("object-fit",$(this).val());
+    myCanvas.bgMode = $(this).val();
 })  
 
 $("#fileInput").on("change",function(event){

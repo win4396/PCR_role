@@ -13,11 +13,11 @@
     <script src="./src/spine-webgl.min.js"></script>
     <script src="./src/htmlAnimation.js"></script>
     <script src="./src/fileToDownload.js"></script>
-	<script src="./src/canvasManager.js"></script>
-	<script src="./src/spineRole.js"></script>
+	<script src="./src/canvasManager.js?ver=1.0.1"></script>
+	<script src="./src/spineRole.js?ver=1.0.1"></script>
 	
     
-    <script type="module" src="script.js?ver=2.0.1" defer></script>
+    <script type="module" src="script.js?ver=2.0.2" defer></script>
     
 </head>
 <body> 
@@ -79,9 +79,9 @@
         </span> -->
         <span class="head-style">
             <span>背景色:</span>
-            <input type="color" id="bg-color" value="#000000" autocomplete="off">
+            <input type="color" id="bg-color" value="#7f7f7f" autocomplete="off">
             <span>纯色透明度</span>
-            <input type="number" class="inputNumber" id = "canvasOpacity" value = "50" max = "100" step = "1" >
+            <input type="number" class="inputNumber" id = "canvasOpacity" value = "20" max = "100" step = "1" >
             <input type="file" id="fileInput" accept="image/*" style="display: none;"> 
         </span>  
         <div id="charaDiv"></div>
@@ -117,8 +117,8 @@
             <input type="button" class="button1 item16"     id= "upLoadImg"      value="选择背景图" >
             <div id = "bgMode" class="item17">
                 <input type="radio" name="gender" value="none" checked> 无<br>
-                <input type="radio" name="gender" value="contain"> 限宽<br>
-                <input type="radio" name="gender" value="cover"> 限高<br>
+                <input type="radio" name="gender" value="contain"> 缩放<br>
+                <input type="radio" name="gender" value="cover"> 填充<br>
             </div>
             <!-- <a>透明背景生成GIF会有白点,介意者慎用</a> -->
         </div>
@@ -139,19 +139,19 @@
                 <!-- <p style="margin: 0;font-size: small;">GIF参数</p> -->
                 <span title = '不要太大'>
                     <label for ="gifWorkers" >workers:</label>
-                    <p class = "dataNum" id = "name01">2</p>   
+                    <p class = "dataNum" id = "name01">4</p>   
                 </span> 
-                <input type="range" id="gifWorkers" value = "2" max = "12" min = "1" step="1">
+                <input type="range" id="gifWorkers" value = "4" max = "16" min = "1" step="1">
                 <span  title = '越小图片质量越好,但生成速度会慢'>
                     <label for ="gifQuality" >quality:</label>
-                    <p class = "dataNum" id = "name02">5</p>   
+                    <p class = "dataNum" id = "name02">2</p>   
                 </span> 
-                <input type="range" id="gifQuality" value = "5" max = "20" min = "1" step="1">
+                <input type="range" id="gifQuality" value = "2" max = "20" min = "1" step="1">
                 <span title = '越小文件越大'>
                     <label for ="gifFrame" >取帧间隔:</label> 
-                    <p class = "dataNum" id = "name03">4</p>   
+                    <p class = "dataNum" id = "name03">2</p>   
                 </span>
-                <input type="range" id="gifFrame" value = "4" max = "10" min = "1" step="1">
+                <input type="range" id="gifFrame" value = "2" max = "10" min = "1" step="1">
                 <span title = '慢动作'>
                     <label for ="gifDelay" >帧延时:</label> 
                     <p class = "dataNum" id = "name04">0</p>     

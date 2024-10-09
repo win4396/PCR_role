@@ -80,11 +80,12 @@ function canvasInit(canvasId){
             pause: false,
         },
         bgColor :{
-            R:0,
-            G:0,
-            B:0,
-            A:0.5
+            R:0.5,
+            G:0.5,
+            B:0.5,
+            A:0.8
         },
+        bgMode:'none',
         viewBg:false,
         hasBgImg:false
     }
