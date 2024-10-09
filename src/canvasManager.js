@@ -49,7 +49,7 @@ function canvasInit(canvasId){
         customName : "PcrImage",
         isScreenShot:false,
         isDrawing:false,
-        gif:{},
+        gif:null,
         gifConfig : {
             fpsCount: 1,
             fpsInit: 4,

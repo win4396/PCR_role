@@ -4,6 +4,7 @@ let lastFrameTime;
 let spineGirl = Array(6).fill({});
 let spineRole_ctx = null;
 let spineRole_canvas = null;
+
 function loadSpineGirl(spineGirl,myCanvas){
     return new Promise((resolve, reject) => { 
         const img = new Image();
@@ -143,11 +144,16 @@ function imgDownload(e,f,b){
     if(!f){
         spineRole_canvas.width = e.canvas.width;
         spineRole_canvas.height = e.canvas.height;
+        if(e.hasBgImg && !e.viewBg)
+            spineRole_ctx.drawImage($("#myImg")[0],0,0,e.canvas.width,e.canvas.height,0,0,e.canvas.width,e.canvas.height);
+        spineRole_ctx.drawImage(e.gl.canvas,0,0,e.canvas.width,e.canvas.height,0,0,e.canvas.width,e.canvas.height);   
     }
- 
-    if(e.hasBgImg && !e.viewBg)
-        spineRole_ctx.drawImage($("#myImg")[0],...b,0,0,b[2],b[3]);
-    spineRole_ctx.drawImage(e.gl.canvas,...b,0,0,b[2],b[3]);    
+    else{
+        if(e.hasBgImg && !e.viewBg)
+            spineRole_ctx.drawImage($("#myImg")[0],...b,0,0,b[2],b[3]);
+        spineRole_ctx.drawImage(e.gl.canvas,...b,0,0,b[2],b[3]);   
+    }
+         
     
     t = spineRole_canvas;  
 
@@ -172,22 +178,26 @@ function gifDownload(e){
             link.download = ( $("#advImgNameCKBox").is(":checked") ? e.customName : spineGirl[e.nowCharacter].characterName)+'.gif';
             link.click();  
 
-           
+            e.gif = null; 
+            e.gifConfig.gifNext = 0;
+            e.gifConfig.gifDeparted = 0;
+            e.gifConfig.gifPage = 0;
+            e.gifConfig.gifDrawing = false; 
+              
+            spineRole_canvas = null;
+            spineRole_ctx = null;
+            logClear();
         });   
         e.gif.render();
     } catch(error) {
-        logInfo("生成GIF失败!",'error'); 
+        logInfo("生成失败,刷新试试?",'error');  
+        setTimeout(() => {  
+            logClear();
+        }, 300);
     } 
-    e.gif = null; 
-    e.gifConfig.gifNext = 0;
-    e.gifConfig.gifDeparted = 0;
-    e.gifConfig.gifPage = 0;
-    e.gifConfig.gifDrawing = false; 
-      
-    spineRole_canvas = null;
-    spineRole_ctx = null;
-    logClear();
+    
 }
+
 function resize (canvas) {
     const t = canvas.camera.acp;
     canvas.canvas.width = canvas.canvas.clientWidth;
@@ -288,12 +298,21 @@ function render(canvas){
             gifConfig.fpsCount = gifConfig.fpsInit;
             gifConfig.gifPage ++;
             
-            if(canvas.viewBg)
-                spineRole_ctx.clearRect(...camera.viewRectData); 
-            else if(canvas.hasBgImg)
-                spineRole_ctx.drawImage($("#myImg")[0], ...camera.viewRectData,0,0,camera.viewRectData[2],camera.viewRectData[3]);  
-    
-            spineRole_ctx.drawImage(gl.canvas, ...camera.viewRectData,0,0,camera.viewRectData[2],camera.viewRectData[3]);
+           
+            if(camera.viewRectTemp.sizing){
+                spineRole_ctx.clearRect(0,0,camera.viewRectData[2],camera.viewRectData[3]); 
+                if(canvas.hasBgImg)
+                    spineRole_ctx.drawImage($("#myImg")[0], ...camera.viewRectData,0,0,camera.viewRectData[2],camera.viewRectData[3]);  
+                spineRole_ctx.drawImage(gl.canvas, ...camera.viewRectData,0,0,camera.viewRectData[2],camera.viewRectData[3]);
+
+            }
+            else{
+                spineRole_ctx.clearRect(0,0,canvas.canvas.width,canvas.canvas.height); 
+                if(canvas.hasBgImg)
+                    spineRole_ctx.drawImage($("#myImg")[0],0,0,canvas.canvas.width,canvas.canvas.height,0,0,canvas.canvas.width,canvas.canvas.height);
+                spineRole_ctx.drawImage(gl.canvas,0,0,canvas.canvas.width,canvas.canvas.height,0,0,canvas.canvas.width,canvas.canvas.height);
+            }  
+                     
             canvas.gif.addFrame(spineRole_ctx, { copy: true, delay: delay});
         }  
         

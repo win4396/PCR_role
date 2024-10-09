@@ -2,7 +2,7 @@ let classMap;
 let myCanvas;
 let num = 0;
 let gifLoaded = false;
-
+let blob;
 const skeletonList = $('#skeletonList');
 const loadSkeleton = $('#loadSkeleton');
 const charaList = $('#charaList');
@@ -713,22 +713,44 @@ $("#downloadGIF").on("click", async function(){
 
     if(!gifLoaded){
         logInfo('加载GIF文件...');
-        try{
-            await Promise.all([  
-                import('https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.js'),  
-                import('https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.worker.js')  
-            ]); 
-       
+        let x = new Promise((resolve,reject)=>{
+            const xhr = new XMLHttpRequest();
+            // console.log(loadType,src)
+            xhr.open('GET','https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.worker.js',true);
+            xhr.responseType = 'blob';
+            xhr.onload = function(){
+                if(xhr.status == 200){
+                    resolve(xhr.response);
+                }
+                else{
+                    const errorInfo = {
+                        error:xhr.status,
+                        fileName:srcL
+                    }
+                    reject(errorInfo);
+                }
+            }
+            xhr.onerror = function(){
+                reject();
+            }
+            
+            xhr.send();
+        }).then((data)=>{
+            blob = data;
+        });
+
+        await Promise.all([import("https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.js"),x]).then((result)=>{
             gifLoaded = true;
             logClear();
-        }
-        catch(error){
+        }).catch((error)=>{
             logInfo('加载失败,刷新试试?','error');
-            logClear();
+            setTimeout(() => {  
+                logClear();
+            }, 300);
             return;
-        }
-        
+        });     
     }
+    
     if('control' in spineGirl[num] && spineGirl[num].control.ready === true){
         let w,h;
         createPngCanvas(myCanvas.camera);
@@ -743,16 +765,21 @@ $("#downloadGIF").on("click", async function(){
             spineRole_canvas.width = w;
             spineRole_canvas.height = h;
         }
+     
         myCanvas.gif = new GIF({
             workers: Number($("#gifWorkers").val()),
             quality: Number($("#gifQuality").val()),
-        // workerScript:"/gif.worker.js",
+            workerScript: URL.createObjectURL(blob),
             debug: false,
+            // background:'#ffffff',
             width: w,
             height: h
-        })
+        });
+        
         myCanvas.gifConfig.fpsInit= Number($("#gifFrame").val());    
         myCanvas.gifConfig.gifDelay= Number($("#gifDelay").val());
+        console.log(myCanvas.gif);
+        console.log(myCanvas.gifConfig);
         myCanvas.isDrawing = true;
         $("#charaButton"+num).trigger('click');
     }
