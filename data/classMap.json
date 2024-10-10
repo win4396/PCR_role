@@ -3583,6 +3583,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "127701": {
+        "chinese_name": "琳德",
+        "name": "リンド",
+        "real_name": "りんど",
+        "exclusive": 0,
+        "type": 48,
+        "ex_type": 6,
+        "place": 3,
+        "position": 693,
+        "mage": 2,
+        "elemental": 1,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "127901": {
         "chinese_name": "佩可莉姆（圣诞节）",
         "name": "ペコリーヌ（クリスマス）",
