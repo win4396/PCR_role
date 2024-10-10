@@ -853,16 +853,20 @@ function init(){
     loadFile('','classMap.json','json').then((json)=>{
         classMap = json;   
         skeletonList.children().first().remove();
+        let other = '';
         Object.keys(json).forEach((i)=>{
             let name = json[i].chinese_name;
-            let noAdded = json[i].type == 0 && !json[i].hasSpecialBase && json[i].place == 0;
-            if(i=='190801') 
+            let noAdded = json[i].type === 0 && !json[i].hasSpecialBase && json[i].place == 0;
+            if(i=='190801') {
+                other = '（助战）';
                 skeletonList.append(createTag('option',{value: '',disabled:''},createTag('text','以下为剧情过场角色')));
+            }
+                
             if(noAdded)
-                skeletonList.append(createTag('option',{value: '',disabled:''},createTag('text',name +'(未实装)')));
+                skeletonList.append(createTag('option',{value: '',disabled:''},createTag('text',name +other+'(未实装)')));
             else{
-                skeletonList.append(createTag('option',{value: i*1+ 10},createTag('text','1★'+name )));
-                skeletonList.append(createTag('option',{value: i*1+ 30},createTag('text','3★'+name )));
+                skeletonList.append(createTag('option',{value: i*1+ 10},createTag('text','1★'+name+other )));
+                skeletonList.append(createTag('option',{value: i*1+ 30},createTag('text','3★'+name+other )));
                 if(json[i].hasRarity6)
                     skeletonList.append(createTag('option',{value: i*1+ 60},createTag('text','6★'+name )));
             }

@@ -718,13 +718,13 @@
         "name": "ジータ",
         "real_name": "じーた",
         "exclusive": 0,
-        "type": 0,
+        "type": 4,
         "ex_type": 4,
         "place": 1,
         "position": 245,
         "mage": 1,
         "elemental": 4,
-        "hasRarity6": true,
+        "hasRarity6": false,
         "hasSpecialBase": false
     },
     "105801": {
@@ -4098,8 +4098,8 @@
         "position": 245,
         "mage": 1,
         "elemental": 4,
-        "hasRarity6": false,
-        "hasSpecialBase": true
+        "hasRarity6": true,
+        "hasSpecialBase": false
     },
     "180101": {
         "chinese_name": "日和莉（公主）",
@@ -4368,7 +4368,7 @@
         "hasSpecialBase": true
     },
     "192701": {
-        "chinese_name": "雪菲（公主）（助战））",
+        "chinese_name": "雪菲（公主）",
         "name": "シェフィ",
         "real_name": "しぇふぃ",
         "exclusive": 1,
@@ -4379,6 +4379,6 @@
         "mage": 1,
         "elemental": 0,
         "hasRarity6": false,
-        "hasSpecialBase": true
+        "hasSpecialBase": false
     }
 }
