@@ -3597,6 +3597,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "127801": {
+        "chinese_name": "乌尔姆",
+        "name": "ヴルム",
+        "real_name": "うるむ",
+        "exclusive": 0,
+        "type": 47,
+        "ex_type": 7,
+        "place": 3,
+        "position": 706,
+        "mage": 2,
+        "elemental": 1,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "127901": {
         "chinese_name": "佩可莉姆（圣诞节）",
         "name": "ペコリーヌ（クリスマス）",
@@ -4368,7 +4382,7 @@
         "hasSpecialBase": true
     },
     "192701": {
-        "chinese_name": "雪菲（公主）",
+        "chinese_name": "雪菲",
         "name": "シェフィ",
         "real_name": "しぇふぃ",
         "exclusive": 1,
