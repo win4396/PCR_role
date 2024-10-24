@@ -771,7 +771,7 @@ $("#downloadGIF").on("click", async function(){
             quality: Number($("#gifQuality").val()),
             workerScript: URL.createObjectURL(blob),
             debug: false,
-            // background:'#ffffff',
+            transparent:'#000000',
             width: w,
             height: h
         });

@@ -4115,6 +4115,34 @@
         "hasRarity6": true,
         "hasSpecialBase": false
     },
+    "170201":{
+        "chinese_name": "环奈（新年）",
+        "name": "环奈（新年）",
+        "real_name": "环奈（新年）",
+        "exclusive": 0,
+        "type": 38,
+        "ex_type": 38,
+        "place": 2,
+        "position": 527,
+        "mage": 1,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
+    "170301":{
+        "chinese_name": "环奈",
+        "name": "环奈",
+        "real_name": "环奈",
+        "exclusive": 0,
+        "type": 4,
+        "ex_type": 4,
+        "place": 2,
+        "position": 433,
+        "mage": 1,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "180101": {
         "chinese_name": "日和莉（公主）",
         "name": "ヒヨリ（プリンセス）",
