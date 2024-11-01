@@ -21,6 +21,7 @@ const outStopRule = [
     'rpet',
     'uper',
     'loop',
+    'ding',
 ];
 
 function createTag(e,t,n){
@@ -259,7 +260,7 @@ $('#charaDiv').on('change','div span input[type="checkbox"]',function(){
         spineGirl[num].control.shadow = val;
     }
 })
-$('#charaDiv').on('change','div span input[type="number"]',function(){
+$('#charaDiv').on('input','div span input[type="number"]',function(){
     const id = $(this).data('id');
     const num = id.slice(0,1);
     const type = id.slice(1);
@@ -406,7 +407,7 @@ loadSkeleton.on('click',async function(){
             t.control.ready = true;
 
     });
-    //  console.log(t);
+    //  console.log(spineGirl);
     logClear();
     
 });
@@ -778,8 +779,8 @@ $("#downloadGIF").on("click", async function(){
         
         myCanvas.gifConfig.fpsInit= Number($("#gifFrame").val());    
         myCanvas.gifConfig.gifDelay= Number($("#gifDelay").val());
-        console.log(myCanvas.gif);
-        console.log(myCanvas.gifConfig);
+        // console.log(myCanvas.gif);
+        // console.log(myCanvas.gifConfig);
         myCanvas.isDrawing = true;
         $("#charaButton"+num).trigger('click');
     }
@@ -804,13 +805,13 @@ $("#charaAdd").on("click",function(){
     charaList.trigger('change');
 })
 
-$("#canvasOpacity").on("change",function(){
+$("#canvasOpacity").on("input",function(){
     let opacity = $(this).val();
     if(opacity>100) opacity = 100;
     if(opacity<0) opacity = 0;
 
     myCanvas.bgColor.A = (100-opacity)/100;
-    console.log(myCanvas.bgColor);
+    // console.log(myCanvas.bgColor);
     
 })
 
@@ -856,13 +857,13 @@ function init(){
         let other = '';
         Object.keys(json).forEach((i)=>{
             let name = json[i].chinese_name;
-            let noAdded = json[i].type === 0 && !json[i].hasSpecialBase && json[i].place == 0;
+            let noAdded = (json[i].type != 0  && json[i].place != 0) || json[i].hasSpecialBase;
             if(i=='190801') {
                 other = '（助战）';
                 skeletonList.append(createTag('option',{value: '',disabled:''},createTag('text','以下为剧情过场角色')));
             }
                 
-            if(noAdded)
+            if(!noAdded)
                 skeletonList.append(createTag('option',{value: '',disabled:''},createTag('text',name +other+'(未实装)')));
             else{
                 skeletonList.append(createTag('option',{value: i*1+ 10},createTag('text','1★'+name+other )));
