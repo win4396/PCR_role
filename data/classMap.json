@@ -3868,14 +3868,14 @@
         "name": "ヤマト",
         "real_name": "やまと",
         "exclusive": 1,
-        "type": 1,
-        "ex_type": 1,
-        "place": 0,
-        "position": 0,
-        "mage": 0,
-        "elemental": 0,
+        "type": 0,
+        "ex_type": 4,
+        "place": 1,
+        "position": 150,
+        "mage": 1,
+        "elemental": 5,
         "hasRarity6": false,
-        "hasSpecialBase": false
+        "hasSpecialBase": true
     },
     "130101": {
         "chinese_name": "若菜",
