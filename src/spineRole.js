@@ -1,7 +1,8 @@
 
 let additionAnimations = ['DEAR', 'NO_WEAPON', 'POSING', 'RACE', 'RUN_JUMP', 'SMILE'];
 let lastFrameTime;
-let spineGirl = Array(6).fill({});
+let spineGirl = Array(12).fill({});
+let spineGirl_queue = [];
 let spineRole_ctx = null;
 let spineRole_canvas = null;
 
@@ -352,9 +353,10 @@ function render(canvas){
 
     canvas.batcher.begin(canvas.shader);
 
-    spineGirl.forEach((i)=>{
-    if('control' in i && i.control.ready === true && !camera.pause){
-        canvas.skeletonRenderer.draw(canvas.batcher, i.spine.skeleton,i.control.shadow,i.control.visable);}
+    spineGirl_queue.forEach((i)=>{
+        const children = spineGirl[Number(i.id.slice(5))];
+        if('control' in children && children.control.ready === true && !camera.pause){
+            canvas.skeletonRenderer.draw(canvas.batcher, children.spine.skeleton,children.control.shadow,children.control.visable);}
     });
     canvas.batcher.end();
     canvas.shader.unbind();

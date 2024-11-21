@@ -12,7 +12,7 @@ const toggleButton =  document.getElementById("toggleButton");
 const topBox = document.getElementById("topBox");
 const setting = document.getElementsByClassName("setting")[0];
 const viewRect = document.getElementById("viewRect");
-
+let drap_target,drap_over,drap_start;
 const outStopRule = [
     'idle',
     'idol',
@@ -172,36 +172,50 @@ function resultDisplay($eve){
 }
 
 function appendCharaDiv(num,str){
-    let a = `<div id = chara${num}>
+    const a = `<div id = chara${num} class = "chara_list">
         <span class="head-style">
         <span class = "charaSpanTitle" id = "charaSpanTitle${num}">${num+1}:${str}:</span><select class = "charaSpanSelect" id = "charaSpan${num}" title="动画列表"></select>
-        <span>同步:</span><input type="checkbox" class="checkbox" data-id ="${num}a">
+        <span>同步:<input type="checkbox" class="checkbox" data-id ="${num}a"></span>
         <input type="button" class="button1" id = "charaButton${num}" value="播放" data-id ="${num}b" > 
-        <span> X:</span><input type="number" value = "0" class="inputNumber" data-id ="${num}x">
-        <span> Y:</span><input type="number" value = "0" class="inputNumber" data-id ="${num}y">
-        <span>镜像:</span><input type="checkbox" class="checkbox" data-id ="${num}c">
-        <span>翻转:</span><input type="checkbox" class="checkbox" data-id ="${num}d">  
-        <span>去阴影:</span><input type="checkbox" class="checkbox" data-id ="${num}f">  
-        <input type="button" class="button1" value="删除" data-id ="${num}e" > 
+        <span> X:<input type="number" value = "0" class="inputNumber" data-id ="${num}x"></span>
+        <span> Y:<input type="number" value = "0" class="inputNumber" data-id ="${num}y"></span>
+        <span>镜像:<input type="checkbox" class="checkbox" data-id ="${num}c"></span>
+        <span>翻转:<input type="checkbox" class="checkbox" data-id ="${num}d"></span>
+        <span>去阴影:<input type="checkbox" class="checkbox" data-id ="${num}f"></span> 
+        <input type="button" class="button1" value="删除" data-id ="${num}e"> 
         </span></div>`;
-    if(!document.getElementById("charaDiv").childNodes.length){
-        $('#charaDiv').append(a);
-        return;
-    }
-    for(let i of spineGirl){ 
-        if(i != {}){
-            if(i.order == num - 1){
-                $('#chara'+i.order).after(a);
-                return;
-            }
-            else if(i.order > num){
-                $('#chara'+i.order).before(a);
-                return;
-            }  
+    //排序在加入拖动后取消了
+    // if(!document.getElementById("charaDiv").childNodes.length){
+    //     $('#charaDiv').append(a);
+       
+    //     return;
+    // }
+    // for(let i of spineGirl){ 
+    //     if(i != {}){
+    //         if(i.order == num - 1){
+    //             $('#chara'+i.order).after(a);
+            
+    //             return;
+    //         }
+    //         else if(i.order > num){
+    //             $('#chara'+i.order).before(a);
+                
+    //             return;
+    //         }  
+    //     }
+    // }
+    $('#charaDiv').append(a);
+    
+}
+
+const observer = new MutationObserver((mutationsList) => {
+    for (const mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+            spineGirl_queue  = Array.from($('#charaDiv')[0].children);
         }
     }
-    $('#charaDiv').append(a);
-}
+});
+observer.observe($('#charaDiv')[0], {childList: true, subtree: false});
 
 $('#charaDiv').on('click','div span input[type="button"]',function(){
     const id = $(this).data('id');
@@ -213,7 +227,7 @@ $('#charaDiv').on('click','div span input[type="button"]',function(){
         const renum = Number(num) + 1;
         charaList.find('option[value='+renum+']').text(renum+'');
         spineGirl[num] = {};
-        $('#chara'+num).remove();
+        $('#chara'+num).remove();   
     }
     else if(type === 'b'){      
         if('control' in spineGirl[num] && spineGirl[num].control.ready === true){
@@ -270,6 +284,94 @@ $('#charaDiv').on('input','div span input[type="number"]',function(){
     }
     else if(type === 'y'){
         spineGirl[num].control.y = val;
+    }
+})
+
+$('#charaDiv').on('mousedown touchstart',e=>{   
+    if(e.target.className != 'charaSpanTitle' && e.target.className != 'head-style' && e.target.className != 'chara_list'){
+        // e.preventDefault();     
+        return;
+    }  
+    e.preventDefault(); 
+    const new_drop = e.target.className === 'chara_list' ?  e.target : (e.target.parentNode.className != "chara_list" ? e.target.parentNode.parentNode : e.target.parentNode);
+    const new_div = new_drop.cloneNode(true);
+    const rect = $('#charaDiv')[0].getBoundingClientRect();
+    const new_dropRect = new_drop.getBoundingClientRect();
+    new_drop.classList.add('moving');
+    drap_target = new_drop;
+    new_div.classList.add('clone');
+    new_div.id = "chara_clone";
+    const dropType = e.type === 'touchstart'? true:false;
+    const offset = 5;
+    const offsetX = (dropType ? e.touches[0].clientX : e.clientX) - new_dropRect.left - offset;
+    const offsetY = (dropType ? e.touches[0].clientY : e.clientY) - new_dropRect.top - offset;
+    
+    document.body.appendChild(new_div);
+    $('#chara_clone').css({"left": new_dropRect.left + offset +"px",
+        "top":new_dropRect.top + offset +"px",
+        "height":new_drop.offsetHeight+"px",
+        "width":new_drop.offsetWidth+"px",});
+    function touchmove(e){
+        
+        e.preventDefault();
+        const mouseX = dropType ? e.touches[0].clientX : e.clientX;
+        const mouseY = dropType ? e.touches[0].clientY : e.clientY;
+
+        $('#chara_clone').css({"left":(mouseX - offsetX) +"px",
+            "top":(mouseY - offsetY) +"px"});
+        
+        if (mouseX < rect.left || mouseX > rect.right || mouseY < rect.top || mouseY > rect.bottom) {
+            
+            return;
+        }
+        
+        const now_div = document.elementFromPoint(mouseX,mouseY);
+        if(now_div.className != 'charaSpanTitle' && now_div.className != 'head-style' && e.target.className != 'chara_list'){
+            // e.preventDefault();     
+            return;
+        }    
+        let drap_over;
+        if(now_div.className == 'charaSpanTitle') 
+            drap_over = now_div.parentNode.parentNode;
+        else if(now_div.className == 'head-style')
+            drap_over = now_div.parentNode;
+        else
+            drap_over = now_div;
+        if(drap_over.className.includes("moving") || drap_over === new_drop)
+            return;
+        
+        drap_target = drap_over;  
+        const kid  = Array.from($('#charaDiv')[0].children);
+        const new_side = kid.indexOf(drap_over);
+        const old_side = kid.indexOf(new_drop);
+        if(old_side < new_side){
+            $('#charaDiv')[0].insertBefore(new_drop,drap_over.nextSibling);
+        }else{
+            $('#charaDiv')[0].insertBefore(new_drop,drap_over);
+        }  
+          
+    }
+    function touchend(e){
+        new_drop.classList.remove('moving');
+        drap_over = null;
+        $('#chara_clone').remove(); 
+        if(dropType){
+            document.removeEventListener("touchmove",touchmove);
+            document.removeEventListener("touchend",touchend);
+            
+        }else{
+            document.removeEventListener("mousemove",touchmove);
+            document.removeEventListener("mouseup",touchend);
+        }
+        
+    }
+    if(dropType){
+        document.addEventListener("touchmove",touchmove);
+        document.addEventListener("touchend",touchend);
+    }
+    else{
+        document.addEventListener("mousemove",touchmove);
+        document.addEventListener("mouseup",touchend);
     }
 })
 
@@ -399,7 +501,7 @@ loadSkeleton.on('click',async function(){
             if($('#chara'+num).length){
                 $('#charaSpanTitle'+num).text(num+1+":"+characterName+":");
                 $('#chara'+num+' span input[type="checkbox"]').trigger('change');
-                $('#chara'+num+' span input[type="number"]').trigger('change');
+                $('#chara'+num+' span input[type="number"]').trigger('input');
             }
             else
                 appendCharaDiv(num,characterName);
@@ -563,7 +665,8 @@ $("#viewRectResize").on("mousedown touchstart",function (event) {
     const viewRectTemp = myCanvas.camera.viewRectTemp;
     
     viewRectTemp.moving = true;
-    if(event.type === 'touchstart')
+    const input =  event.type === 'touchstart' ? true : false;
+    if(input)
         myCanvas.camera.viewRectData = [event.touches[0].clientX,event.touches[0].clientY,viewRect.offsetWidth,viewRect.offsetHeight];
     else 
         myCanvas.camera.viewRectData = [event.clientX,event.clientY,viewRect.offsetWidth,viewRect.offsetHeight];
@@ -571,15 +674,10 @@ $("#viewRectResize").on("mousedown touchstart",function (event) {
         const viewRectData = myCanvas.camera.viewRectData;
         if(!viewRectTemp.moving)    return;
         event.preventDefault(); // 阻止页面滚动  
-        let dx,dy;
-        if(event.type === 'touchmove'){
-            dx = event.touches[0].clientX - viewRectData[0];
-            dy = event.touches[0].clientY - viewRectData[1];
-        }
-        else{
-            dx = event.clientX - viewRectData[0];
-            dy = event.clientY - viewRectData[1];
-        }
+       
+        const dx = (input ? event.touches[0].clientX : event.clientX) - viewRectData[0];
+        const dy = (input ? event.touches[0].clientY : event.clientY) - viewRectData[1];
+        
  
         $("#viewRect").css({"width":(dx + viewRectData[2]) +"px",
                             "height":(dy + viewRectData[3]) +"px"});
@@ -589,7 +687,7 @@ $("#viewRectResize").on("mousedown touchstart",function (event) {
     function handleMouseUp() {
         viewRectTemp.moving = false;
         viewDataUpdate();
-        if(event.type === 'touchstart'){
+        if(input){
             document.removeEventListener("touchmove",handleMouseMove);
             document.removeEventListener("touchend",handleMouseUp);
         }
@@ -598,7 +696,7 @@ $("#viewRectResize").on("mousedown touchstart",function (event) {
             document.removeEventListener("mouseup",handleMouseUp);
         }
     }
-    if(event.type === 'touchstart'){
+    if(input){
         document.addEventListener("touchmove",handleMouseMove);
         document.addEventListener("touchend",handleMouseUp);
     }
@@ -609,23 +707,19 @@ $("#viewRectResize").on("mousedown touchstart",function (event) {
 });
 
 $("#animationControlPanel").on("mousedown touchstart",function(event){
-    let offsetX,offsetY,input;
-    if(event.type === 'touchstart')
-        input = event.touches[0];
-    else
-        input = event;
-    offsetX = input.clientX - setting.getBoundingClientRect().left;
-    offsetY = input.clientY - setting.getBoundingClientRect().top;
+    
+    const input =  event.type === 'touchstart' ? true : false;
+    const offsetX = (input ? event.touches[0].clientX : event.clientX) - setting.getBoundingClientRect().left;
+    const offsetY = (input ? event.touches[0].clientY : event.clientY) - setting.getBoundingClientRect().top;
     function handleMouseMove(event) {
-        if(event.type === 'touchmove')
-            $(".setting").css({"left":(event.touches[0].clientX - offsetX) +"px",
-                "top":(event.touches[0].clientY - offsetY) +"px"});
-        else
-            $(".setting").css({"left":(event.clientX - offsetX) +"px",
-                                "top":(event.clientY - offsetY) +"px"}); 
+        
+        $(".setting").css({"left":((input ? event.touches[0].clientX : event.clientX) - offsetX) +"px",
+                            "top":((input ? event.touches[0].clientY : event.clientY) - offsetY) +"px",
+                            "pointer-events": "none"}); 
+        
     }
-    function handleMouseUp() {
-        if(event.type === 'touchstart'){
+    function handleMouseUp(e) {
+        if(input){
             document.removeEventListener("touchmove",handleMouseMove);
             document.removeEventListener("touchend",handleMouseUp);
         }
@@ -633,9 +727,11 @@ $("#animationControlPanel").on("mousedown touchstart",function(event){
             document.removeEventListener("mousemove",handleMouseMove);
             document.removeEventListener("mouseup",handleMouseUp);
         }
+        $(".setting").css({"pointer-events": "all"}); 
+        
     }
     
-    if(event.type === 'touchstart'){
+    if(input){
         document.addEventListener("touchmove",handleMouseMove);
         document.addEventListener("touchend",handleMouseUp);
     }
@@ -872,7 +968,7 @@ function init(){
                     skeletonList.append(createTag('option',{value: i*1+ 60},createTag('text','6★'+name )));
             }
         })
-        for(let i=1;i<=6;i++)
+        for(let i=1;i<=spineGirl.length;i++)
             charaList.append(createTag('option',{value: i },createTag('text',i)));
         loadSkeleton.prop('disabled',false);
 

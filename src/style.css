@@ -26,10 +26,14 @@ img {
     background-color:gray;
     z-index: -2;
 }
+span{
+    display: inline-block;
+    /* white-space: break-spaces; */
+}
 span,label#debug{
     vertical-align: middle; 
     font-size: 18px;  
-    padding: 5px 0 2px 0;
+    
 }
 select,input[type='text']{
     height: 20px;
@@ -43,7 +47,7 @@ select,input[type='text']{
     top: 0;
     left:50%;
     width:70%;
-    padding: 0 0 10px 0; 
+    padding: 0 0 16px 0; 
     text-align: center;
     background-color:gray;
     transform: translate(-50%, 0);
@@ -60,7 +64,7 @@ select,input[type='text']{
     width: 45px
 }
 .head-style{
-    display: inline-block;
+    padding: 5px 0 2px 0;
 }
 
 .button1{
@@ -109,7 +113,7 @@ input.checkbox{
 .setting{
     position: absolute;
     width: 135px;
-    top: 120px;
+    top: 340px;
     left:5px;
 
     /* visibility: hidden; */
@@ -126,8 +130,25 @@ input.checkbox{
     justify-content: center;
     box-sizing: border-box;
 }
-
-
+.chara_list{
+    border-radius: 12px;
+    margin-top: 12px;
+}
+.chara_list.clone{
+    position: absolute;
+    opacity: 0.4;
+    background: rgb(33, 33, 33);
+    z-index: 999;
+    pointer-events: none;
+    text-align: center;
+}
+.chara_list.moving{
+    background: rgb(33, 33, 33);
+}
+#charaDiv{
+    cursor: move;
+    padding:0px 10px;
+}
 #advOptionBox>span{
     display: flex;
     justify-content: space-evenly;
