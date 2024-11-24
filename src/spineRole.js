@@ -60,6 +60,15 @@ function loadSpineGirl(spineGirl,myCanvas){
             let bounds = calculateSetupPoseBounds(skeleton);
 
             let animationStateData = new spine.AnimationStateData(skeleton.data);
+            let m = skeleton.drawOrder;
+            if(m[0].data.name != 'shadow'){    
+                for(var sp = 1;sp< m.length;sp++){
+                    if(m[sp].data.name === 'shadow'){
+                        skeleton.shadowkey = sp;
+                        break;
+                    }        
+                }
+            }
             animationStateData.defaultMix = 0.05;
             // console.log(animationStateData);
             
@@ -83,9 +92,14 @@ function loadSpineGirl(spineGirl,myCanvas){
                     ////console.log("Animation on track " + track.trackIndex + " completed");
                     if (spineGirl.nowQueue.length) {
                         var nextAnim = spineGirl.nowQueue.shift();
-                        if (nextAnim == 'stop') {
+                        if (nextAnim == 'stop' || nextAnim == 'loop') {
                             if(myCanvas.isDrawing && (spineGirl.order == myCanvas.nowCharacter)){
                                 gifDownload(myCanvas);
+                            }
+                            if(nextAnim == 'loop'){
+                                nextAnim = spineGirl.nowQueue[0];
+                                spineGirl.nowQueue.unshift('loop');
+                                spineGirl.spine.state.setAnimation(0, nextAnim, true);
                             }
                             return;
                         }

@@ -106,7 +106,7 @@ function animationQueueReset(order){
         'idle', 
         'walk',
         'run', 
-        'run_gamestart'
+        'run_gamestart',
     ].indexOf(a[0]) == -1){
         if(outStopRule.indexOf(a[0].slice(a[0].length-4)) == -1)
                 a.push('idle');   
@@ -114,6 +114,10 @@ function animationQueueReset(order){
     let nextAnim = a.shift();
     if(!/^\d{6}/.test(nextAnim))
         nextAnim = spineGirl[order].weapon +'_'+ nextAnim;
+    // else if(/\d{6}_joyResult/.test(nextAnim)){
+    //     spineGirl[order].nowQueue = ['loop',nextAnim];
+    //     spineGirl[order].spine.state.setAnimation(0, nextAnim, true);
+    // }
     // spineGirl[num].animationQueue = a;
     spineGirl[order].spine.state.setAnimation(0, nextAnim, !a.length);
 }
@@ -813,7 +817,7 @@ $("#downloadGIF").on("click", async function(){
         let x = new Promise((resolve,reject)=>{
             const xhr = new XMLHttpRequest();
             // console.log(loadType,src)
-            xhr.open('GET','https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.worker.js',true);
+            xhr.open('GET','./src/gif.worker.js',true);
             xhr.responseType = 'blob';
             xhr.onload = function(){
                 if(xhr.status == 200){
@@ -836,7 +840,7 @@ $("#downloadGIF").on("click", async function(){
             blob = data;
         });
 
-        await Promise.all([import("https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.js"),x]).then((result)=>{
+        await Promise.all([import("./src/gif.js"),x]).then((result)=>{
             gifLoaded = true;
             logClear();
         }).catch((error)=>{
