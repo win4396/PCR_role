@@ -11,6 +11,7 @@ function canvasInit(canvasId){
         return;
     }
 
+    let sceneRenderer = new spine.webgl.SceneRenderer(canvas, gl);
     let shader = spine.webgl.Shader.newTwoColoredTextured(gl);  
     let batcher = new spine.webgl.PolygonBatcher(gl);
  
@@ -41,6 +42,7 @@ function canvasInit(canvasId){
         shapes : shapes,
         skeletonRenderer : skeletonRenderer,
         debugRenderer : debugRenderer,
+        sceneRenderer : sceneRenderer,
         switchClassList :{
             before:'1',
             after:'1'
@@ -49,6 +51,7 @@ function canvasInit(canvasId){
         customName : "PcrImage",
         isScreenShot:false,
         isDrawing:false,
+        isTheaterMode:false,
         gif:null,
         gifConfig : {
             fpsCount: 1,
@@ -60,6 +63,8 @@ function canvasInit(canvasId){
             gifLenth: 0,
             gifDelay: 0,
             gifDrawing: false,
+            isLoaded:false,
+            blob:null
         },
         camera : {
             viewRectData:[0,0,200,250],

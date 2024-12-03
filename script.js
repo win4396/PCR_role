@@ -1,18 +1,18 @@
 let classMap;
 let myCanvas;
 let num = 0;
-let gifLoaded = false;
-let blob;
+let locusArray = Array(30).fill({});
+
 const skeletonList = $('#skeletonList');
 const loadSkeleton = $('#loadSkeleton');
 const charaList = $('#charaList');
 const classList = $('#classList');
-const inputview = $('#inputview');
-const toggleButton =  document.getElementById("toggleButton");
+const inputView = $('#inputView');
+const toggleButton =  $("#toggleButton");
 const topBox = document.getElementById("topBox");
 const setting = document.getElementsByClassName("setting")[0];
 const viewRect = document.getElementById("viewRect");
-let drap_target,drap_over,drap_start;
+
 const outStopRule = [
     'idle',
     'idol',
@@ -41,6 +41,8 @@ function createTag(e,t,n){
 }
 
 function weaponCalc(str){
+    if(typeof num === 'number') 
+        str = (str).toString();
     return str.length < 2 ? '0'+ str : str;
 }
 
@@ -149,7 +151,7 @@ function searchClasses(query){
     }
     if(results.length === 0)    return;
     
-    let offest = $('#search-box').offset();
+    let offest = $('#searchBox').offset();
     // $('#viewRect').after(`<div class='get' id="results" style='top:${offest.top+20}px;left:${offest.left}px;'></div>`)
     $('#viewRect').after(createTag('div',{class:'get',id:'results',style:{top:offest.top+20+'px',left:offest.left+'px'}})).queue(function(next){
         results.forEach(function(item) {    
@@ -165,7 +167,7 @@ function searchClasses(query){
 }
 
 function resultDisplay($eve){
-    $('#search-box').val($eve.text());
+    $('#searchBox').val($eve.text());
     const val = $eve.data('val') | 0;
     if($eve.data('has6'))    $('#star-box').append(`<option value= ${val + 60}>6★</option>`);
         $('#star-box').append(`<option value= ${val + 30}>3★</option>`);
@@ -174,11 +176,52 @@ function resultDisplay($eve){
     changeClassList(classMap[val].type);
     $('#results').remove();    
 }
+function addTimeStamp(type,num){
+    const a = type === "locus" ?
+    `<div id = charaLocus${num} class = "timeStamp_list">
+    <span>
+        ★轨迹${num}:
+        <input type="button" class="button1" value="删除" data-id ="${num}e"> 
+        <span>显示轨迹:<input type="checkbox" class="checkbox" data-id ="${num}a" checked></span>
+        <span>起始时间:<input type="number" value = "0" class="inputNumber" data-id ="${num}x"></span>
+        
+    </span>
+    <br>     
+    <span>轨迹类型:<select class = "TsSelect" title="轨迹列表" id = "tsSelect${num}"></select></span>
+    <span>每帧移动像素:<input type="number" value = "0" class="inputNumber" data-id ="${num}y"></span>
+    
+    </div>`:``;
+  
+    $('#timeStampDiv').append(a);
+    loadTsSelect(num);
+    locusArray[num]={
+        here:true,
+        selected:0,
+        visible:true,
+        start:0,
+        move:0
+    };
+} 
+function loadTsSelect(num){
+    const select = $('#tsSelect'+num);
+    select.empty();
+    [
+        ["直线",0],
+        ["贝塞尔曲线",1],
+        ["圆",2],
+        ["圆弧",3],
+        ["方形",4],
+    ].forEach((i)=>{
+        select.append(createTag('option',{value: i[1]},createTag('text',i[0])));
+    })
+
+}
 
 function appendCharaDiv(num,str){
     const a = `<div id = chara${num} class = "chara_list">
         <span class="head-style">
-        <span class = "charaSpanTitle" id = "charaSpanTitle${num}">${num+1}:${str}:</span><select class = "charaSpanSelect" id = "charaSpan${num}" title="动画列表"></select>
+        <span class = "charaSpanTitle" id = "charaSpanTitle${num}">${num+1}:${str}:</span>
+        <select class = "charaSpanSelect" id = "charaSpan${num}" title="动画列表"></select>
         <span>同步:<input type="checkbox" class="checkbox" data-id ="${num}a"></span>
         <input type="button" class="button1" id = "charaButton${num}" value="播放" data-id ="${num}b" > 
         <span> X:<input type="number" value = "0" class="inputNumber" data-id ="${num}x"></span>
@@ -212,14 +255,9 @@ function appendCharaDiv(num,str){
     
 }
 
-const observer = new MutationObserver((mutationsList) => {
-    for (const mutation of mutationsList) {
-        if (mutation.type === 'childList') {
-            spineGirl_queue  = Array.from($('#charaDiv')[0].children);
-        }
-    }
-});
-observer.observe($('#charaDiv')[0], {childList: true, subtree: false});
+$("#timeStampDiv").on("click",'div span input',function(){
+    console.log(this.type)
+})
 
 $('#charaDiv').on('click','div span input[type="button"]',function(){
     const id = $(this).data('id');
@@ -297,12 +335,13 @@ $('#charaDiv').on('mousedown touchstart',e=>{
         return;
     }  
     e.preventDefault(); 
+    let drap_over;
     const new_drop = e.target.className === 'chara_list' ?  e.target : (e.target.parentNode.className != "chara_list" ? e.target.parentNode.parentNode : e.target.parentNode);
     const new_div = new_drop.cloneNode(true);
     const rect = $('#charaDiv')[0].getBoundingClientRect();
     const new_dropRect = new_drop.getBoundingClientRect();
     new_drop.classList.add('moving');
-    drap_target = new_drop;
+    let drap_target = new_drop;
     new_div.classList.add('clone');
     new_div.id = "chara_clone";
     const dropType = e.type === 'touchstart'? true:false;
@@ -334,7 +373,7 @@ $('#charaDiv').on('mousedown touchstart',e=>{
             // e.preventDefault();     
             return;
         }    
-        let drap_over;
+        
         if(now_div.className == 'charaSpanTitle') 
             drap_over = now_div.parentNode.parentNode;
         else if(now_div.className == 'head-style')
@@ -359,24 +398,12 @@ $('#charaDiv').on('mousedown touchstart',e=>{
         new_drop.classList.remove('moving');
         drap_over = null;
         $('#chara_clone').remove(); 
-        if(dropType){
-            document.removeEventListener("touchmove",touchmove);
-            document.removeEventListener("touchend",touchend);
-            
-        }else{
-            document.removeEventListener("mousemove",touchmove);
-            document.removeEventListener("mouseup",touchend);
-        }
+        $(document).off({"mousemove touchmove":touchmove,
+                        "mouseup touchend":touchend});
         
     }
-    if(dropType){
-        document.addEventListener("touchmove",touchmove);
-        document.addEventListener("touchend",touchend);
-    }
-    else{
-        document.addEventListener("mousemove",touchmove);
-        document.addEventListener("mouseup",touchend);
-    }
+    $(document).on({"mousemove touchmove":touchmove,
+                    "mouseup touchend":touchend});
 })
 
 charaList.on('change',function(){
@@ -393,7 +420,7 @@ skeletonList.on('change',function(){
 
 loadSkeleton.on('click',async function(){
 
-    const str = inputview.prop('checked') ? $("#star-box").val() : skeletonList.val();
+    const str = inputView.prop('checked') ? $("#star-box").val() : skeletonList.val();
     const [character,star] = removeStar(str);
     const characterMap = classMap[character];
     let weapon = characterMap.hasSpecialBase ? character : weaponCalc(classList.val());
@@ -405,7 +432,7 @@ loadSkeleton.on('click',async function(){
         if(t != {})
             t.control.ready = false;
     }
-    if(inputview.prop('checked'))
+    if(inputView.prop('checked'))
         characterName = $('#star-box').find(':selected').text()+characterMap.chinese_name;
     else
         characterName = skeletonList.find(':selected').text();
@@ -518,21 +545,6 @@ loadSkeleton.on('click',async function(){
     
 });
 
-
-const resizeObserver = new ResizeObserver((entries)=>{
-    for (let entry of entries) {  
-        // //console.log('元素的高度变化:', entry.contentRect.height);  
-        // viewportWidth = window.innerWidth;
-        toggleButton.style.left = (window.innerWidth - toggleButton.offsetWidth)/2+ "px";
-        if(toggleButton.style.top != "0px"){
-            toggleButton.style.top = topBox.offsetHeight  + "px"; 
-        }
-        else{
-            topBox.style.top = "-" + topBox.offsetHeight + "px"; 
-        }
-    }  
-}).observe(topBox);
-
 $("#toggleButton").on("click",function(){
     if(this.style.top != "0px"){
         topBox.style.top = "-" + this.style.top; 
@@ -558,8 +570,8 @@ $("#bg-color").on('input', function (event) {
     myCanvas.bgColor.B = (newcolor  & 0xFF) / 255;
 });
 
-inputview.on("change",function () {
-    $("#search-box").toggleClass('hidden');
+inputView.on("change",function () {
+    $("#searchBox").toggleClass('hidden');
     $("#star-box").toggleClass('hidden');
     skeletonList.toggleClass("hidden");
     $('#results').toggleClass('hidden');
@@ -572,7 +584,7 @@ inputview.on("change",function () {
 })
 
 classList.on("change",function(){
-    if(inputview.prop('checked'))   myCanvas.switchClassList.after = $(this).val();
+    if(inputView.prop('checked'))   myCanvas.switchClassList.after = $(this).val();
     else                            myCanvas.switchClassList.before = $(this).val();
 })
 
@@ -581,7 +593,7 @@ $('#speedList').on('change',function(){
     if(!isNaN(value))  (myCanvas.camera.speed = value);
 })
 
-$('#search-box').on('input',function(){
+$('#searchBox').on('input',function(){
     let query = $(this).val(); 
     if (query.trim() !== '') {  
         searchClasses(query);  
@@ -624,44 +636,27 @@ $("#viewRange").on("change",function () {
 // 拖拽事件
 $("#viewRect").on("mousedown touchstart",function(event){
     if(myCanvas.camera.viewRectTemp.moving) return;
-
-    let offsetX,offsetY,input;
-    if(event.type === 'touchstart')
-        input = event.touches[0];
-    else
-        input = event;
     
-    offsetX = input.clientX - viewRect.offsetLeft;
-    offsetY = input.clientY - viewRect.offsetTop;
+    const input =  event.type === 'touchstart' ? true : false;
+
+    const offsetX = (input ? event.touches[0].clientX : event.clientX) - viewRect.offsetLeft;
+    const offsetY = (input ? event.touches[0].clientY : event.clientY) - viewRect.offsetTop;
+
     function handleMouseMove(event) {
         event.preventDefault(); // 阻止页面滚动  
-        if(event.type === 'touchmove')
-            $("#viewRect").css({"left":(event.touches[0].clientX - offsetX) +"px",
-                                "top":(event.touches[0].clientY - offsetY) +"px"});
-        else
-            $("#viewRect").css({"left":(event.clientX - offsetX) +"px",
-                                "top":(event.clientY - offsetY) +"px"});
+        $("#viewRect").css({"left":((input ? event.touches[0].clientX : event.clientX) - offsetX) +"px",
+                            "top":((input ? event.touches[0].clientY : event.clientY) - offsetY) +"px"});
+ 
     }
-    function handleMouseUp() {
+    function handleMouseUp(e) {
         viewDataUpdate();
-        if(event.type === 'touchstart'){
-            document.removeEventListener("touchmove",handleMouseMove);
-            document.removeEventListener("touchend",handleMouseUp);
-        }
-        else{
-            document.removeEventListener("mousemove",handleMouseMove);
-            document.removeEventListener("mouseup",handleMouseUp);
-        }
+        $(document).off({"touchmove mousemove":handleMouseMove,
+                        "touchend mouseup":handleMouseUp});
     }
+  
+    $(document).on({"touchmove mousemove":handleMouseMove,
+                    "touchend mouseup":handleMouseUp});
     
-    if(event.type === 'touchstart'){
-        document.addEventListener("touchmove",handleMouseMove);
-        document.addEventListener("touchend",handleMouseUp);
-    }
-    else{
-        document.addEventListener('mousemove', handleMouseMove);  
-        document.addEventListener("mouseup",handleMouseUp);
-    }
 });
 
 // 缩放事件
@@ -691,30 +686,19 @@ $("#viewRectResize").on("mousedown touchstart",function (event) {
     function handleMouseUp() {
         viewRectTemp.moving = false;
         viewDataUpdate();
-        if(input){
-            document.removeEventListener("touchmove",handleMouseMove);
-            document.removeEventListener("touchend",handleMouseUp);
-        }
-        else{
-            document.removeEventListener("mousemove",handleMouseMove);
-            document.removeEventListener("mouseup",handleMouseUp);
-        }
+        $(document).off({"touchmove mousemove":handleMouseMove,
+                        "touchend mouseup":handleMouseUp});
     }
-    if(input){
-        document.addEventListener("touchmove",handleMouseMove);
-        document.addEventListener("touchend",handleMouseUp);
-    }
-    else{
-        document.addEventListener('mousemove', handleMouseMove);  
-        document.addEventListener("mouseup",handleMouseUp);
-    }
+    $(document).on({"touchmove mousemove":handleMouseMove,
+                    "touchend mouseup":handleMouseUp});
 });
 
 $("#animationControlPanel").on("mousedown touchstart",function(event){
     
     const input =  event.type === 'touchstart' ? true : false;
-    const offsetX = (input ? event.touches[0].clientX : event.clientX) - setting.getBoundingClientRect().left;
-    const offsetY = (input ? event.touches[0].clientY : event.clientY) - setting.getBoundingClientRect().top;
+    const data = setting.getBoundingClientRect();
+    const offsetX = (input ? event.touches[0].clientX : event.clientX) - data.left;
+    const offsetY = (input ? event.touches[0].clientY : event.clientY) - data.top;
     function handleMouseMove(event) {
         
         $(".setting").css({"left":((input ? event.touches[0].clientX : event.clientX) - offsetX) +"px",
@@ -723,26 +707,14 @@ $("#animationControlPanel").on("mousedown touchstart",function(event){
         
     }
     function handleMouseUp(e) {
-        if(input){
-            document.removeEventListener("touchmove",handleMouseMove);
-            document.removeEventListener("touchend",handleMouseUp);
-        }
-        else{
-            document.removeEventListener("mousemove",handleMouseMove);
-            document.removeEventListener("mouseup",handleMouseUp);
-        }
+        $(document).off({"touchmove mousemove":handleMouseMove,
+                        "touchend mouseup":handleMouseUp});
         $(".setting").css({"pointer-events": "all"}); 
         
     }
     
-    if(input){
-        document.addEventListener("touchmove",handleMouseMove);
-        document.addEventListener("touchend",handleMouseUp);
-    }
-    else{
-        document.addEventListener('mousemove', handleMouseMove);  
-        document.addEventListener("mouseup",handleMouseUp);
-    }
+    $(document).on({"touchmove mousemove":handleMouseMove,
+                    "touchend mouseup":handleMouseUp});
 });
 
 $("#advWidth").on('input',function(){
@@ -811,8 +783,8 @@ $("#viewbackground").on("change",function () {
 }); 
 
 $("#downloadGIF").on("click", async function(){
-
-    if(!gifLoaded){
+    
+    if(!myCanvas.gifConfig.isLoaded){
         logInfo('加载GIF文件...');
         let x = new Promise((resolve,reject)=>{
             const xhr = new XMLHttpRequest();
@@ -837,11 +809,11 @@ $("#downloadGIF").on("click", async function(){
             
             xhr.send();
         }).then((data)=>{
-            blob = data;
+            myCanvas.gifConfig.blob = data;
         });
 
         await Promise.all([import("./src/gif.js"),x]).then((result)=>{
-            gifLoaded = true;
+            myCanvas.gifConfig.isLoaded = true;
             logClear();
         }).catch((error)=>{
             logInfo('加载失败,刷新试试?','error');
@@ -870,7 +842,7 @@ $("#downloadGIF").on("click", async function(){
         myCanvas.gif = new GIF({
             workers: Number($("#gifWorkers").val()),
             quality: Number($("#gifQuality").val()),
-            workerScript: URL.createObjectURL(blob),
+            workerScript: URL.createObjectURL(myCanvas.gifConfig.blob),
             debug: false,
             transparent:'#000000',
             width: w,
@@ -938,10 +910,145 @@ $("#upLoadImg").on("click",function(){
     $("#fileInput").trigger('click');
 })
 
-function init(){
+$("#addATrack").on("click",function(){
+    let newNum = 0;
+    for(;newNum < locusArray.length;newNum++){
+        if(Object.keys(locusArray[newNum]).length === 0)
+            break;
+    }
+    addTimeStamp("locus",newNum);
+    console.log(locusArray)
+})
+
+$(".timeshow").each(function(){
+    let owntime = $(this);
+    let value = 0,object;
+    const id = owntime.data('id');
+    function settime(t){
+        value = t;
+        owntime[0].innerText = `${weaponCalc(Math.floor(value/60))}:${weaponCalc(value%60)}`;
+    }
+    function onclick(){
+        let userInput = prompt(id === "now" ? "请输入当前时间(不能大于当前时间)：" : "请输入总秒数(最多不超过300秒)","0");
+        if(userInput === "")        return;
+
+        let inputNumber = Number(userInput);
+        if(isNaN(inputNumber))      return;
+        
+        inputNumber = inputNumber>300 ? 300 : inputNumber;
+        const endtime = $($(".timeshow")[1]);
+        let nowtime = 0;
+        if(owntime[0] === endtime[0]){
+            if(inputNumber === 0)   return;
+            $($(".timeshow")[0]).data("time").set(0);
+            $($(".slider")[0]).data("slider").set(0);
+            value = inputNumber;
+        }
+        else{
+            nowtime = endtime.data("time").get();
+            value = inputNumber > nowtime ? nowtime: inputNumber;
+        }  
+            
+        
+        owntime[0].innerText = `${weaponCalc(Math.floor(value/60))}:${weaponCalc(value%60)}`;
+        
+        // console.log(owntime[0].innerText)
+    }
     
-    toggleButton.style.top = topBox.offsetHeight + "px";
-    toggleButton.style.left = (window.innerWidth - toggleButton.offsetWidth)/2+ "px";
+    owntime.on("click",onclick);
+    owntime.data("time",object = {
+        set: settime,
+        get: ()=> { return value; },
+        
+    });
+})
+
+
+$("#theaterMode").on("click",function(){
+    if(myCanvas.isTheaterMode){
+        this.value = "普通模式";
+        myCanvas.isTheaterMode = false;
+    }
+    else{
+        this.value = "剧场模式";
+        myCanvas.isTheaterMode = true;
+    }
+})
+
+function loadSliders(){
+    let div =  $(".slider").first(),
+        value = 0,
+        object,
+        handle = $("<div/>").appendTo(div);
+    let hw = handle.width(),lastX;
+			handle = handle[0].style;
+    positionHandle(0);
+    function positionHandle (percent) {
+        var w = div.width();
+        var x = Math.round((w - hw - 3) * percent);
+        if (x != lastX) {
+            lastX = x;
+            handle.transform = "translateX(" + x + "px)";
+        }
+        value = percent;
+        let time = [];
+        $(".timeshow").each(function(){
+            time.push($(this).data("time").get());
+        })
+        if(time[1] === 0) return;
+        const mewtime = Math.floor((value*time[1]));
+        $($(".timeshow")[0]).data("time").set(mewtime);
+        // console.log(time);
+    }
+    function clearEvents () {
+        $(document).off("mouseup.slider mousemove.slider touchmove.slider touchend.slider");
+    }
+    function mouseEvent (e) {
+        var x = e.pageX;
+        if (!x && e.originalEvent.touches) x = e.originalEvent.touches[0].pageX;
+        var percent = Math.max(0, Math.min(1, (x - div.offset().left - hw / 2) / (div.width() - hw - 2)));
+        positionHandle(percent);
+        if (object.changed) object.changed(percent);
+    }
+    div.on("mousedown touchstart", function (e) {
+        mouseEvent(e);
+        e.preventDefault(); 
+        $(document).on({"mousemove.slider touchmove.slider": mouseEvent,
+                        "mouseup.slider touchend.slider": clearEvents});
+    });
+    div.data("slider",object = {
+        get:()=>{ return value; },
+        set:positionHandle
+    })
+
+    
+}
+function init(){
+    new MutationObserver((mutationsList) => {
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                spineGirl_queue  = Array.from($('#charaDiv')[0].children);
+            }
+        }
+    }).observe($('#charaDiv')[0], {childList: true, subtree: false});
+
+    new ResizeObserver(()=>{
+        const innerWidth = window.innerWidth;
+        const offsetWidth = toggleButton[0].offsetWidth;
+        toggleButton.css("left",`${(innerWidth - offsetWidth)/2}px`);
+        if(parseInt(toggleButton[0].style.top,10) !== 0){
+            toggleButton.css("top",`${topBox.offsetHeight}px`);
+        }
+        else{
+            $("#topBox").css("top",`-${topBox.offsetHeight}px`);
+        }
+        
+    }).observe(topBox);
+
+    new ResizeObserver(()=>{
+        $("#buttomBox").css("bottom",`${$('footer')[0].offsetHeight}px`);
+        
+    }).observe($('footer')[0]);
 
 
     myCanvas = canvasInit('canvas');
@@ -979,6 +1086,7 @@ function init(){
     }).catch(()=>{
         logErrorInfo('classMap.json');
     })
+    loadSliders();
 }
 
 window.onload = function(){

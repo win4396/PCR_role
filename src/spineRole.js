@@ -128,7 +128,7 @@ function loadSpineGirl(spineGirl,myCanvas){
             
             // console.log(animationState);
             
-            resolve({ skeleton: skeleton, state: animationState, bounds: bounds, premultipliedAlpha: true });
+            resolve({ skeleton: skeleton, state: animationState, initialFrame: animationState, bounds: bounds, premultipliedAlpha: true });
         }
         img.src = URL.createObjectURL(allTexture2DData[src]);
     });
@@ -332,7 +332,7 @@ function render(canvas){
     const now = Date.now() / 1000;
     const num = canvas.nowCharacter;
     const gl = canvas.gl;
-    let delta = now - lastFrameTime;
+    let delta = canvas.isDrawing ? 0.01667:(now - lastFrameTime);
     delta *= camera.speed;
     lastFrameTime = now;
 
@@ -352,6 +352,7 @@ function render(canvas){
                 i.spine.skeleton.flipY = i.control.flipY;
                 i.spine.skeleton.x = i.control.x;
                 i.spine.skeleton.y = i.control.y;
+                //到时候在这里插入演出相关,修改state的来源
                 i.spine.state.update(delta);
                 i.spine.state.apply(i.spine.skeleton);
                 i.spine.skeleton.updateWorldTransform();
@@ -373,6 +374,9 @@ function render(canvas){
             canvas.skeletonRenderer.draw(canvas.batcher, children.spine.skeleton,children.control.shadow,children.control.visable);}
     });
     canvas.batcher.end();
+    canvas.sceneRenderer.begin();
+    canvas.sceneRenderer.circle(false,0,0,25, new spine.Color(0, 1, 0, 1)); 
+    canvas.sceneRenderer.end();
     canvas.shader.unbind();
     if(canvas.isScreenShot){
         createPngCanvas(camera);
@@ -415,7 +419,6 @@ function render(canvas){
             gifConfig.fpsCount = gifConfig.fpsInit;
             gifConfig.gifPage ++;
             
-           
             if(camera.viewRectTemp.sizing){
                 spineRole_ctx.clearRect(0,0,camera.viewRectData[2],camera.viewRectData[3]); 
                 if(canvas.hasBgImg){

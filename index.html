@@ -24,12 +24,13 @@
     <img id = "myImg" alt="">
     <div id = "topBox" class="flex-container">
         <span class="head-style">
+            <input type="button" class="button1" id= "theaterMode"  value="剧场模式" >
             <input type="button" class="button1" id= "charaSub"     value="◀" >
             <input type="button" class="button1" id= "charaAdd"     value="▶" >
             
             <select id="charaList" title="人物编号"></select>
-            <input type="checkbox" class="checkbox" id="inputview" title="点击切换查询方式">
-            <input type="text"     class="hidden" id="search-box" placeholder="请输入中文名" autocomplete="off"> 
+            <input type="checkbox" class="checkbox" id="inputView" title="点击切换查询方式">
+            <input type="text"     class="hidden" id="searchBox" placeholder="请输入中文名" autocomplete="off"> 
             <select class="hidden" id="star-box" title ="星级"></select>
             
             <select id="skeletonList" title="角色列表">
@@ -139,9 +140,9 @@
                 <!-- <p style="margin: 0;font-size: small;">GIF参数</p> -->
                 <span title = '不要太大'>
                     <label for ="gifWorkers" >workers:</label>
-                    <p class = "dataNum" id = "name01">4</p>   
+                    <p class = "dataNum" id = "name01">6</p>   
                 </span> 
-                <input type="range" id="gifWorkers" value = "4" max = "16" min = "1" step="1">
+                <input type="range" id="gifWorkers" value = "6" max = "16" min = "1" step="1">
                 <span  title = '越小图片质量越好,但生成速度会慢'>
                     <label for ="gifQuality" >quality:</label>
                     <p class = "dataNum" id = "name02">2</p>   
@@ -149,9 +150,9 @@
                 <input type="range" id="gifQuality" value = "2" max = "20" min = "1" step="1">
                 <span title = '越小文件越大'>
                     <label for ="gifFrame" >取帧间隔:</label> 
-                    <p class = "dataNum" id = "name03">2</p>   
+                    <p class = "dataNum" id = "name03">5</p>   
                 </span>
-                <input type="range" id="gifFrame" value = "2" max = "10" min = "1" step="1">
+                <input type="range" id="gifFrame" value = "5" max = "10" min = "1" step="1">
                 <span title = '慢动作'>
                     <label for ="gifDelay" >帧延时:</label> 
                     <p class = "dataNum" id = "name04">0</p>     
@@ -162,6 +163,22 @@
     </div>
     
     <canvas id = "canvas" width="0" height="0"></canvas>
+    <div id = "rightBox" class="flex-container-right">
+        <span class="head-style bottom">
+            <input type="button" class="button1" id= "addATrack"  value="添加轨迹" >
+            <input type="button" class="button1" id= "addAction"  value="添加动作" >
+            <input type="button" class="button1" id= "reorderTS"  value="整理时间线" >
+        </span>
+        <div id="timeStampDiv"></div>
+    </div>
+
+    <div id = "buttomBox" class="flex-container-bottom">
+        <span class="head-style bottom">
+            <span class="timeshow" data-id = "now">00:00</span> /
+            <span class="timeshow" data-id = "end">00:00</span>
+            <div id="imagechanges-timeline" class="slider"></div>
+        </span>
+    </div>
     <div id="viewRect">
         <div id="viewRectResize"></div>
     </div>
