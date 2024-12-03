@@ -4143,6 +4143,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "132801": {
+        "chinese_name": "莱菈耶尔（圣诞节）",
+        "name": "ライラエル（クリスマス）",
+        "real_name": "らいらえる",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 7,
+        "place": 3,
+        "position": 750,
+        "mage": 2,
+        "elemental": 1,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "134101": {
         "chinese_name": "布武机",
         "name": "フブキ",
@@ -4150,6 +4164,20 @@
         "exclusive": 1,
         "type": 1,
         "ex_type": 5,
+        "place": 0,
+        "position": 0,
+        "mage": 0,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
+    "134201": {
+        "chinese_name": "莱菈耶尔（圣诞节）",
+        "name": "ライラエル（クリスマス）",
+        "real_name": "らいらえる",
+        "exclusive": 1,
+        "type": 1,
+        "ex_type": 7,
         "place": 0,
         "position": 0,
         "mage": 0,
