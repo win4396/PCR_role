@@ -843,13 +843,8 @@ $("#downloadGIF").on("click", async function(){
             myCanvas.gifConfig.blob = data;
         });
 
-<<<<<<< HEAD
         await Promise.all([import("./src/gif.js"),x]).then((result)=>{
             myCanvas.gifConfig.isLoaded = true;
-=======
-        await Promise.all([import("https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.js"),x]).then((result)=>{
-            gifLoaded = true;
->>>>>>> parent of 38f26e9 (角色阴影隐藏显示修正)
             logClear();
         }).catch((error)=>{
             logInfo('加载失败,刷新试试?','error');
