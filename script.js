@@ -1,7 +1,7 @@
 let classMap;
 let myCanvas;
 let num = 0;
-let locusArray = Array(30).fill({});
+
 
 const skeletonList = $('#skeletonList');
 const loadSkeleton = $('#loadSkeleton');
@@ -108,7 +108,7 @@ function animationQueueReset(order){
         'idle', 
         'walk',
         'run', 
-        'run_gamestart',
+        'run_gamestart'
     ].indexOf(a[0]) == -1){
         if(outStopRule.indexOf(a[0].slice(a[0].length-4)) == -1)
                 a.push('idle');   
@@ -116,10 +116,6 @@ function animationQueueReset(order){
     let nextAnim = a.shift();
     if(!/^\d{6}/.test(nextAnim))
         nextAnim = spineGirl[order].weapon +'_'+ nextAnim;
-    // else if(/\d{6}_joyResult/.test(nextAnim)){
-    //     spineGirl[order].nowQueue = ['loop',nextAnim];
-    //     spineGirl[order].spine.state.setAnimation(0, nextAnim, true);
-    // }
     // spineGirl[num].animationQueue = a;
     spineGirl[order].spine.state.setAnimation(0, nextAnim, !a.length);
 }
@@ -189,7 +185,14 @@ function addTimeStamp(type,num){
     <br>     
     <span>轨迹类型:<select class = "TsSelect" title="轨迹列表" id = "tsSelect${num}"></select></span>
     <span>每帧移动像素:<input type="number" value = "0" class="inputNumber" data-id ="${num}y"></span>
-    
+    <br> 
+    <span>起点</span>
+    <span> X:<input type="number" value = "0" class="inputNumber" data-id ="${num}h" data-type ="x1"></span>
+    <span> Y:<input type="number" value = "0" class="inputNumber" data-id ="${num}h" data-type ="y1"></span>
+    <br> 
+    <span>终点</span>
+    <span> X:<input type="number" value = "0" class="inputNumber" data-id ="${num}h" data-type ="x2"></span>
+    <span> Y:<input type="number" value = "0" class="inputNumber" data-id ="${num}h" data-type ="y2"></span>
     </div>`:``;
   
     $('#timeStampDiv').append(a);
@@ -197,9 +200,10 @@ function addTimeStamp(type,num){
     locusArray[num]={
         here:true,
         selected:0,
-        visible:true,
+        visable:true,
         start:0,
-        move:0
+        move:0,
+        line:[0,0,0,0]
     };
 } 
 function loadTsSelect(num){
@@ -255,9 +259,36 @@ function appendCharaDiv(num,str){
     
 }
 
-$("#timeStampDiv").on("click",'div span input',function(){
-    console.log(this.type)
+
+
+$("#timeStampDiv").on("click input",'div span input',function(e){
+    const event = e.type === "input" ? true :false;
+    const id = $(this).data('id');
+    const num = id.slice(0,1);
+    const type = id.slice(1);
+
+    if(!event && type === 'a'){
+        locusArray[num].visable = $(this).is(":checked");
+        return;
+    }
+    if(type === 'e'){
+        $('#charaLocus'+num).remove();   
+        locusArray[num] = undefined;
+        return;
+    }
+    if(event && type === 'h'){
+        const b = [];
+        $('input[data-id="'+num+'h"]').each(function() {
+            const val = $(this).val();
+            b.push(Number(val));
+        });
+        switch(locusArray[num].selected){
+            case 0:locusArray[num].line = b;
+        }
+        console.log(b,locusCalc.line(...b));
+    }
 })
+
 
 $('#charaDiv').on('click','div span input[type="button"]',function(){
     const id = $(this).data('id');
@@ -789,7 +820,7 @@ $("#downloadGIF").on("click", async function(){
         let x = new Promise((resolve,reject)=>{
             const xhr = new XMLHttpRequest();
             // console.log(loadType,src)
-            xhr.open('GET','./src/gif.worker.js',true);
+            xhr.open('GET','https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.worker.js',true);
             xhr.responseType = 'blob';
             xhr.onload = function(){
                 if(xhr.status == 200){
@@ -812,8 +843,13 @@ $("#downloadGIF").on("click", async function(){
             myCanvas.gifConfig.blob = data;
         });
 
+<<<<<<< HEAD
         await Promise.all([import("./src/gif.js"),x]).then((result)=>{
             myCanvas.gifConfig.isLoaded = true;
+=======
+        await Promise.all([import("https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.js"),x]).then((result)=>{
+            gifLoaded = true;
+>>>>>>> parent of 38f26e9 (角色阴影隐藏显示修正)
             logClear();
         }).catch((error)=>{
             logInfo('加载失败,刷新试试?','error');
@@ -911,13 +947,15 @@ $("#upLoadImg").on("click",function(){
 })
 
 $("#addATrack").on("click",function(){
-    let newNum = 0;
-    for(;newNum < locusArray.length;newNum++){
-        if(Object.keys(locusArray[newNum]).length === 0)
+    
+    for(let newNum = 0;newNum < locusArray.length;newNum++){
+        if(locusArray[newNum] === undefined){
+            addTimeStamp("locus",newNum);
             break;
+        }
+            
     }
-    addTimeStamp("locus",newNum);
-    console.log(locusArray)
+   
 })
 
 $(".timeshow").each(function(){

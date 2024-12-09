@@ -1,10 +1,12 @@
 
 let additionAnimations = ['DEAR', 'NO_WEAPON', 'POSING', 'RACE', 'RUN_JUMP', 'SMILE'];
 let lastFrameTime;
+let locusArray = Array(30).fill();
 let spineGirl = Array(12).fill({});
 let spineGirl_queue = [];
 let spineRole_ctx = null;
 let spineRole_canvas = null;
+let test = false;
 
 function loadSpineGirl(spineGirl,myCanvas){
     return new Promise((resolve, reject) => { 
@@ -60,15 +62,6 @@ function loadSpineGirl(spineGirl,myCanvas){
             let bounds = calculateSetupPoseBounds(skeleton);
 
             let animationStateData = new spine.AnimationStateData(skeleton.data);
-            let m = skeleton.drawOrder;
-            if(m[0].data.name != 'shadow'){    
-                for(var sp = 1;sp< m.length;sp++){
-                    if(m[sp].data.name === 'shadow'){
-                        skeleton.shadowkey = sp;
-                        break;
-                    }        
-                }
-            }
             animationStateData.defaultMix = 0.05;
             // console.log(animationStateData);
             
@@ -92,14 +85,9 @@ function loadSpineGirl(spineGirl,myCanvas){
                     ////console.log("Animation on track " + track.trackIndex + " completed");
                     if (spineGirl.nowQueue.length) {
                         var nextAnim = spineGirl.nowQueue.shift();
-                        if (nextAnim == 'stop' || nextAnim == 'loop') {
+                        if (nextAnim == 'stop') {
                             if(myCanvas.isDrawing && (spineGirl.order == myCanvas.nowCharacter)){
                                 gifDownload(myCanvas);
-                            }
-                            if(nextAnim == 'loop'){
-                                nextAnim = spineGirl.nowQueue[0];
-                                spineGirl.nowQueue.unshift('loop');
-                                spineGirl.spine.state.setAnimation(0, nextAnim, true);
                             }
                             return;
                         }
@@ -373,11 +361,28 @@ function render(canvas){
         if('control' in children && children.control.ready === true && !camera.pause){
             canvas.skeletonRenderer.draw(canvas.batcher, children.spine.skeleton,children.control.shadow,children.control.visable);}
     });
-    canvas.batcher.end();
-    canvas.sceneRenderer.begin();
-    canvas.sceneRenderer.circle(false,0,0,25, new spine.Color(0, 1, 0, 1)); 
-    canvas.sceneRenderer.end();
+   {
+        canvas.batcher.end();
+        canvas.sceneRenderer.begin();
+        {
+            // canvas.sceneRenderer.circle(false,0,0,25, new spine.Color(0, 1, 0, 1)); 
+            locusArray.forEach((i)=>{
+                if(i !== undefined && i.visable === true){
+                    switch(i.selected){
+                        case 0:
+                            canvas.sceneRenderer.line(...i.line,new spine.Color(0, 1, 0, 1));
+                            break;     
+                    }
+                }
+            })
+            
+            canvas.sceneRenderer.curve(110,280,109,430,109,430,497,296,30,new spine.Color(0, 1, 0, 1));
+        }
+        
+        canvas.sceneRenderer.end();
+    }
     canvas.shader.unbind();
+
     if(canvas.isScreenShot){
         createPngCanvas(camera);
         if(camera.viewRectTemp.sizing){
