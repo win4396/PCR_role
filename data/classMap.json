@@ -4157,6 +4157,20 @@
         "hasRarity6": false,
         "hasSpecialBase": true
     },
+    "132901": {
+        "chinese_name": "伊绪（圣诞节）",
+        "name": "イオ（クリスマス）",
+        "real_name": "いお",
+        "exclusive": 0,
+        "type": 46,
+        "ex_type": 5,
+        "place": 3,
+        "position": 748,
+        "mage": 2,
+        "elemental": 4,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "134101": {
         "chinese_name": "布武机",
         "name": "フブキ",
