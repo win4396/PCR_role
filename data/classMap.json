@@ -3807,6 +3807,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "129501": {
+        "chinese_name": "千爱瑠（冬日）",
+        "name": "チエル（ウィンター）",
+        "real_name": "ちえる",
+        "exclusive": 1,
+        "type": 1,
+        "ex_type": 1,
+        "place": 1,
+        "position": 247,
+        "mage": 1,
+        "elemental": 2,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "129601": {
         "chinese_name": "银莲",
         "name": "アネモネ",
