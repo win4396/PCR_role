@@ -4217,13 +4217,13 @@
         "chinese_name": "咲恋（新年）",
         "name": "サレン（ニューイヤー）",
         "real_name": "されん",
-        "exclusive": 0,
+        "exclusive": 1,
         "type": 22,
-        "ex_type": 1,
-        "place": 0,
-        "position": 0,
-        "mage": 0,
-        "elemental": 0,
+        "ex_type": 4,
+        "place": 3,
+        "position": 718,
+        "mage": 2,
+        "elemental": 4,
         "hasRarity6": false,
         "hasSpecialBase": false
     },
@@ -4256,7 +4256,7 @@
         "hasSpecialBase": false
     },
     "136601": {
-        "chinese_name": "メドゥーサ",
+        "chinese_name": "美杜莎",
         "name": "メドゥーサ",
         "real_name": "めどぅーさ",
         "exclusive": 0,
