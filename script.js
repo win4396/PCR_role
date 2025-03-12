@@ -172,6 +172,7 @@ function resultDisplay($eve){
     changeClassList(classMap[val].type);
     $('#results').remove();    
 }
+
 function addTimeStamp(type,num){
     const a = type === "locus" ?
     `<div id = charaLocus${num} class = "timeStamp_list">
@@ -179,12 +180,11 @@ function addTimeStamp(type,num){
         ★轨迹${num}:
         <input type="button" class="button1" value="删除" data-id ="${num}e"> 
         <span>显示轨迹:<input type="checkbox" class="checkbox" data-id ="${num}a" checked></span>
-        <span>起始时间:<input type="number" value = "0" class="inputNumber" data-id ="${num}x"></span>
         
     </span>
     <br>     
-    <span>轨迹类型:<select class = "TsSelect" title="轨迹列表" id = "tsSelect${num}"></select></span>
-    <span>每帧移动像素:<input type="number" value = "0" class="inputNumber" data-id ="${num}y"></span>
+    <span>类型:<select class = "TsSelect" title="轨迹列表" id = "tsSelect${num}"></select></span>
+    <span>每帧移动像素:<input type="number" value = "1" min = "1" class="inputNumber" data-id ="${num}b"></span>
     <br> 
     <span>起点</span>
     <span> X:<input type="number" value = "0" class="inputNumber" data-id ="${num}h" data-type ="x1"></span>
@@ -193,6 +193,11 @@ function addTimeStamp(type,num){
     <span>终点</span>
     <span> X:<input type="number" value = "0" class="inputNumber" data-id ="${num}h" data-type ="x2"></span>
     <span> Y:<input type="number" value = "0" class="inputNumber" data-id ="${num}h" data-type ="y2"></span>
+    <div class = "timeStamp_list_child hidden" id = "tsChildDiv${num}">
+    <span>拐点</span>
+    <span> X:<input type="number" value = "0" class="inputNumber" data-id ="${num}h" data-type ="x3"></span>
+    <span> Y:<input type="number" value = "0" class="inputNumber" data-id ="${num}h" data-type ="y3"></span>
+    </div>
     </div>`:``;
   
     $('#timeStampDiv').append(a);
@@ -202,8 +207,9 @@ function addTimeStamp(type,num){
         selected:0,
         visable:true,
         start:0,
-        move:0,
-        line:[0,0,0,0]
+        move:1,
+        line:[0,0,0,0],
+        curve:[0,0,0,0,0,0]
     };
 } 
 function loadTsSelect(num){
@@ -212,9 +218,6 @@ function loadTsSelect(num){
     [
         ["直线",0],
         ["贝塞尔曲线",1],
-        ["圆",2],
-        ["圆弧",3],
-        ["方形",4],
     ].forEach((i)=>{
         select.append(createTag('option',{value: i[1]},createTag('text',i[0])));
     })
@@ -259,33 +262,74 @@ function appendCharaDiv(num,str){
     
 }
 
+$("#timeStampDiv").on("change",'select',function(e){
+    const val = Number($(this).val());
+    const id = Number($(this)[0].id.slice(8));
+    console.log(val);
+    locusArray[id].selected = val;
+    switch(val){
+        case 0:
+            $("#tsChildDiv"+id).addClass("hidden");
+            break;
+        case 1:
+            $("#tsChildDiv"+id).removeClass("hidden");
+            break;
+    }
+    
+})
 
-
-$("#timeStampDiv").on("click input",'div span input',function(e){
+$("#timeStampDiv").on("click input",'input',function(e){
     const event = e.type === "input" ? true :false;
     const id = $(this).data('id');
     const num = id.slice(0,1);
     const type = id.slice(1);
 
-    if(!event && type === 'a'){
+    if(!event && type === "a"){
         locusArray[num].visable = $(this).is(":checked");
         return;
     }
-    if(type === 'e'){
+    if(type === "e"){
         $('#charaLocus'+num).remove();   
         locusArray[num] = undefined;
         return;
     }
-    if(event && type === 'h'){
+    if(event && type === "b"){
+        const val = $(this).val();
+        let a;
+        locusArray[num].move = Number(Math.floor(val));
+        switch(locusArray[num].selected){
+            case 0:
+                a = locusArray[num].line;
+                const t0 =  new locusCalc.line(...a,locusArray[num].move);
+                locusArray[num].linePoints = t0.getPointArray();
+                break;
+            case 1:
+                a = locusArray[num].curve;
+                const t1 =  new locusCalc.curve(...a,locusArray[num].move);
+                locusArray[num].curvePoints = t1.getPointArray();
+                break;
+        }
+        return;
+    }
+    if(event && type === "h"){
         const b = [];
         $('input[data-id="'+num+'h"]').each(function() {
             const val = $(this).val();
             b.push(Number(val));
         });
         switch(locusArray[num].selected){
-            case 0:locusArray[num].line = b;
+            case 0:
+                locusArray[num].line = b.slice(0,4);
+                const t0 =  new locusCalc.line(...b,locusArray[num].move);
+                locusArray[num].linePoints = t0.getPointArray();
+                break;
+            case 1:
+                locusArray[num].curve = b;
+                const t1 =  new locusCalc.curve(...b,locusArray[num].move);
+                locusArray[num].curvePoints = t1.getPointArray();
+                break;
         }
-        console.log(b,locusCalc.line(...b));
+        // console.log(b,locusCalc.line(...b));
     }
 })
 
@@ -820,7 +864,7 @@ $("#downloadGIF").on("click", async function(){
         let x = new Promise((resolve,reject)=>{
             const xhr = new XMLHttpRequest();
             // console.log(loadType,src)
-            xhr.open('GET','https://cdn.bootcdn.net/ajax/libs/gif.js/0.2.0/gif.worker.js',true);
+            xhr.open('GET','./src/gif.worker.js',true);
             xhr.responseType = 'blob';
             xhr.onload = function(){
                 if(xhr.status == 200){
@@ -957,9 +1001,10 @@ $(".timeshow").each(function(){
     let owntime = $(this);
     let value = 0,object;
     const id = owntime.data('id');
-    function settime(t){
-        value = t;
+    function setTime(t){
+        value = Math.floor(t);
         owntime[0].innerText = `${weaponCalc(Math.floor(value/60))}:${weaponCalc(value%60)}`;
+        myCanvas.theaterMode[id] = t;
     }
     function onclick(){
         let userInput = prompt(id === "now" ? "请输入当前时间(不能大于当前时间)：" : "请输入总秒数(最多不超过300秒)","0");
@@ -969,6 +1014,7 @@ $(".timeshow").each(function(){
         if(isNaN(inputNumber))      return;
         
         inputNumber = inputNumber>300 ? 300 : inputNumber;
+        myCanvas.theaterMode[id] = inputNumber;
         const endtime = $($(".timeshow")[1]);
         let nowtime = 0;
         if(owntime[0] === endtime[0]){
@@ -990,7 +1036,7 @@ $(".timeshow").each(function(){
     
     owntime.on("click",onclick);
     owntime.data("time",object = {
-        set: settime,
+        set: setTime,
         get: ()=> { return value; },
         
     });
@@ -1029,7 +1075,7 @@ function loadSliders(){
             time.push($(this).data("time").get());
         })
         if(time[1] === 0) return;
-        const mewtime = Math.floor((value*time[1]));
+        const mewtime = value*time[1];
         $($(".timeshow")[0]).data("time").set(mewtime);
         // console.log(time);
     }
@@ -1066,9 +1112,6 @@ function init(){
     }).observe($('#charaDiv')[0], {childList: true, subtree: false});
 
     new ResizeObserver(()=>{
-        const innerWidth = window.innerWidth;
-        const offsetWidth = toggleButton[0].offsetWidth;
-        toggleButton.css("left",`${(innerWidth - offsetWidth)/2}px`);
         if(parseInt(toggleButton[0].style.top,10) !== 0){
             toggleButton.css("top",`${topBox.offsetHeight}px`);
         }

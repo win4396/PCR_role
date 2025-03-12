@@ -56,6 +56,7 @@ select,input[type='text']{
     border-radius: 0px 0px 15px 15px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
     z-index:99;
+    transition: top 0.5s;
 }
 .flex-container-bottom{
     position: fixed;
@@ -103,7 +104,13 @@ select,input[type='text']{
 .timeStamp_list >*{
     margin: 5px 0 5px 10px;
 }
-
+.timeStamp_list_child{
+    margin: 5px;
+    text-align: center;
+}
+.timeStamp_list_child >*{
+    margin: 5px 0 5px 10px;
+}
 .TsSelect{
     width: 80px;
 }
@@ -198,10 +205,11 @@ input.checkbox{
     height: 40px;
     border: none;
     border-radius: 0px 0px 10px 10px;
-    transition: opacity 0.5s ease-in-out;
+    transition: opacity  0.5s ease-in-out,top 0.5s;
     opacity: 0;
     box-shadow: -5px 5px 5px rgba(0, 0, 0, 0.3),5px 5px 5px rgba(0, 0, 0, 0.3);
     z-index: 99;
+    transform: translateX(calc(50vw - 150px));
 }
 .flex-container:hover ,
 #toggleButton:hover{

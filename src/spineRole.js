@@ -6,7 +6,7 @@ let spineGirl = Array(12).fill({});
 let spineGirl_queue = [];
 let spineRole_ctx = null;
 let spineRole_canvas = null;
-let test = false;
+let test = 0;
 
 function loadSpineGirl(spineGirl,myCanvas){
     return new Promise((resolve, reject) => { 
@@ -333,6 +333,15 @@ function render(canvas){
     else
     gl.clearColor(bgColor.R*bgColor.A,bgColor.G*bgColor.A,bgColor.B*bgColor.A,bgColor.A);
     gl.clear(gl.COLOR_BUFFER_BIT);
+
+    if(canvas.isTheaterMode)
+        if(canvas.theaterMode.end === 0){
+            requestAnimationFrame(()=>{
+                render(canvas);
+            });
+            return;
+        }
+            
     if(!camera.pause){
         spineGirl.forEach((i)=>{
             if('control' in i && i.control.ready === true){
@@ -340,8 +349,24 @@ function render(canvas){
                 i.spine.skeleton.flipY = i.control.flipY;
                 i.spine.skeleton.x = i.control.x;
                 i.spine.skeleton.y = i.control.y;
+                //locusArray[0].linePoints[Math.floor(myCanvas.theaterMode.now*60)]
+                // if(locusArray[0].linePoints[test]){
+                //     i.spine.skeleton.x = locusArray[0].linePoints[test].x;
+                //     i.spine.skeleton.y = locusArray[0].linePoints[test].y;
+                //     test ++;
+                // }
+                // else{
+                //     test = 0;
+                // }
                 //到时候在这里插入演出相关,修改state的来源
-                i.spine.state.update(delta);
+                if(canvas.isTheaterMode){
+                    i.spine.state =i.spine.initialFrame;
+                    const time = Math.floor(myCanvas.theaterMode.now/0.01667)*0.01667;
+                    i.spine.state.update(time);
+                }
+                else{
+                    i.spine.state.update(delta);
+                }
                 i.spine.state.apply(i.spine.skeleton);
                 i.spine.skeleton.updateWorldTransform();
                 
@@ -361,26 +386,32 @@ function render(canvas){
         if('control' in children && children.control.ready === true && !camera.pause){
             canvas.skeletonRenderer.draw(canvas.batcher, children.spine.skeleton,children.control.shadow,children.control.visable);}
     });
-   {
-        canvas.batcher.end();
-        canvas.sceneRenderer.begin();
-        {
-            // canvas.sceneRenderer.circle(false,0,0,25, new spine.Color(0, 1, 0, 1)); 
-            locusArray.forEach((i)=>{
-                if(i !== undefined && i.visable === true){
-                    switch(i.selected){
-                        case 0:
-                            canvas.sceneRenderer.line(...i.line,new spine.Color(0, 1, 0, 1));
-                            break;     
-                    }
+    canvas.batcher.end();
+    
+
+    canvas.sceneRenderer.begin();
+    {
+        // canvas.sceneRenderer.circle(true,0,80,3,new spine.Color(0, 1, 1, 1));
+        // canvas.sceneRenderer.line(0,0,0,80,new spine.Color(0, 1, 1, 1));
+        // canvas.sceneRenderer.line(0,80,200,0,new spine.Color(0, 1, 1, 1));
+        locusArray.forEach((i)=>{
+            if(i !== undefined && i.visable === true){
+                switch(i.selected){
+                    case 0:
+                        canvas.sceneRenderer.line(...i.line,new spine.Color(0, 1, 0, 1));
+                        break; 
+                    case 1:
+                        canvas.sceneRenderer.curve(...deviationFix(...i.curve),30,new spine.Color(1, 0, 0, 1));
+                        break; 
                 }
-            })
-            
-            canvas.sceneRenderer.curve(110,280,109,430,109,430,497,296,30,new spine.Color(0, 1, 0, 1));
-        }
+            }
+        })
+   
         
-        canvas.sceneRenderer.end();
     }
+    
+    canvas.sceneRenderer.end();
+ 
     canvas.shader.unbind();
 
     if(canvas.isScreenShot){
@@ -454,4 +485,14 @@ function render(canvas){
     requestAnimationFrame(()=>{
         render(canvas);
     });
+}
+
+// 修复贝塞尔曲线显示误差
+function deviationFix(x1,y1,x2,y2,cx,cy){
+   
+    
+    const x = cx === 0 ? 1 : 1.12;
+    const newCx = (cx - x2 * 0.03 - x1 * 0.1 ) * x;
+    const newCy = cy * 1.13;
+    return [x1,y1,newCx,newCy,x2,y2,x2,y2]
 }
