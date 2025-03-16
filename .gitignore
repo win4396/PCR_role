@@ -1,6 +1,6 @@
 node_modules
 CNAME
 *.code-workspace
-.gitgnore
 .vscode
-data/去掉txt.ps1
+data/批处理.bat
+.gitignore
