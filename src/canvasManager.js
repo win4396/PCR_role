@@ -51,7 +51,11 @@ function canvasInit(canvasId){
         customName : "PcrImage",
         isScreenShot:false,
         isDrawing:false,
-        isTheaterMode:false,
+        isTheaterMode:true,
+        theaterMode:{
+            now:0,
+            end:0
+        },
         gif:null,
         gifConfig : {
             fpsCount: 1,
