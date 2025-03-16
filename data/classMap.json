@@ -4339,6 +4339,20 @@
         "hasRarity6": false,
         "hasSpecialBase": true
     },
+    "134401": {
+        "chinese_name": "千歌（礼服）",
+        "name": "チカ（儀装束）",
+        "real_name": "ちか",
+        "exclusive": 0,
+        "type": 21,
+        "ex_type": 7,
+        "place": 3,
+        "position": 773,
+        "mage": 2,
+        "elemental": 3,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "136601": {
         "chinese_name": "美杜莎",
         "name": "メドゥーサ",
