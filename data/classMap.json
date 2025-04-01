@@ -4353,6 +4353,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "134601": {
+        "chinese_name": "碧（驾驶员）",
+        "name": "アオイ（パイロット）",
+        "real_name": "あおい",
+        "exclusive": 1,
+        "type": 35,
+        "ex_type": 35,
+        "place": 2,
+        "position": 526,
+        "mage": 1,
+        "elemental": 4,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "136601": {
         "chinese_name": "美杜莎",
         "name": "メドゥーサ",
