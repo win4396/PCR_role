@@ -4353,6 +4353,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "134501": {
+        "chinese_name": "克洛琪（风灵）",
+        "name": "クローチェ（エアリアル）",
+        "real_name": "くろーちぇ",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 3,
+        "position": 719,
+        "mage": 2,
+        "elemental": 1,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "134601": {
         "chinese_name": "碧（驾驶员）",
         "name": "アオイ（パイロット）",
