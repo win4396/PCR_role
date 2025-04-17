@@ -3402,7 +3402,7 @@
         "hasSpecialBase": false
     },
     "126401": {
-        "chinese_name": "克洛琪",
+        "chinese_name": "克萝茜",
         "name": "クローチェ",
         "real_name": "くろーちぇ",
         "exclusive": 1,
@@ -4354,7 +4354,7 @@
         "hasSpecialBase": false
     },
     "134501": {
-        "chinese_name": "克洛琪（风灵）",
+        "chinese_name": "克萝茜（风灵）",
         "name": "クローチェ（エアリアル）",
         "real_name": "くろーちぇ",
         "exclusive": 1,
@@ -4378,6 +4378,20 @@
         "position": 526,
         "mage": 1,
         "elemental": 4,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
+    "134701": {
+        "chinese_name": "凤凰",
+        "name": "ホウオウ",
+        "real_name": "ほうおう",
+        "exclusive": 1,
+        "type": 7,
+        "ex_type": 7,
+        "place": 2,
+        "position": 490,
+        "mage": 1,
+        "elemental": 1,
         "hasRarity6": false,
         "hasSpecialBase": false
     },
