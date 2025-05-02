@@ -4157,6 +4157,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "132301": {
+        "chinese_name": "露易斯玛丽",
+        "name": "ルイズマリー",
+        "real_name": "るいずまりー",
+        "exclusive": 1,
+        "type": 7,
+        "ex_type": 7,
+        "place": 0,
+        "position": 0,
+        "mage": 0,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "132801": {
         "chinese_name": "莱菈耶尔（圣诞节）",
         "name": "ライラエル（クリスマス）",
@@ -4194,6 +4208,20 @@
         "ex_type": 0,
         "place": 1,
         "position": 234,
+        "mage": 1,
+        "elemental": 5,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "133101": {
+        "chinese_name": "薇欧莉特",
+        "name": "ヴァイオレット",
+        "real_name": "うぁいおれっと",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 1,
+        "position": 154,
         "mage": 1,
         "elemental": 5,
         "hasRarity6": false,
