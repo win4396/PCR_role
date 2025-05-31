@@ -4437,6 +4437,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "134801": {
+        "chinese_name": "纺希（吉欧・格黑纳）",
+        "name": "ツムギ（ジオ・ゲヘナ）",
+        "real_name": "つむぎ",
+        "exclusive": 1,
+        "type": 1,
+        "ex_type": 1,
+        "place": 2,
+        "position": 485,
+        "mage": 1,
+        "elemental": 4,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "136601": {
         "chinese_name": "美杜莎",
         "name": "メドゥーサ",
@@ -4472,6 +4486,20 @@
         "exclusive": 1,
         "type": 1,
         "ex_type": 7,
+        "place": 0,
+        "position": 0,
+        "mage": 0,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
+    "137301": {
+        "chinese_name": "华音",
+        "name": "カノン",
+        "real_name": "かのん",
+        "exclusive": 1,
+        "type": 1,
+        "ex_type": 2,
         "place": 0,
         "position": 0,
         "mage": 0,
