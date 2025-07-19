@@ -4479,6 +4479,34 @@
         "hasRarity6": false,
         "hasSpecialBase": true
     },
+    "135001": {
+        "chinese_name": "厄莉丝（夏日）",
+        "name": "エリス（サマー）",
+        "real_name": "えりす",
+        "exclusive": 1,
+        "type": 21,
+        "ex_type": 7,
+        "place": 3,
+        "position": 785,
+        "mage": 2,
+        "elemental": 3,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
+    "135101": {
+        "chinese_name": "雪菲（夏日）",
+        "name": "シェフィ（サマー）",
+        "real_name": "しぇふぃ",
+        "exclusive": 1,
+        "type": 4,
+        "ex_type": 4,
+        "place": 1,
+        "position": 143,
+        "mage": 1,
+        "elemental": 4,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "135801": {
         "chinese_name": "雪乃",
         "name": "ユキノ",
