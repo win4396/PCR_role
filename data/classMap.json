@@ -4507,6 +4507,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "135201": {
+        "chinese_name": "普雷西亚（夏日）",
+        "name": "プレシア（サマー）",
+        "real_name": "ぷれしあ",
+        "exclusive": 1,
+        "type": 7,
+        "ex_type": 7,
+        "place": 2,
+        "position": 548,
+        "mage": 2,
+        "elemental": 3,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "135801": {
         "chinese_name": "雪乃",
         "name": "ユキノ",
