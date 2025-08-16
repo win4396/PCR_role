@@ -4535,6 +4535,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "135401": {
+        "chinese_name": "银莲（夏日）",
+        "name": "アネモネ（サマー）",
+        "real_name": "あねもね",
+        "exclusive": 1,
+        "type": 52,
+        "ex_type": 2,
+        "place": 2,
+        "position": 553,
+        "mage": 2,
+        "elemental": 4,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "135801": {
         "chinese_name": "雪乃",
         "name": "ユキノ",
@@ -4602,6 +4616,20 @@
         "position": 0,
         "mage": 0,
         "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
+    "137101": {
+        "chinese_name": "妮侬（夏日）",
+        "name": "ニノン（サマー）",
+        "real_name": "にのん",
+        "exclusive": 0,
+        "type": 47,
+        "ex_type": 8,
+        "place": 2,
+        "position": 566,
+        "mage": 2,
+        "elemental": 2,
         "hasRarity6": false,
         "hasSpecialBase": false
     },
