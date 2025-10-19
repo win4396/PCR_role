@@ -4609,15 +4609,15 @@
         "chinese_name": "皐月",
         "name": "サツキ",
         "real_name": "さつき",
-        "exclusive": 0,
-        "type": 1,
-        "ex_type": 1,
-        "place": 0,
-        "position": 0,
-        "mage": 0,
-        "elemental": 0,
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 3,
+        "place": 1,
+        "position": 219,
+        "mage": 1,
+        "elemental": 5,
         "hasRarity6": false,
-        "hasSpecialBase": false
+        "hasSpecialBase": true
     },
     "136201": {
         "chinese_name": "娜娜",
