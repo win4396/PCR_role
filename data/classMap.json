@@ -4619,6 +4619,20 @@
         "hasRarity6": false,
         "hasSpecialBase": true
     },
+    "136101": {
+        "chinese_name": "樱",
+        "name": "サクラ",
+        "real_name": "さくら",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 2,
+        "position": 432,
+        "mage": 1,
+        "elemental": 5,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "136201": {
         "chinese_name": "娜娜",
         "name": "ナーナ",
@@ -4738,6 +4752,20 @@
         "exclusive": 1,
         "type": 1,
         "ex_type": 7,
+        "place": 0,
+        "position": 0,
+        "mage": 0,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
+    "138601": {
+        "chinese_name": "樱",
+        "name": "サクラ",
+        "real_name": "さくら",
+        "exclusive": 1,
+        "type": 1,
+        "ex_type": 1,
         "place": 0,
         "position": 0,
         "mage": 0,
