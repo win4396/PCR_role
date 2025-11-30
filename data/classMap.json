@@ -4661,6 +4661,34 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "136301": {
+        "chinese_name": "美空（圣诞节）",
+        "name": "ミソラ（クリスマス）",
+        "real_name": "みそら",
+        "exclusive": 0,
+        "type": 35,
+        "ex_type": 35,
+        "place": 0,
+        "position": 0,
+        "mage": 0,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
+    "136401": {
+        "chinese_name": "优衣（圣诞节）",
+        "name": "ユイ（クリスマス）",
+        "real_name": "ゆい",
+        "exclusive": 1,
+        "type": 21,
+        "ex_type": 7,
+        "place": 2,
+        "position": 382,
+        "mage": 2,
+        "elemental": 1,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "136601": {
         "chinese_name": "美杜莎",
         "name": "メドゥーサ",
