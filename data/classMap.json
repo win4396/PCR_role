@@ -4689,6 +4689,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "136501": {
+        "chinese_name": "静流（新年）",
+        "name": "シズル（ニューイヤー）",
+        "real_name": "しずる",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 5,
+        "place": 1,
+        "position": 151,
+        "mage": 1,
+        "elemental": 3,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "136601": {
         "chinese_name": "美杜莎",
         "name": "メドゥーサ",
@@ -4801,6 +4815,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "137601": {
+        "chinese_name": "可可萝（向导幼君）",
+        "name": "コッコロ（嚮導幼君）",
+        "real_name": "こっころ",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 7,
+        "place": 3,
+        "position": 733,
+        "mage": 2,
+        "elemental": 3,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "137801": {
         "chinese_name": "雪乃",
         "name": "ユキノ",
@@ -4815,11 +4843,39 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "137901": {
+        "chinese_name": "璃乃（新年）",
+        "name": "リノ（ニューイヤー）",
+        "real_name": "りの",
+        "exclusive": 0,
+        "type": 8,
+        "ex_type": 8,
+        "place": 0,
+        "position": 0,
+        "mage": 1,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "138601": {
         "chinese_name": "樱",
         "name": "サクラ",
         "real_name": "さくら",
         "exclusive": 1,
+        "type": 1,
+        "ex_type": 1,
+        "place": 0,
+        "position": 0,
+        "mage": 0,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
+    "141401": {
+        "chinese_name": "静流（新年）",
+        "name": "シズル（ニューイヤー）",
+        "real_name": "しずる",
+        "exclusive": 0,
         "type": 1,
         "ex_type": 1,
         "place": 0,
