@@ -4857,6 +4857,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "138001": {
+        "chinese_name": "薇欧莉特（伊邪那美）",
+        "name": "ヴァイオレット（イサナミ）",
+        "real_name": "うぁいおれっと",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 1,
+        "position": 154,
+        "mage": 1,
+        "elemental": 2,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "138601": {
         "chinese_name": "樱",
         "name": "サクラ",
@@ -4878,6 +4892,20 @@
         "exclusive": 0,
         "type": 1,
         "ex_type": 1,
+        "place": 0,
+        "position": 0,
+        "mage": 0,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
+    "141501": {
+        "chinese_name": "薇欧莉特（伊邪那美）",
+        "name": "ヴァイオレット（イサナミ）",
+        "real_name": "うぁいおれっと",
+        "exclusive": 0,
+        "type": 1,
+        "ex_type": 0,
         "place": 0,
         "position": 0,
         "mage": 0,
