@@ -273,7 +273,7 @@
         "type": 3,
         "ex_type": 3,
         "place": 1,
-        "position": 240,
+        "position": 197,
         "mage": 1,
         "elemental": 3,
         "hasRarity6": true,
@@ -2978,7 +2978,7 @@
         "position": 350,
         "mage": 1,
         "elemental": 2,
-        "hasRarity6": false,
+        "hasRarity6": true,
         "hasSpecialBase": true
     },
     "123401": {
@@ -3836,7 +3836,7 @@
         "hasSpecialBase": true
     },
     "129701": {
-        "chinese_name": "涅妃涅菈",
+        "chinese_name": "涅妃=涅菈",
         "name": "ネフィ＝ネラ",
         "real_name": "ねふぃーねら",
         "exclusive": 1,
@@ -4882,6 +4882,20 @@
         "position": 729,
         "mage": 2,
         "elemental": 3,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "138201": {
+        "chinese_name": "涅妃=涅菈（鬼面佛心）",
+        "name": "ネフィ＝ネラ（鬼面仏心）",
+        "real_name": "ねふぃーねら",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 2,
+        "position": 502,
+        "mage": 1,
+        "elemental": 4,
         "hasRarity6": false,
         "hasSpecialBase": true
     },
