@@ -4927,6 +4927,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "138701": {
+        "chinese_name": "若菜（冬日）",
+        "name": "ワカナ（ウィンター）",
+        "real_name": "わかな",
+        "exclusive": 1,
+        "type": 55,
+        "ex_type": 7,
+        "place": 2,
+        "position": 539,
+        "mage": 1,
+        "elemental": 5,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "138801": {
         "chinese_name": "栞（冬日）",
         "name": "シオリ（ウィンター）",
