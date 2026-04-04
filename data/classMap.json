@@ -4955,6 +4955,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "138901": {
+        "chinese_name": "格蕾斯（兔女郎）",
+        "name": "グレイス（バニー）",
+        "real_name": "ぐれいす",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 4,
+        "place": 2,
+        "position": 429,
+        "mage": 1,
+        "elemental": 2,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "141401": {
         "chinese_name": "静流（新年）",
         "name": "シズル（ニューイヤー）",
@@ -4976,6 +4990,20 @@
         "exclusive": 0,
         "type": 1,
         "ex_type": 0,
+        "place": 0,
+        "position": 0,
+        "mage": 0,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
+    "141601": {
+        "chinese_name": "格蕾斯（兔女郎）",
+        "name": "グレイス（バニー）",
+        "real_name": "ぐれいす",
+        "exclusive": 1,
+        "type": 1,
+        "ex_type": 4,
         "place": 0,
         "position": 0,
         "mage": 0,
