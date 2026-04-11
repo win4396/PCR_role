@@ -4969,6 +4969,20 @@
         "hasRarity6": false,
         "hasSpecialBase": true
     },
+    "139001": {
+        "chinese_name": "镜华（哥特）",
+        "name": "キョウカ（ゴシック）",
+        "real_name": "きょうか",
+        "exclusive": 1,
+        "type": 7,
+        "ex_type": 7,
+        "place": 3,
+        "position": 816,
+        "mage": 2,
+        "elemental": 5,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "141401": {
         "chinese_name": "静流（新年）",
         "name": "シズル（ニューイヤー）",
