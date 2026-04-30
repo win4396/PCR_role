@@ -4983,6 +4983,48 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "139101": {
+        "chinese_name": "凯露（霸瞳天星）",
+        "name": "キャル（覇瞳天星）",
+        "real_name": "きゃる",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 3,
+        "position": 770,
+        "mage": 2,
+        "elemental": 5,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "139201": {
+        "chinese_name": "美穗（少女与战车）",
+        "name": "ミホ（ガルパン）",
+        "real_name": "みほ",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 2,
+        "position": 486,
+        "mage": 2,
+        "elemental": 1,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "139301": {
+        "chinese_name": "真穗（少女与战车）",
+        "name": "マホ（ガルパン）",
+        "real_name": "まほ",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 3,
+        "position": 700,
+        "mage": 1,
+        "elemental": 1,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "141401": {
         "chinese_name": "静流（新年）",
         "name": "シズル（ニューイヤー）",
