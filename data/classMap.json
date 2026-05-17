@@ -5025,6 +5025,20 @@
         "hasRarity6": false,
         "hasSpecialBase": true
     },
+    "139401": {
+        "chinese_name": "艾丽卡（少女与战车）",
+        "name": "エリカ（ガルパン）",
+        "real_name": "えりか",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 2,
+        "position": 322,
+        "mage": 1,
+        "elemental": 3,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "141401": {
         "chinese_name": "静流（新年）",
         "name": "シズル（ニューイヤー）",
