@@ -4745,6 +4745,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "136901": {
+        "chinese_name": "璐璐伊",
+        "name": "ルルィ",
+        "real_name": "るるぃ",
+        "exclusive": 0,
+        "type": 0,
+        "ex_type": 3,
+        "place": 2,
+        "position": 409,
+        "mage": 1,
+        "elemental": 2,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "137101": {
         "chinese_name": "妮侬（夏日）",
         "name": "ニノン（サマー）",
