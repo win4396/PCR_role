@@ -5053,6 +5053,48 @@
         "hasRarity6": false,
         "hasSpecialBase": true
     },
+    "139501": {
+        "chinese_name": "莉莉（女武神）",
+        "name": "リリ（ヴァルキュリア）",
+        "real_name": "りり",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 2,
+        "position": 453,
+        "mage": 2,
+        "elemental": 4,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "139601": {
+        "chinese_name": "可璃亚（女武神）",
+        "name": "クリア（ヴァルキュリア）",
+        "real_name": "くりあ",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 2,
+        "place": 1,
+        "position": 150,
+        "mage": 2,
+        "elemental": 4,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "139701": {
+        "chinese_name": "普雷西亚（女武神）",
+        "name": "プレシア（ヴァルキュリア）",
+        "real_name": "ぷれしあ",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 2,
+        "position": 500,
+        "mage": 2,
+        "elemental": 4,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "141401": {
         "chinese_name": "静流（新年）",
         "name": "シズル（ニューイヤー）",
