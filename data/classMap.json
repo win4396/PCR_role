@@ -5095,6 +5095,34 @@
         "hasRarity6": false,
         "hasSpecialBase": true
     },
+    "139801": {
+        "chinese_name": "雪菲（真龙）",
+        "name": "シェフィ（ヴァードラッヘ）",
+        "real_name": "しぇふぃ",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 2,
+        "position": 386,
+        "mage": 1,
+        "elemental": 5,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "139901": {
+        "chinese_name": "露易斯玛丽（夏日）",
+        "name": "ルイズマリー（サマー）",
+        "real_name": "るいずまりー",
+        "exclusive": 1,
+        "type": 55,
+        "ex_type": 55,
+        "place": 3,
+        "position": 757,
+        "mage": 2,
+        "elemental": 2,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "141401": {
         "chinese_name": "静流（新年）",
         "name": "シズル（ニューイヤー）",
