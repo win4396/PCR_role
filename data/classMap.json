@@ -5123,6 +5123,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "140001": {
+        "chinese_name": "克蕾琪塔（夏日）",
+        "name": "クレジッタ（サマー）",
+        "real_name": "くれじった",
+        "exclusive": 1,
+        "type": 54,
+        "ex_type": 54,
+        "place": 3,
+        "position": 730,
+        "mage": 2,
+        "elemental": 1,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "141401": {
         "chinese_name": "静流（新年）",
         "name": "シズル（ニューイヤー）",
