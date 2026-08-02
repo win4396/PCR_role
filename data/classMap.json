@@ -5137,6 +5137,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "140101": {
+        "chinese_name": "吹雪（夏日）",
+        "name": "フブキ（サマー）",
+        "real_name": "ふぶき",
+        "exclusive": 1,
+        "type": 54,
+        "ex_type": 54,
+        "place": 2,
+        "position": 376,
+        "mage": 1,
+        "elemental": 5,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "141401": {
         "chinese_name": "静流（新年）",
         "name": "シズル（ニューイヤー）",
