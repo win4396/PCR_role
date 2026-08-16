@@ -5151,6 +5151,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "140201": {
+        "chinese_name": "斑比（夏日）",
+        "name": "ヴァンピィ（サマー）",
+        "real_name": "うぁんぴぃ",
+        "exclusive": 0,
+        "type": 43,
+        "ex_type": 43,
+        "place": 2,
+        "position": 582,
+        "mage": 2,
+        "elemental": 2,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
     "141401": {
         "chinese_name": "静流（新年）",
         "name": "シズル（ニューイヤー）",
