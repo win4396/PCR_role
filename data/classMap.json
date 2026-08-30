@@ -5165,6 +5165,20 @@
         "hasRarity6": false,
         "hasSpecialBase": false
     },
+    "140301": {
+        "chinese_name": "提娅",
+        "name": "ティア",
+        "real_name": "てぃあ",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 3,
+        "position": 744,
+        "mage": 2,
+        "elemental": 2,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "141401": {
         "chinese_name": "静流（新年）",
         "name": "シズル（ニューイヤー）",
