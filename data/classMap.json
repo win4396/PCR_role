@@ -5179,6 +5179,34 @@
         "hasRarity6": false,
         "hasSpecialBase": true
     },
+    "140401": {
+        "chinese_name": "黎萨",
+        "name": "リーザ",
+        "real_name": "りーざ",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 3,
+        "position": 780,
+        "mage": 1,
+        "elemental": 3,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
+    "140501": {
+        "chinese_name": "乌尔姆（真龙）",
+        "name": "ヴルム（ヴァルムドラッヘ）",
+        "real_name": "うるむ",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 2,
+        "position": 396,
+        "mage": 1,
+        "elemental": 5,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "141401": {
         "chinese_name": "静流（新年）",
         "name": "シズル（ニューイヤー）",
