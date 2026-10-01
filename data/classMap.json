@@ -4550,7 +4550,7 @@
         "hasSpecialBase": false
     },
     "135501": {
-        "chinese_name": "埃拉",
+        "chinese_name": "艾拉",
         "name": "アイラ",
         "real_name": "あいら",
         "exclusive": 1,
@@ -4564,7 +4564,7 @@
         "hasSpecialBase": true
     },
     "135601": {
-        "chinese_name": "志那都",
+        "chinese_name": "诗夏",
         "name": "シナツ",
         "real_name": "しなつ",
         "exclusive": 1,
@@ -4606,7 +4606,7 @@
         "hasSpecialBase": true
     },
     "135901": {
-        "chinese_name": "皐月",
+        "chinese_name": "沙月",
         "name": "サツキ",
         "real_name": "さつき",
         "exclusive": 1,
@@ -4816,7 +4816,7 @@
         "hasSpecialBase": false
     },
     "137501": {
-        "chinese_name": "埃拉",
+        "chinese_name": "艾拉",
         "name": "アイラ",
         "real_name": "あいら",
         "exclusive": 1,
@@ -5221,6 +5221,20 @@
         "hasRarity6": false,
         "hasSpecialBase": true
     },
+    "140701": {
+        "chinese_name": "咲恋（火枪手）",
+        "name": "サレン（ガンナー）",
+        "real_name": "されん",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 2,
+        "position": 431,
+        "mage": 1,
+        "elemental": 5,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "141401": {
         "chinese_name": "静流（新年）",
         "name": "シズル（ニューイヤー）",
@@ -5256,6 +5270,20 @@
         "exclusive": 1,
         "type": 1,
         "ex_type": 4,
+        "place": 0,
+        "position": 0,
+        "mage": 0,
+        "elemental": 0,
+        "hasRarity6": false,
+        "hasSpecialBase": false
+    },
+    "143001": {
+        "chinese_name": "露易斯玛丽",
+        "name": "ルイズマリー",
+        "real_name": "るいずまりー",
+        "exclusive": 0,
+        "type": 1,
+        "ex_type": 0,
         "place": 0,
         "position": 0,
         "mage": 0,
