@@ -5235,6 +5235,20 @@
         "hasRarity6": false,
         "hasSpecialBase": true
     },
+    "140801": {
+        "chinese_name": "爱梅斯（火枪手）",
+        "name": "アメス（ガンナー）",
+        "real_name": "あめす",
+        "exclusive": 1,
+        "type": 0,
+        "ex_type": 0,
+        "place": 2,
+        "position": 512,
+        "mage": 2,
+        "elemental": 1,
+        "hasRarity6": false,
+        "hasSpecialBase": true
+    },
     "141401": {
         "chinese_name": "静流（新年）",
         "name": "シズル（ニューイヤー）",
